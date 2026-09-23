@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""Parallel-safe wrapper around pplx-web.
+
+pplx-web is a separate local tool (a Perplexity Pro web-session client) that is NOT part of this
+repo. Point PPLX_WEB_SCRIPT at its pplx_web.py; without it, use your harness's own web search.
+
+pplx-web rewrites ~/.config/perplexity-web/cookies.json after every search through a fixed
+temp name (cookies.json.tmp), so concurrent processes race on the rename. This wrapper runs
+each call under a private temporary HOME holding a copy of the cookie files. Refreshed cookies
+from the call are not written back to the real file.
+
+Usage: pplx-safe search "QUERY" [--json] [--timeout 180] [...]   (same args as pplx-web)
+       pplx-safe search "QUERY" --model M --mode research   (experimental: in 2026-09 tests the
+                                                             research mode was not engaged, see harness.md)
+
+--mode is the only extra flag: pplx-web always sends mode "copilot"; with --mode the request's
+params.mode is replaced (research / agentic_research), which Perplexity's research models need.
+"""
+
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+REAL_HOME = Path(os.environ.get("PPLX_SAFE_REAL_HOME") or Path.home())
+SCRIPT = Path(os.environ.get("PPLX_WEB_SCRIPT")
+              or REAL_HOME / ".agents/skills/perplexity-research/scripts/pplx_web.py")
+CONFIG = REAL_HOME / ".config/perplexity-web"
+
+
+SHIM = """
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("pplx_web", sys.argv[1])
+pw = importlib.util.module_from_spec(spec); spec.loader.exec_module(pw)
+mode, orig = sys.argv[2], pw.session_client
+def session_client(cookies):
+    sess = orig(cookies)
+    post = sess.post
+    def post_with_mode(url, json=None, **kw):
+        if isinstance(json, dict) and isinstance(json.get("params"), dict):
+            json["params"]["mode"] = mode
+        return post(url, json=json, **kw)
+    sess.post = post_with_mode
+    return sess
+pw.session_client = session_client
+sys.exit(pw.main(sys.argv[3:]))
+"""
+
+
+def main(argv):
+    args = list(argv[1:])
+    mode = None
+    if "--mode" in args:
+        i = args.index("--mode")
+        mode = args[i + 1]
+        del args[i:i + 2]
+    if not SCRIPT.exists():
+        sys.stderr.write(f'{{"error": "NO_PPLX_WEB", "message": "missing {SCRIPT}"}}\n')
+        return 1
+    uv = shutil.which("uv") or str(REAL_HOME / ".local/bin/uv")
+    with tempfile.TemporaryDirectory(prefix="pplx-safe-") as tmp:
+        cfg = Path(tmp) / ".config/perplexity-web"
+        cfg.mkdir(parents=True, mode=0o700)
+        for name in ("cookies.json", "config.json"):
+            src = CONFIG / name
+            if src.exists():
+                shutil.copy2(src, cfg / name)
+                os.chmod(cfg / name, 0o600)
+        env = dict(os.environ)
+        env["HOME"] = tmp
+        env.setdefault("UV_CACHE_DIR", str(REAL_HOME / ".cache/uv"))
+        py_dir = REAL_HOME / ".local/share/uv/python"
+        if py_dir.exists():
+            env.setdefault("UV_PYTHON_INSTALL_DIR", str(py_dir))
+        cmd = [uv, "run", "--quiet", "--with", "browser-cookie3", "--with", "curl_cffi", "python3"]
+        cmd += ["-c", SHIM, str(SCRIPT), mode, *args] if mode else [str(SCRIPT), *args]
+        return subprocess.run(cmd, env=env).returncode
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

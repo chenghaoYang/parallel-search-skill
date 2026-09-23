@@ -1,0 +1,168 @@
+{
+  "pplx-best": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 5.0,
+    "downstream": 4.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 5.0,
+    "mean_rank": 10.0,
+    "errors": []
+  },
+  "pplx-gpt6sol": {
+    "orientation": 6.0,
+    "taxonomy": 7.0,
+    "mainstream": 6.0,
+    "downstream": 6.0,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 5.5,
+    "concision": 3.5,
+    "overall": 5.5,
+    "mean_rank": 7.0,
+    "errors": []
+  },
+  "pplx-gemini38flash": {
+    "orientation": 6.5,
+    "taxonomy": 6.5,
+    "mainstream": 6.0,
+    "downstream": 6.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 5.5,
+    "mean_rank": 7.0,
+    "errors": []
+  },
+  "pplx-sonnet5": {
+    "orientation": 6.0,
+    "taxonomy": 7.5,
+    "mainstream": 5.5,
+    "downstream": 6.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.5,
+    "sourcing": 5.5,
+    "concision": 4.0,
+    "overall": 5.5,
+    "mean_rank": 7.0,
+    "errors": []
+  },
+  "pplx-kimik3": {
+    "orientation": 5.0,
+    "taxonomy": 5.5,
+    "mainstream": 5.0,
+    "downstream": 4.5,
+    "pitfalls": 5.0,
+    "accuracy": 5.5,
+    "sourcing": 5.0,
+    "concision": 3.0,
+    "overall": 4.0,
+    "mean_rank": 12.0,
+    "errors": [
+      "DeepSeek 思考内容一节把「不要默认把 reasoning 字段原样回注到下一轮上下文」写成正确原则，与带 tools 时不回传 reasoning_content 会 400 的规则相反",
+      "「不要默认把 reasoning 字段原样回注到下一轮上下文」与 DeepSeek 带 tools 时必须回传 reasoning_content 相反，按这条做会 400。",
+      "开篇把 DeepSeek 写成与 OpenAI、Anthropic、Gemini 并列的原生协议家族：「本文以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」"
+    ]
+  },
+  "pplx-glm53": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 6.0,
+    "downstream": 5.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 5.0,
+    "mean_rank": 9.0,
+    "errors": [
+      "Gemini 回传工具结果的示例使用 role:\"function\" 包裹 functionResponse；现行 generateContent 是放进后续 user content 的 part。"
+    ]
+  },
+  "pplx-grok46": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 6.0,
+    "downstream": 6.5,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 6.0,
+    "concision": 4.0,
+    "overall": 6.0,
+    "mean_rank": 5.0,
+    "errors": [
+      "速查表把 Anthropic 结构化输出写成「主要通过 tool schema / prompt 约束」，忽略已经 GA 的 output_config.format json_schema"
+    ]
+  },
+  "pplx-nemotron3": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 5.0,
+    "downstream": 4.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.0,
+    "overall": 4.5,
+    "mean_rank": 11.0,
+    "errors": []
+  },
+  "cc-opus-opus": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 8.5,
+    "downstream": 9.0,
+    "pitfalls": 8.0,
+    "accuracy": 7.5,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 8.5,
+    "mean_rank": 2.0,
+    "errors": [
+      "generateContent 列把结构化输出写成 responseFormat.text{mimeType,schema}，该接口的字段是 generationConfig.responseMimeType 配合 responseSchema/responseJsonSchema"
+    ]
+  },
+  "cc-opus-sonnet": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 8.5,
+    "accuracy": 8.5,
+    "sourcing": 9.0,
+    "concision": 8.5,
+    "overall": 9.0,
+    "mean_rank": 1.0,
+    "errors": []
+  },
+  "grok-47-47": {
+    "orientation": 9.0,
+    "taxonomy": 8.0,
+    "mainstream": 7.5,
+    "downstream": 8.5,
+    "pitfalls": 8.5,
+    "accuracy": 9.0,
+    "sourcing": 9.0,
+    "concision": 8.5,
+    "overall": 8.0,
+    "mean_rank": 4.0,
+    "errors": []
+  },
+  "kimi-glm53-glm53flash": {
+    "orientation": 8.5,
+    "taxonomy": 8.5,
+    "mainstream": 8.5,
+    "downstream": 8.5,
+    "pitfalls": 8.5,
+    "accuracy": 8.0,
+    "sourcing": 8.5,
+    "concision": 8.0,
+    "overall": 8.5,
+    "mean_rank": 3.0,
+    "errors": []
+  }
+}

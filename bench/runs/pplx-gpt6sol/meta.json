@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-gpt6sol",
+    "harness": "pplx",
+    "model": "gpt6_sol_thinking"
+  },
+  "returncode": 0,
+  "seconds": 158.3,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 88
+}

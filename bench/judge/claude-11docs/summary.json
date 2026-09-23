@@ -1,0 +1,156 @@
+{
+  "pplx-best": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 6.0,
+    "downstream": 4.0,
+    "pitfalls": 6.0,
+    "accuracy": 6.5,
+    "sourcing": 5.0,
+    "concision": 4.0,
+    "overall": 4.5,
+    "mean_rank": 9.5,
+    "errors": [
+      "标题「兼容性可分为五个等级」但表格列出 L0–L5 六级，自相矛盾"
+    ]
+  },
+  "pplx-gpt6sol": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 6.5,
+    "downstream": 4.5,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.0,
+    "overall": 5.5,
+    "mean_rank": 8.0,
+    "errors": []
+  },
+  "pplx-gemini38flash": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 6.5,
+    "downstream": 4.5,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 5.5,
+    "mean_rank": 6.5,
+    "errors": []
+  },
+  "pplx-sonnet5": {
+    "orientation": 5.5,
+    "taxonomy": 7.0,
+    "mainstream": 6.0,
+    "downstream": 5.5,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 5.5,
+    "concision": 4.0,
+    "overall": 5.5,
+    "mean_rank": 5.5,
+    "errors": []
+  },
+  "pplx-kimik3": {
+    "orientation": 5.0,
+    "taxonomy": 5.0,
+    "mainstream": 5.5,
+    "downstream": 3.5,
+    "pitfalls": 5.0,
+    "accuracy": 5.0,
+    "sourcing": 5.5,
+    "concision": 3.5,
+    "overall": 4.0,
+    "mean_rank": 11.0,
+    "errors": [
+      "DeepSeek 章节建议「不要默认把 reasoning 字段原样回注到下一轮上下文」：DeepSeek 思考模式在工具调用循环中要求回传 reasoning_content，否则报 400，照此建议会直接失败",
+      "「不要默认把 reasoning 字段原样回注到下一轮上下文」——与 DeepSeek 思考模式带 tools 时必须回传 reasoning_content（否则 400）的官方规则相冲突",
+      "「本文以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」——DeepSeek 是 OpenAI/Anthropic 兼容实现而非原生协议家族，文中自己也称其「高度 OpenAI 兼容」",
+      "开篇称「以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」：DeepSeek 是 OpenAI/Anthropic 兼容实现，不是独立原生协议，与后文「高度 OpenAI 兼容」自相矛盾"
+    ]
+  },
+  "pplx-glm53": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 6.5,
+    "downstream": 4.0,
+    "pitfalls": 6.5,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 4.0,
+    "overall": 5.0,
+    "mean_rank": 6.5,
+    "errors": []
+  },
+  "pplx-grok46": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 6.0,
+    "downstream": 5.5,
+    "pitfalls": 6.5,
+    "accuracy": 6.0,
+    "sourcing": 6.0,
+    "concision": 4.0,
+    "overall": 5.5,
+    "mean_rank": 4.0,
+    "errors": [
+      "参数迁移对照表 Responses 列写「最大输出 | 供应商定义字段」：OpenAI Responses 明确定义了 `max_output_tokens`",
+      "速查表「结构化输出」行 Anthropic 列写「主要通过 tool schema / prompt 约束」——Anthropic 已有原生 structured outputs（output_format/output_config.format），说法过时",
+      "速查表把 Anthropic 结构化输出写成「主要通过 tool schema / prompt 约束」：Anthropic 自 2025-11 起已有原生 structured outputs（output_format → output_config.format），该说法已过时"
+    ]
+  },
+  "pplx-nemotron3": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 6.0,
+    "downstream": 3.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 5.5,
+    "concision": 3.0,
+    "overall": 5.0,
+    "mean_rank": 9.0,
+    "errors": []
+  },
+  "cc-opus-opus": {
+    "orientation": 9.0,
+    "taxonomy": 8.5,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 8.0,
+    "accuracy": 8.0,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 2.0,
+    "errors": []
+  },
+  "cc-opus-sonnet": {
+    "orientation": 9.0,
+    "taxonomy": 9.5,
+    "mainstream": 9.0,
+    "downstream": 9.5,
+    "pitfalls": 9.0,
+    "accuracy": 8.0,
+    "sourcing": 9.5,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 1.0,
+    "errors": []
+  },
+  "grok-47-47": {
+    "orientation": 7.5,
+    "taxonomy": 6.5,
+    "mainstream": 8.0,
+    "downstream": 8.0,
+    "pitfalls": 8.0,
+    "accuracy": 8.5,
+    "sourcing": 9.5,
+    "concision": 8.0,
+    "overall": 7.5,
+    "mean_rank": 3.0,
+    "errors": []
+  }
+}

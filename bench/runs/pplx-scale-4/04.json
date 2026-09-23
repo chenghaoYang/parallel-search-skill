@@ -1,0 +1,203 @@
+{
+ "query": "只查 DeepSeek 官方文档和智谱开放平台官方文档：DeepSeek 的 OpenAI 兼容 base URL、Anthropic 兼容 base URL、聊天路径，以及思考内容字段名分别是什么？智谱提供给 Claude Code / Anthropic SDK 的兼容 base URL 是什么？请附官方 URL。",
+ "answer": "按两家**当前官方文档**，核心配置如下：\n\n| 平台/协议 | base URL | 聊天接口路径 |\n|---|---|---|\n| DeepSeek OpenAI 兼容 | `https://api.deepseek.com` | `POST /chat/completions`，完整地址为 `https://api.deepseek.com/chat/completions` [1][2] |\n| DeepSeek Anthropic 兼容 | `https://api.deepseek.com/anthropic` | Anthropic SDK 调用 Messages API；HTTP 完整路径为 `POST https://api.deepseek.com/anthropic/v1/messages` [3] |\n| 智谱 Claude Code / Anthropic SDK | `https://open.bigmodel.cn/api/anthropic` | HTTP 完整路径为 `POST https://open.bigmodel.cn/api/anthropic/v1/messages` [4][5] |\n\n## DeepSeek 思考字段\n\nOpenAI Chat Completions 兼容响应中的思维链字段名是：\n\n```text\nreasoning_content\n```\n\n具体位置为：\n\n- 非流式：`choices[0].message.reasoning_content`\n- 流式：`choices[0].delta.reasoning_content`\n- 最终回答仍是 `content`，两者同级[2][6]\n\n需要注意：`reasoning_content` 是**返回的思维链字段**；`thinking` 通常用于控制思考模式，两者不是同一个字段。Anthropic 兼容格式则支持 `thinking` 内容块 。[3][6]\n\n## 官方 URL\n\n- DeepSeek 首次调用与 base URL：[Your First API Call](https://api-docs.deepseek.com/)[1]\n- DeepSeek Anthropic 兼容：[使用 Anthropic API](https://api-docs.deepseek.com/zh-cn/guides/anthropic_api/)[3]\n- DeepSeek 聊天路径：[Chat Completions API](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion/)[2]\n- DeepSeek 思考字段：[思考模式](https://api-docs.deepseek.com/zh-cn/guides/thinking_mode)[6]\n- 智谱 Anthropic SDK 兼容：[Claude API 兼容](https://docs.bigmodel.cn/cn/guide/develop/claude/introduction)[4]\n- 智谱 Claude Code 配置：[Claude Code](https://docs.bigmodel.cn/cn/guide/develop/claude)[5]",
+ "citations": [
+  {
+   "title": "DeepSeek API Docs: Your First API Call",
+   "url": "https://api-docs.deepseek.com/",
+   "snippet": "The DeepSeek API uses an API format compatible with OpenAI/Anthropic. By modifying the configuration, you can use the OpenAI/Anthropic SDK or softwares compatible with the OpenAI/Anthropic API to access the DeepSeek API."
+  },
+  {
+   "title": "Chat Completions API | DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/zh-cn/api/create-chat-completion/",
+   "snippet": "根据输入的上下文，来让模型补全对话内容。"
+  },
+  {
+   "title": "使用Anthropic API",
+   "url": "https://api-docs.deepseek.com/zh-cn/guides/anthropic_api/",
+   "snippet": "为了满足大家对 Anthropic API 生态的使用需求，我们的 API 新增了对 Anthropic API 格式的支持，其 base_url 为 https://api.deepseek.com/anthropic。"
+  },
+  {
+   "title": "Claude API 兼容- 智谱AI开放文档 - 平台介绍",
+   "url": "https://docs.bigmodel.cn/cn/guide/develop/claude/introduction",
+   "snippet": "替换您访问的 base\\_url 为 https://open.bigmodel.cn/api/anthropic 在 [智谱开放平台](https://bigmodel.cn/usercenter/proj-mgmt/apikeys) 申请您的 api_key ... base_url=\"https://open.bigmodel.cn/api/anthropic\" # 配置智谱 base_url )"
+  },
+  {
+   "title": "Claude Code - 智谱AI开放文档 - 平台介绍",
+   "url": "https://docs.bigmodel.cn/cn/guide/develop/claude",
+   "snippet": ""
+  },
+  {
+   "title": "思考模式 - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/zh-cn/guides/thinking_mode",
+   "snippet": "DeepSeek 模型支持思考模式：在输出最终回答之前，模型会先输出一段思维链内容，以提升最终答案的准确性。"
+  },
+  {
+   "title": "DeepSeek V3.1 API-大模型服务平台百炼(Model Studio) - 阿里云文档",
+   "url": "https://help.aliyun.com/zh/model-studio/deepseek-api",
+   "snippet": "本文档介绍如何在阿里云百炼平台通过OpenAI兼容接口或DashScope SDK调用DeepSeek系列模型。"
+  },
+  {
+   "title": "模型迁移- 智谱AI开放文档",
+   "url": "https://docs.bigmodel.cn/cn/guide/platform/model-migration",
+   "snippet": "<Step title=\"更换Base URL\"> 将 base\\_url 设置为智谱的 API 地址"
+  },
+  {
+   "title": "DeepSeek API Guide - Tencent Cloud",
+   "url": "https://intl.cloud.tencent.com/document/product/1300/80633",
+   "snippet": "Tencent is a leading influencer in industries such as social media, mobile payments, online video, games, music, and more. Leverage Tencent's vast ecosystem of key products across various verticals as well as its extensive expertise and networks to gain a competitive edge and make your own impact in these industries."
+  },
+  {
+   "title": "Introducing DeepSeek-V3",
+   "url": "https://api-docs.deepseek.com/news/news1226",
+   "snippet": "The DeepSeek API uses an API format compatible with OpenAI/Anthropic. By modifying the configuration, you can use the OpenAI/Anthropic SDK or softwares compatible with the OpenAI/Anthropic API to access the DeepSeek API."
+  },
+  {
+   "title": "Integrate with Claude Code - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code/",
+   "snippet": "Claude Code is an AI coding assistant that runs in the terminal."
+  },
+  {
+   "title": "大模型服务平台TokenHub 语言模型调用概览 - 腾讯云",
+   "url": "https://cloud.tencent.com/document/product/1823/130079",
+   "snippet": "TokenHub 平台聚合腾讯混元、DeepSeek、智谱 GLM、Kimi、MiniMax 等多厂商语言模型，统一兼容 OpenAI Chat Complet"
+  },
+  {
+   "title": "Feature: 支持DeepSeek Anthropic 兼容API · Issue #1205 - GitHub",
+   "url": "https://github.com/esengine/DeepSeek-Reasonix/issues/1205",
+   "snippet": "Problem Reasonix 目前仅支持 DeepSeek 的原生 API 格式，请求直接发往 api.deepseek.com。但 DeepSeek 已原生支持 Anthropic Messages API 格式，终端接入方式与 Claude API 完全一致。这一兼容能力的缺失带来了两个实际问题： 无法使用 Anthropic 生态工具：用户若想通过 Claude Code 等 An..."
+  },
+  {
+   "title": "Reasoning Model (deepseek-reasoner)",
+   "url": "https://api-docs.deepseek.com/guides/reasoning_model",
+   "snippet": ""
+  },
+  {
+   "title": "DeepSeek V3.2 正式版：强化Agent 能力，融入思考推理",
+   "url": "https://api-docs.deepseek.com/zh-cn/news/news251201/",
+   "snippet": "两个月前，我们发布了实验性的 DeepSeek-V3.2-Exp，并收到了众多热心用户反馈的对比测试结果。目前未发现 V3.2-Exp 在任何特定场景中显著差于 V3.1-Terminus，这验证了 DSA 稀疏注意力机制的有效性。也感谢广大用户一直以来的积极反馈与支持，为我们的持续创新注入了更多信心与动力。"
+  },
+  {
+   "title": "thinking_mode_api_example_streaming | DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/zh-cn/api_samples/thinking_mode_api_example_streaming",
+   "snippet": ""
+  },
+  {
+   "title": "thinking_mode_api_example_no...",
+   "url": "https://api-docs.deepseek.com/zh-cn/guides/thinking_mode_api_example_non_streaming/",
+   "snippet": "messages = [{\"role\": \"user\", \"content\": \"9.11 and 9.8, which is greater?\"}] response = client.chat.completions.create( model=\"deepseek-reasoner\", messages=messages ) reasoning_content = response.choices.message.reasoning_content content = response.choices.message.content"
+  },
+  {
+   "title": "thinking_mode_api_example_str...",
+   "url": "https://api-docs.deepseek.com/guides/thinking_mode_api_example_streaming",
+   "snippet": "messages = [{\"role\": \"user\", \"content\": \"9.11 and 9.8, which is greater?\"}] response = client.chat.completions.create( model=\"deepseek-reasoner\", ... stream=True ) reasoning_content = \"\" content = \"\" for chunk in response: if chunk.choices.delta.reasoning_content: reasoning_content += chunk.choices.delta.reasoning_content else: content += chunk.choices.delta.content"
+  },
+  {
+   "title": "thinking_mode_api_example_no...",
+   "url": "https://api-docs.deepseek.com/zh-cn/api_samples/thinking_mode_api_example_non_streaming/",
+   "snippet": ") reasoning_content = response.choices.message.reasoning_content content = response.choices.message.content"
+  },
+  {
+   "title": "Integrate with GitHub Copilot CLI - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/copilot_cli/",
+   "snippet": "Configure GitHub Copilot CLI to use DeepSeek V4 models via BYOK (Bring Your Own Key) with the Anthropic-compatible endpoint."
+  },
+  {
+   "title": "Using DeepSeek with Oh My Pi",
+   "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/oh_my_pi",
+   "snippet": "Oh My Pi is a terminal AI coding agent. As of v14.5 it ships DeepSeek V4 model entries, but the built-in compat is incomplete — a custom models.yml is still required for reliable use."
+  },
+  {
+   "title": "接入Pi",
+   "url": "https://api-docs.deepseek.com/zh-cn/quick_start/agent_integrations/pi_mono",
+   "snippet": "Pi（pi-mono）是一个极简且高度可扩展的终端编码框架。它通过 TypeScript 扩展、技能、提示模板和主题来适配你的工作流，支持树状会话结构和 15+ 内置供应商。"
+  },
+  {
+   "title": "DeepSeek-V3.1 发布",
+   "url": "https://api-docs.deepseek.com/zh-cn/news/news250821",
+   "snippet": "д»ҠеӨ©пјҢжҲ‘д»¬жӯЈејҸеҸ‘еёғ DeepSeek-V3.1гҖӮжң¬ж¬ЎеҚҮзә§еҢ…еҗ«д»ҘдёӢдё»иҰҒеҸҳеҢ–пјҡ"
+  },
+  {
+   "title": "Integrate with Codex - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/codex",
+   "snippet": "Codex is an AI coding assistant from OpenAI. It talks to models via the Responses API, which the DeepSeek API natively supports."
+  },
+  {
+   "title": "thinking_mode_api_example_to...",
+   "url": "https://api-docs.deepseek.com/api_samples/thinking_mode_api_example_tool_call/",
+   "snippet": "messages.append(response.choices.message) reasoning_content = response.choices.message.reasoning_content content = response.choices.message.content"
+  },
+  {
+   "title": "Tool Calls | DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/tool_calls/",
+   "snippet": "Tool Calls allows the model to call external tools to enhance its capabilities."
+  },
+  {
+   "title": "Error Codes - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/quick_start/error_codes",
+   "snippet": "When calling DeepSeek API, you may encounter errors. Here list the causes and solutions."
+  },
+  {
+   "title": "Using the Anthropic API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/anthropic_api/",
+   "snippet": "To meet the demand for using the Anthropic API ecosystem, our API has added support for the Anthropic API format, with the base_url being https://api.deepseek.com/anthropic."
+  },
+  {
+   "title": "Chat Completions API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+   "snippet": "Creates a model response for the given chat conversation."
+  },
+  {
+   "title": "Use An Uploaded File In A...",
+   "url": "https://api-docs.deepseek.com/guides/files_api/",
+   "snippet": "The Files API lets you upload images and reference them later by file_id. It is the recommended way to:"
+  },
+  {
+   "title": "Using the Responses API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/responses_api/",
+   "snippet": "To meet the demand for Codex, our API now supports the Responses API format, with the base_url being https://api.deepseek.com."
+  },
+  {
+   "title": "Responses API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/create-response/",
+   "snippet": "Creates a model response in the OpenAI Responses API format."
+  },
+  {
+   "title": "DeepSeek-V3.1 Release",
+   "url": "https://api-docs.deepseek.com/news/news250821/",
+   "snippet": "Introducing DeepSeek-V3.1: our first step toward the agent era! ­¤ÜĆ"
+  },
+  {
+   "title": "Authentication - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/deepseek-api/",
+   "snippet": "The DeepSeek API. To use the DeepSeek API, please [create an API key first](https://platform.deepseek.com/api_keys)."
+  },
+  {
+   "title": "Multi-round Conversation - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/multi_round_chat",
+   "snippet": "This guide will introduce how to use the DeepSeek /chat/completions API for multi-turn conversations."
+  },
+  {
+   "title": "DeepSeek-R1 Release",
+   "url": "https://api-docs.deepseek.com/news/news250120/",
+   "snippet": "⚡ Performance on par with OpenAI-o1"
+  },
+  {
+   "title": "Lists Models - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/list-models/",
+   "snippet": "Lists the currently available models, and provides basic information about each one such as the owner and availability. Check [Models & Pricing](/quick_start/pricing) for our currently supported models."
+  },
+  {
+   "title": "Integrate with AI Tools - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/coding_agents/",
+   "snippet": "This guide shows how to integrate DeepSeek models with popular AI coding tools, including Claude Code, OpenCode, and OpenClaw."
+  },
+  {
+   "title": "Thinking Mode - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+   "snippet": "The DeepSeek model supports the thinking mode: before outputting the final answer, the model will first output a chain-of-thought reasoning to improve the accuracy of the final response."
+  }
+ ],
+ "model": "kimik3thinking",
+ "requested_model": "kimik3thinking"
+}

@@ -1,0 +1,78 @@
+{
+ "query": "只查 OpenAI 官方 API 文档：Chat Completions 和 Responses 各自的 HTTP 路径是什么？对话内容分别放在哪个请求字段？系统提示或开发者指令放在哪里？请附官方 URL，并引用字段名。",
+ "answer": "两者都是 `POST`：`Chat Completions` 使用 `/v1/chat/completions`，对话放在 `messages`；`Responses` 使用 `/v1/responses`，对话放在 `input`，系统/开发者指令通常放在顶层 `instructions`。[1]\n\n## 官方字段对照\n\n| API | HTTP 方法与路径 | 对话内容字段 | 系统提示 / 开发者指令 |\n|---|---|---|---|\n| Chat Completions | `POST https://api.openai.com/v1/chat/completions` | `messages`：消息数组，每条含 `role` 和 `content` | 放在 `messages` 中，`role: \"system\"` 或 `role: \"developer\"` |\n| Responses | `POST https://api.openai.com/v1/responses` | `input`：可以是字符串或 Input Item 数组 | 推荐放在顶层 `instructions`；也可在 `input` 消息中使用 `role: \"system\"` 或 `role: \"developer\"` |\n\n官方迁移文档明确给出的路径是 `post /v1/chat/completions` 和 `post /v1/responses`，并分别使用请求字段 `messages` 与 `input`。[1]\n\n## Chat Completions\n\n- 官方参考：[Create chat completion](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)\n- `messages` 是“迄今为止组成对话的消息列表”。\n- 每条消息使用 `role` 标识作者、`content` 存放内容。\n- 开发者指令可写成 `role: \"developer\"` 的消息；官方说明，o1 及更新模型用 `developer` 消息取代之前的 `system` 消息。[2]\n\n```json\n{\n  \"model\": \"MODEL_ID\",\n  \"messages\": [\n    {\n      \"role\": \"developer\",\n      \"content\": \"你是一个简洁、准确的中文助手。\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"你好\"\n    }\n  ]\n}\n```\n\n兼容旧式写法时，也可以把第一条消息的 `role` 写成 `\"system\"`；其指令内容仍然放在该消息的 `content` 字段。[2]\n\n## Responses\n\n- 官方参考：[Create a model response](https://developers.openai.com/api/reference/resources/responses/methods/create)\n- `input` 存放文本、图片、文件等模型输入；字符串 `input` 等价于一条 `user` 消息。[3]\n- 多轮对话时，`input` 可以是多个消息 Item，`role` 可为 `\"user\"`、`\"assistant\"`、`\"system\"` 或 `\"developer\"`。[3]\n- 顶层 `instructions` 用于模型行为、语气、目标和示例等高层指令；官方说明其优先级高于 `input` 中的提示，且只适用于当前生成请求。[4]\n\n```json\n{\n  \"model\": \"MODEL_ID\",\n  \"instructions\": \"你是一个简洁、准确的中文助手。\",\n  \"input\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"你好\"\n    }\n  ]\n}\n```\n\n单轮简单请求也可以写成：\n\n```json\n{\n  \"model\": \"MODEL_ID\",\n  \"instructions\": \"你是一个简洁、准确的中文助手。\",\n  \"input\": \"你好\"\n}\n```\n\n若为了迁移而保留现有消息结构，也可以把系统指令作为 `input` 数组中的消息传入：\n\n```json\n{\n  \"model\": \"MODEL_ID\",\n  \"input\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"你是一个简洁、准确的中文助手。\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"你好\"\n    }\n  ]\n}\n```\n\n官方迁移文档将映射概括为：Chat Completions 的 `messages[]` 对应 Responses 的 `input`；“system 或 developer guidance”对应顶层 `instructions`，或者在需要保留原有对话记录时使用兼容的消息 Item。[1]",
+ "citations": [
+  {
+   "title": "Migrate to the Responses API - OpenAI Developers",
+   "url": "https://developers.openai.com/api/docs/guides/migrate-to-responses",
+   "snippet": "Both APIs make it easy to generate output from our models. The input to, and result of, a call to Chat completions is an array of *Messages*, while the Responses API uses *Items*. ... When you get a response back from the Responses API, the fields differ slightly. Instead of a message, you receive a typed response object with its own id. ... In Chat Completions, you receive an array of choices, each containing a message. In Responses, you receive an array of Items labeled output. ... Treat..."
+  },
+  {
+   "title": "Create chat completion | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create",
+   "snippet": ""
+  },
+  {
+   "title": "Create a model response | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/resources/responses/methods/create",
+   "snippet": ""
+  },
+  {
+   "title": "Text generation | OpenAI API",
+   "url": "https://developers.openai.com/api/docs/guides/text",
+   "snippet": "Learn how to use the OpenAI API to generate text from a prompt. Learn about message types and available text formats like JSON and Structured Outputs."
+  },
+  {
+   "title": "API Overview | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/overview/",
+   "snippet": "Responses for direct model requests, tool use, audio, image, and text inputs, and stateful interactions."
+  },
+  {
+   "title": "由OpenAI API 的Completions 遷移至Chat Completions",
+   "url": "https://help.openai.com/zh-hant-hk/articles/7042661-moving-from-completions-to-chat-completions-in-the-openai-api",
+   "snippet": "How to get migrate from the legacy OpenAI Completions API to Chat Completions"
+  },
+  {
+   "title": "OpenAI兼容Responses API调用及从Chat Completions迁移指南",
+   "url": "https://help.aliyun.com/zh/model-studio/compatibility-with-openai-responses-api",
+   "snippet": "阿里云百炼的通义千问模型支持 OpenAI 兼容 Responses 接口。作为Chat Completions API的演进版本，Responses API能够以更简洁的方式提供智能体原生功能。"
+  },
+  {
+   "title": "如何使用Chat Completions API？ - OpenAI Help Center",
+   "url": "https://help.openai.com/zh-hans-cn/articles/7232945-how-can-i-use-the-chat-completion-api",
+   "snippet": "Learn how to get started with the OpenAI Chat Completions API"
+  },
+  {
+   "title": "在OpenAI API 中從Completions 轉移至Chat Completions",
+   "url": "https://help.openai.com/zh-hant/articles/7042661-moving-from-completions-to-chat-completions-in-the-openai-api",
+   "snippet": "How to get migrate from the legacy OpenAI Completions API to Chat Completions"
+  },
+  {
+   "title": "使用聊天完成模型- Microsoft Foundry",
+   "url": "https://learn.microsoft.com/zh-tw/azure/foundry/openai/how-to/chatgpt",
+   "snippet": "瞭解如何使用模型來搭配聊天完成 API 的不同方法"
+  },
+  {
+   "title": "隆重推出GPT-5.2 - OpenAI",
+   "url": "https://openai.com/zh-Hans-CN/index/introducing-gpt-5-2/",
+   "snippet": "GPT-5.2 是我们面向日常专业工作的最先进前沿模型，具备顶尖的推理、长上下文理解、代码处理和视觉能力。你可以在 ChatGPT 和 OpenAI API 中使用它，构建更便捷可靠的智能体工作流程。"
+  },
+  {
+   "title": "OpenAI 聊天補全",
+   "url": "https://docs.openclaw.ai/zh-TW/gateway/openai-http-api",
+   "snippet": "從閘道公開相容於 OpenAI 的 /v1/chat/completions HTTP 端點"
+  },
+  {
+   "title": "会话补全（Chat completions） - OpenAI 文档介绍- 犀牛书",
+   "url": "https://openai.xiniushu.com/docs/guides/chat",
+   "snippet": "ChatGPT 基于 OpenAI 最先进的语言模型 gpt-3.5-turbo。"
+  },
+  {
+   "title": "Create a model response | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/resources/responses/methods/create/",
+   "snippet": "POST/responses Creates a model response. Provide text or image inputs to generate text or JSON outputs. Have the model call your own custom code or use built-in tools like web search or file search to use your own data as input for the model’s response. ... include: optional array of ResponseIncludable or null Specify additional output data to include in the model response. ... One of the following: EasyInputMessage object { content, role, phase, type } A message input to the model with a role..."
+  }
+ ],
+ "model": "kimik3thinking",
+ "requested_model": "kimik3thinking"
+}

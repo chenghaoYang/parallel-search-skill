@@ -1,0 +1,193 @@
+{
+  "pplx-best": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 5.0,
+    "downstream": 3.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 4.0,
+    "mean_rank": 11.0,
+    "errors": [
+      "「兼容性可分为五个等级」随后却列出 L0–L5 共六级，自相矛盾",
+      "「兼容性可分为五个等级」，但下表列出 L0–L5 共六级"
+    ]
+  },
+  "pplx-gpt6sol": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 5.5,
+    "downstream": 4.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 2.5,
+    "overall": 4.5,
+    "mean_rank": 9.5,
+    "errors": [
+      "称「functionCall、functionResponse、thought 和 thoughtSignature 都属于 Part 的不同联合类型」——thought 与 thoughtSignature 是 Part 上的独立字段，不在 data 联合里"
+    ]
+  },
+  "pplx-gemini38flash": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 5.5,
+    "downstream": 4.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 4.5,
+    "mean_rank": 7.0,
+    "errors": []
+  },
+  "pplx-sonnet5": {
+    "orientation": 5.5,
+    "taxonomy": 6.0,
+    "mainstream": 4.5,
+    "downstream": 4.5,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 4.5,
+    "mean_rank": 7.5,
+    "errors": []
+  },
+  "pplx-kimik3": {
+    "orientation": 5.0,
+    "taxonomy": 4.5,
+    "mainstream": 4.5,
+    "downstream": 3.0,
+    "pitfalls": 5.0,
+    "accuracy": 5.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 3.0,
+    "mean_rank": 13.0,
+    "errors": [
+      "DeepSeek 部分建议「不要默认把 reasoning 字段原样回注到下一轮上下文」，却未提官方要求带 tools 时必须回传 reasoning_content、否则 400，易误导",
+      "「不要默认把 reasoning 字段原样回注到下一轮上下文」与 DeepSeek 文档要求相悖：带 tools 时必须回传 reasoning_content，否则 400",
+      "「本文以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」错误：DeepSeek 是兼容 OpenAI/Anthropic 格式的实现，不是独立原生协议族，且文中 2.4 自己也这样写",
+      "开篇称「以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」，DeepSeek 实为 OpenAI/Anthropic 兼容实现，并非独立原生协议"
+    ]
+  },
+  "pplx-glm53": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 5.0,
+    "downstream": 4.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.0,
+    "concision": 3.5,
+    "overall": 4.0,
+    "mean_rank": 9.5,
+    "errors": []
+  },
+  "pplx-grok46": {
+    "orientation": 6.0,
+    "taxonomy": 5.5,
+    "mainstream": 5.5,
+    "downstream": 5.0,
+    "pitfalls": 6.0,
+    "accuracy": 6.0,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 5.0,
+    "mean_rank": 6.5,
+    "errors": [
+      "§10.1 参数对照表 Responses 列最大输出写「供应商定义字段」，OpenAI Responses 明确为 max_output_tokens",
+      "§2.1 速查表称 Anthropic 结构化输出「主要通过 tool schema / prompt 约束」，忽略已上线的原生 structured outputs（output_config.format）",
+      "参数迁移表中 Responses 的「最大输出 | 供应商定义字段」错误，Responses 有明确的 `max_output_tokens`",
+      "速查表把 Anthropic Messages 的结构化输出写成「主要通过 tool schema / prompt 约束」，Anthropic 已有原生结构化输出（output_config.format、工具 strict），属过时说法"
+    ]
+  },
+  "pplx-nemotron3": {
+    "orientation": 6.0,
+    "taxonomy": 6.0,
+    "mainstream": 5.0,
+    "downstream": 3.0,
+    "pitfalls": 5.5,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.0,
+    "overall": 4.0,
+    "mean_rank": 12.0,
+    "errors": []
+  },
+  "cc-opus-opus": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 8.0,
+    "accuracy": 8.0,
+    "sourcing": 9.5,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 1.5,
+    "errors": []
+  },
+  "cc-opus-sonnet": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 8.5,
+    "accuracy": 8.0,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 1.5,
+    "errors": []
+  },
+  "grok-47-47": {
+    "orientation": 7.5,
+    "taxonomy": 7.0,
+    "mainstream": 7.0,
+    "downstream": 8.0,
+    "pitfalls": 7.5,
+    "accuracy": 8.0,
+    "sourcing": 9.0,
+    "concision": 8.0,
+    "overall": 7.0,
+    "mean_rank": 5.0,
+    "errors": []
+  },
+  "kimi-glm53-glm53flash": {
+    "orientation": 8.5,
+    "taxonomy": 8.0,
+    "mainstream": 8.0,
+    "downstream": 8.0,
+    "pitfalls": 8.0,
+    "accuracy": 6.5,
+    "sourcing": 8.5,
+    "concision": 8.5,
+    "overall": 7.5,
+    "mean_rank": 4.0,
+    "errors": [
+      "3.1 表把百炼/Qwen 的 Responses 列标为「—」，百炼实际提供 OpenAI 兼容 Responses 接口",
+      "DeepSeek「/beta 仅 FIM 与 strict」不完整，对话前缀续写（prefix completion）同样必须走 /beta",
+      "§2.1 版本行 Chat 写「URL 无版本段」，与同表端点 `POST /v1/chat/completions` 自相矛盾",
+      "§2.6 采样行 Responses 写「同左（无 n）」，暗示 Responses 也有 stop≤4、penalties、seed；实际 Responses 不提供 stop/seed/penalty",
+      "§3.1 百炼/Qwen 的 B: responses 列标「—」，但百炼已提供 compatible-mode/v1/responses 兼容接口",
+      "「版本」行写「URL 无版本段」，而 OpenAI 路径本身含 `/v1`（同表端点行也写了 `/v1/chat/completions`）"
+    ]
+  },
+  "justin-handbook-full": {
+    "orientation": 8.0,
+    "taxonomy": 8.5,
+    "mainstream": 10.0,
+    "downstream": 8.5,
+    "pitfalls": 9.0,
+    "accuracy": 8.0,
+    "sourcing": 10.0,
+    "concision": 5.0,
+    "overall": 8.0,
+    "mean_rank": 3.0,
+    "errors": []
+  }
+}

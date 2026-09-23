@@ -1,0 +1,24 @@
+{
+  "task_id": "api-protocol-v1",
+  "tool": "pplx-web",
+  "note": "规模是唯一自变量。每路都是一次 Perplexity Pro 检索。scale-1 的答案本身就是报告。scale-4 先并行扩开，再由不联网的收束步骤写成一份报告。查询里不放标准答案。",
+  "methods": [
+    {
+      "id": "pplx-scale-1",
+      "fanout": 1,
+      "queries": [
+        "对比这几家大模型 HTTP API 的请求协议，写给工程师，每条差异附官方文档 URL。范围：OpenAI Chat Completions 和 OpenAI Responses 的路径与请求体字段有什么不同；Anthropic Messages 的路径、系统提示放在哪里、输入消息有没有 system role；Google Gemini generateContent 的 URL、对话内容字段名、系统指令字段名；DeepSeek 如何兼容 OpenAI 和 Anthropic（base URL，以及思考内容放在哪个字段）；智谱 GLM 的 Anthropic 兼容 base URL 是什么。只写协议差异，不要写安装教程。"
+      ]
+    },
+    {
+      "id": "pplx-scale-4",
+      "fanout": 4,
+      "queries": [
+        "只查 OpenAI 官方 API 文档：Chat Completions 和 Responses 各自的 HTTP 路径是什么？对话内容分别放在哪个请求字段？系统提示或开发者指令放在哪里？请附官方 URL，并引用字段名。",
+        "只查 Anthropic 官方 Messages API 文档：创建消息的 HTTP 路径是什么？系统提示是顶层参数还是消息里的一种 role？输入消息允许哪些 role？请附官方 URL，并引用原句。",
+        "只查 Google Gemini 官方 API 文档：generateContent 的完整 HTTP URL 形态是什么？对话历史放在哪个字段？系统指令是哪个字段？它和 OpenAI 的 messages 是否同名？请附官方 URL。",
+        "只查 DeepSeek 官方文档和智谱开放平台官方文档：DeepSeek 的 OpenAI 兼容 base URL、Anthropic 兼容 base URL、聊天路径，以及思考内容字段名分别是什么？智谱提供给 Claude Code / Anthropic SDK 的兼容 base URL 是什么？请附官方 URL。"
+      ]
+    }
+  ]
+}

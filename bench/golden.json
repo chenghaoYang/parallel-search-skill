@@ -1,0 +1,103 @@
+{
+  "task_id": "api-protocol-v1",
+  "question": "对比 OpenAI Chat Completions、OpenAI Responses、Anthropic Messages、Google generateContent 的请求协议，并写明 DeepSeek 相对 OpenAI、智谱相对 Anthropic 的官方兼容入口。最终一份对比说明。",
+  "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+  "claims": [
+    {
+      "id": "openai-chat-path",
+      "claim": "OpenAI Chat Completions 是 POST /v1/chat/completions。",
+      "groups": [["/v1/chat/completions"]],
+      "hosts": ["developers.openai.com", "platform.openai.com"],
+      "source": "https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create",
+      "quote": "POST /v1/chat/completions"
+    },
+    {
+      "id": "openai-chat-messages",
+      "claim": "Chat Completions 的对话放在 messages 数组里。",
+      "groups": [["/v1/chat/completions"], ["\"messages\"", "`messages`", "messages 数组", "messages array"]],
+      "hosts": ["developers.openai.com", "platform.openai.com"],
+      "source": "https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create",
+      "quote": "messages (array) Required. A list of messages comprising the conversation so far."
+    },
+    {
+      "id": "openai-responses-path",
+      "claim": "OpenAI Responses 是 POST /v1/responses。",
+      "groups": [["/v1/responses"]],
+      "hosts": ["developers.openai.com", "platform.openai.com"],
+      "source": "https://developers.openai.com/api/reference/resources/responses/methods/create",
+      "quote": "POST /v1/responses"
+    },
+    {
+      "id": "openai-responses-input",
+      "claim": "Responses 的输入字段叫 input，官方示例里可以是字符串，也可以是内容数组。",
+      "groups": [["/v1/responses"], ["\"input\"", "`input`", "input 字段", "field input"]],
+      "hosts": ["developers.openai.com", "platform.openai.com"],
+      "source": "https://developers.openai.com/api/reference/resources/responses/methods/create",
+      "quote": "\"input\": \"How much wood would a woodchuck chuck?\""
+    },
+    {
+      "id": "anthropic-messages-path",
+      "claim": "Anthropic 创建消息是 POST /v1/messages。",
+      "groups": [["/v1/messages"]],
+      "hosts": ["platform.claude.com", "docs.anthropic.com"],
+      "source": "https://platform.claude.com/docs/en/api/messages",
+      "quote": "POST /v1/messages"
+    },
+    {
+      "id": "anthropic-system-toplevel",
+      "claim": "Anthropic 正文写明：系统提示用顶层 system 参数，输入 messages 没有 system role。",
+      "groups": [["/v1/messages", "messages api"], ["top-level system", "顶层 system", "no \"system\" role", "没有 system role", "there is no"]],
+      "hosts": ["platform.claude.com", "docs.anthropic.com"],
+      "source": "https://platform.claude.com/docs/en/api/messages",
+      "quote": "you can use the top-level system parameter — there is no \"system\" role for input messages in the Messages API."
+    },
+    {
+      "id": "google-generate-content",
+      "claim": "Gemini 生成接口是 POST generativelanguage.googleapis.com 上的 models/*:generateContent。",
+      "groups": [["generativelanguage.googleapis.com"], ["generatecontent"]],
+      "hosts": ["ai.google.dev"],
+      "source": "https://ai.google.dev/api/generate-content",
+      "quote": "post https://generativelanguage.googleapis.com/v1beta/{model=models/*}:generateContent"
+    },
+    {
+      "id": "google-contents-not-messages",
+      "claim": "Gemini 对话在 contents 里，系统指令是单独的 systemInstruction，不是 OpenAI 那种 messages。",
+      "groups": [["generatecontent"], ["contents"], ["systeminstruction", "system instruction", "系统指令"]],
+      "hosts": ["ai.google.dev"],
+      "source": "https://ai.google.dev/api/generate-content",
+      "quote": "contents[] Required. The content of the current conversation with the model. systemInstruction Optional."
+    },
+    {
+      "id": "deepseek-openai-base",
+      "claim": "DeepSeek 的 OpenAI 兼容 base URL 是 https://api.deepseek.com ，聊天路径是 /chat/completions。",
+      "groups": [["https://api.deepseek.com"], ["chat/completions"]],
+      "hosts": ["api-docs.deepseek.com"],
+      "source": "https://api-docs.deepseek.com/",
+      "quote": "base_url (OpenAI) https://api.deepseek.com ; curl https://api.deepseek.com/chat/completions"
+    },
+    {
+      "id": "deepseek-anthropic-base",
+      "claim": "DeepSeek 另外给了一个 Anthropic 兼容 base URL：https://api.deepseek.com/anthropic 。",
+      "groups": [["https://api.deepseek.com/anthropic"]],
+      "hosts": ["api-docs.deepseek.com"],
+      "source": "https://api-docs.deepseek.com/",
+      "quote": "base_url (Anthropic) https://api.deepseek.com/anthropic"
+    },
+    {
+      "id": "deepseek-reasoning-content",
+      "claim": "DeepSeek 思考模式把思考过程放在 reasoning_content，和最终 content 分开。",
+      "groups": [["reasoning_content"]],
+      "hosts": ["api-docs.deepseek.com"],
+      "source": "https://api-docs.deepseek.com/api/create-chat-completion",
+      "quote": "reasoning_content string nullable. For thinking mode only. The reasoning contents of the assistant message, before the final answer."
+    },
+    {
+      "id": "zhipu-anthropic-base",
+      "claim": "智谱让 Claude Code 使用的 Anthropic 兼容地址是 https://open.bigmodel.cn/api/anthropic 。",
+      "groups": [["https://open.bigmodel.cn/api/anthropic", "open.bigmodel.cn/api/anthropic"]],
+      "hosts": ["docs.bigmodel.cn", "open.bigmodel.cn"],
+      "source": "https://docs.bigmodel.cn/cn/guide/develop/claude",
+      "quote": "ANTHROPIC_BASE_URL: https://open.bigmodel.cn/api/anthropic"
+    }
+  ]
+}

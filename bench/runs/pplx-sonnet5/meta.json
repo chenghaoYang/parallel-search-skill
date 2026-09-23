@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-sonnet5",
+    "harness": "pplx",
+    "model": "claude50sonnetthinking"
+  },
+  "returncode": 0,
+  "seconds": 166.3,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 48
+}

@@ -1,0 +1,11 @@
+{
+  "id": "pplx-scale-1",
+  "fanout": 1,
+  "searches": [
+    {
+      "index": 1,
+      "returncode": 0,
+      "bytes": 36853
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "arm": {
+    "id": "kimi-glm53-glm53flash",
+    "harness": "kimi-code",
+    "lead": "zhipuai-coding-plan/glm-5.3",
+    "worker": "zhipuai-coding-plan/glm-5.3-flash",
+    "max_parallel": 3,
+    "note": "GLM Coding Plan 限并发：第 1 次启动时主 agent 卡在 APIEmptyResponseError 重试 10+ 分钟，改为同时最多 3 个工人（KIMI_CODE_AGENT_SWARM_MAX_CONCURRENCY=3 + 提示词要求分批）。"
+  },
+  "returncode": 0,
+  "seconds": 6653.1,
+  "subagent_stats": {
+    "spawned": 15
+  },
+  "kimi_usage": {
+    "tokens": {},
+    "usage_records_by_model": {
+      "zhipuai-coding-plan/glm-5.3-flash": 380,
+      "zhipuai-coding-plan/glm-5.3": 92
+    }
+  }
+}

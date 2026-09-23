@@ -1,0 +1,23 @@
+{
+  "arm": {
+    "id": "grok-47-47",
+    "harness": "grok-build",
+    "lead": "grok-4.7",
+    "worker": "grok-4.7"
+  },
+  "returncode": 0,
+  "seconds": 5434.7,
+  "grok_usage": {
+    "inputTokens": 121921438,
+    "outputTokens": 1723615,
+    "cachedReadTokens": 101419392,
+    "modelCalls": 1108,
+    "costUsdTicks": 362377705200,
+    "sessions_found": 16,
+    "subagents": 15
+  },
+  "total_cost_usd": 36.24,
+  "subagent_stats": {
+    "spawned": 15
+  }
+}

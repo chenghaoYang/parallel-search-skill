@@ -1,0 +1,11 @@
+# local-only material: private notes, raw transcripts, third-party copies
+private/
+.claude/
+bench/runs/*/transcript.jsonl
+bench/runs/*/stderr.txt
+bench/runs/justin-handbook-*/report.md
+
+# python / os
+__pycache__/
+*.pyc
+.DS_Store

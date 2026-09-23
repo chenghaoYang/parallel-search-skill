@@ -1,0 +1,246 @@
+{
+  "seed": 2,
+  "labels": {
+    "D1": "pplx-nemotron3",
+    "D2": "grok-47-47",
+    "D3": "pplx-sonnet5",
+    "D4": "pplx-kimik3",
+    "D5": "pplx-gemini38flash",
+    "D6": "cc-opus-opus",
+    "D7": "pplx-grok46",
+    "D8": "pplx-glm53",
+    "D9": "cc-opus-sonnet",
+    "D10": "pplx-gpt6sol",
+    "D11": "pplx-best"
+  },
+  "scores": {
+    "pplx-nemotron3": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 6,
+      "downstream": 4,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 6,
+      "concision": 3,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "DeepSeek Responses 对未支持能力返回固定值（store: false、previous_response_id: null、parallel_tool_calls: true），无法独立核实",
+        "工具调用表中 Gemini「call ID 机制依实现」——Gemini 3 的 functionCall 已带 id 字段，表述偏模糊"
+      ],
+      "strengths": "开头结论加协议家族总表清楚，九维度 taxonomy、三条迁移清单和常见误解总结实用，DeepSeek JSON mode 与 Responses 固定值有官方引用",
+      "weaknesses": "篇幅超长，canonical IR、能力矩阵等通用建议反复出现；智谱只给待验证清单，未回答其 Anthropic 兼容端点与官方的差异，DeepSeek Responses 差异挖得浅"
+    },
+    "grok-47-47": {
+      "orientation": 7,
+      "taxonomy": 6,
+      "mainstream": 8,
+      "downstream": 8,
+      "pitfalls": 8,
+      "accuracy": 8,
+      "sourcing": 9,
+      "concision": 8,
+      "overall": 7,
+      "errors": [],
+      "unsure": [
+        "Chat/Responses 的 reasoning_effort 取值含 max（共 7 档）",
+        "Anthropic「Authorization 在未设置 x-api-key 时为必需」的鉴权描述",
+        "DeepSeek Chat 的 max_tokens 默认非思考 8K、思考 64K",
+        "「delta 的 type 与事件名一致」表述含糊：Messages 流中 delta.type 实为 text_delta/input_json_delta 等，与事件名一致的是 data 的 type"
+      ],
+      "strengths": "一屏直接给出 DeepSeek 与智谱两个疑点的结论，四协议字段矩阵与 10 行适配层对照密度高，全部官方来源并单列文档冲突与缺口",
+      "weaknesses": "电报式行文晦涩，夹杂过程噪声（sitemap 236 条、未定义的「D2–D9」、403 记录）；taxonomy 较薄，缺请求示例和 Responses 流事件名"
+    },
+    "pplx-sonnet5": {
+      "orientation": 5,
+      "taxonomy": 7,
+      "mainstream": 6,
+      "downstream": 5,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 6,
+      "concision": 4,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "DeepSeek Chat Completions 支持 image_url 与文件类内容部件",
+        "DeepSeek「Chat Completion API 不支持在对话中途插入 tool calls」",
+        "智谱 finish_reason 含 model_context_window_exceeded"
+      ],
+      "strengths": "六层 taxonomy 在第 4 节逐层展开，DeepSeek 差异表和智谱 Chat 相对 OpenAI 的参数差异（温度 [0,1]、do_sample、finish_reason、response_format）具体",
+      "weaknesses": "把「智谱 message」理解成 Chat 接口去对比 Anthropic，未涉及智谱官方 /api/anthropic 端点；DeepSeek Responses 只提存在无细节；后半通用架构内容冗长"
+    },
+    "pplx-kimik3": {
+      "orientation": 5,
+      "taxonomy": 5,
+      "mainstream": 5,
+      "downstream": 3,
+      "pitfalls": 5,
+      "accuracy": 5,
+      "sourcing": 6,
+      "concision": 4,
+      "overall": 4,
+      "errors": [
+        "「本文以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」——DeepSeek 是 OpenAI/Anthropic 兼容实现而非原生协议家族，文中自己也称其「高度 OpenAI 兼容」",
+        "「不要默认把 reasoning 字段原样回注到下一轮上下文」——与 DeepSeek 思考模式带 tools 时必须回传 reasoning_content（否则 400）的官方规则相冲突"
+      ],
+      "unsure": [
+        "DeepSeek 未开启 include_usage 时「usage 字段可能仅在最后一个 chunk 中出现」",
+        "「content 从一开始就是 block 数组」——Anthropic 允许字符串简写，表述过强"
+      ],
+      "strengths": "四协议示例完整，角色映射表与响应提取对照清楚，提到 Gemini Interactions、Live API 与 Batch",
+      "weaknesses": "完全遗漏 DeepSeek Responses（用户疑点一），拿 DeepSeek Chat 对比 OpenAI Responses 属错位比较；智谱对比误读为 Chat 接口且停留在「通常/一般」；冗长"
+    },
+    "pplx-gemini38flash": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 7,
+      "downstream": 4,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 5,
+      "concision": 3,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "Qwen 通过「类似 clear_thinking / preserve-thinking」控制历史思维——clear_thinking 是智谱参数，疑似混用",
+        "Anthropic 相关结论主要引自 Bedrock 文档与 primer，与原生 API 细节可能不一致"
+      ],
+      "strengths": "六层 taxonomy 与语法/语义/能力三类适配区分清楚，推理字段回传表和 DeepSeek 带工具须回传 reasoning_content 的坑点前置，Qwen/Mistral/Cohere 补充有价值",
+      "weaknesses": "智谱对比误读为 Chat 接口，DeepSeek Responses 仅一句「无状态」；130 条引用大量非官方凑数，篇幅冗长"
+    },
+    "cc-opus-opus": {
+      "orientation": 9,
+      "taxonomy": 8,
+      "mainstream": 9,
+      "downstream": 9,
+      "pitfalls": 8,
+      "accuracy": 8,
+      "sourcing": 9,
+      "concision": 9,
+      "overall": 9,
+      "errors": [],
+      "unsure": [
+        "Anthropic 鉴权以 Bearer 为主、x-api-key 为旧式回退",
+        "「GPT-5.4 起 CC 的工具调用只能配 reasoning_effort: none」",
+        "Gemini 自 2026-07-21 起弃用 temperature/top_p/top_k",
+        "generateContent 结构化输出写作 responseFormat.text{mimeType,schema}",
+        "generateContent「未见第三方」兼容实现（LiteLLM 等网关已提供 /generateContent）"
+      ],
+      "strengths": "两代×家族 taxonomy 与 D1–D12 维度贯穿，五协议字段矩阵极细（含推理回传、缓存、错误格式），DeepSeek/智谱结论前置，下游按端点×厂商对照，来源官方并标注二手与冲突",
+      "weaknesses": "高度压缩、缩写与符号多，新手阅读门槛高且无请求示例；DeepSeek Responses 细节略少于最佳，智谱 Anthropic 端点差异多依赖二手 issue"
+    },
+    "pplx-grok46": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 6,
+      "downstream": 5,
+      "pitfalls": 6,
+      "accuracy": 6,
+      "sourcing": 6,
+      "concision": 4,
+      "overall": 5,
+      "errors": [
+        "速查表「结构化输出」行 Anthropic 列写「主要通过 tool schema / prompt 约束」——Anthropic 已有原生 structured outputs（output_format/output_config.format），说法过时"
+      ],
+      "unsure": [
+        "DeepSeek Responses「function_call 被并入相邻 assistant message」",
+        "DeepSeek 示例使用 deepseek-reasoner（该名称或已停用）"
+      ],
+      "strengths": "10 维速查表、参数映射表与迁移清单实用；DeepSeek Responses 支持范围（developer→user、无 summary/encrypted_content、无文件输入）和 reasoning_content 保留代码具体",
+      "weaknesses": "智谱对比误读为 Chat 接口，未涉及其 Anthropic 端点；Responses 列多处写「供应商定义字段」不精确；通用 IR/清单篇幅冗长"
+    },
+    "pplx-glm53": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 7,
+      "downstream": 4,
+      "pitfalls": 7,
+      "accuracy": 7,
+      "sourcing": 5,
+      "concision": 4,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "Gemini functionResponse 示例使用 role: function（现行文档多用 user）",
+        "DeepSeek「Chat Completion API 不支持在对话中途插入 tool calls」"
+      ],
+      "strengths": "Message/Item/Block/Part 抽象对照表清楚，四协议工具调用逐一示例，症状→根因→修复表与 15 项最小兼容测试集可直接落地",
+      "weaknesses": "DeepSeek Responses 差异几乎未展开，智谱对比误读为 Chat 接口；Together/vLLM 等扩展稀释重点，尾部大量非官方引用"
+    },
+    "cc-opus-sonnet": {
+      "orientation": 9,
+      "taxonomy": 9,
+      "mainstream": 9,
+      "downstream": 9,
+      "pitfalls": 9,
+      "accuracy": 8,
+      "sourcing": 9,
+      "concision": 9,
+      "overall": 9,
+      "errors": [],
+      "unsure": [
+        "Anthropic 以 Authorization: Bearer 为主、x-api-key 为 legacy fallback",
+        "Opus 4.6 之后模型 temperature 只接受 1.0、top_p 只接受 ≥0.99、top_k 任何值 400",
+        "OpenAI Chat 缓存参数 prompt_cache_options.ttl",
+        "Responses store「至少 30 天」（官方表述为默认保存 30 天）",
+        "DeepSeek Responses 入口上线日期 2026-08-13"
+      ],
+      "strengths": "A1–A3 分类轴加 Chat/Items/Blocks/Parts/Steps 家族贯穿全文，四协议 D1–D12 字段矩阵最细，DeepSeek Responses 与智谱 Anthropic 端点给出明确结论，六家厂商按协议家族逐列对照，全官方来源并标注缺口与冲突",
+      "weaknesses": "信息极度压缩、全角符号密集，缺少请求示例，读者需一定背景才能快速消化"
+    },
+    "pplx-gpt6sol": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 6,
+      "downstream": 4,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 5,
+      "concision": 3,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "DeepSeek Responses 固定值（store: false、previous_response_id: null、parallel_tool_calls: true）",
+        "Anthropic 可用末尾 assistant message 预填续写（较新 Claude 模型可能已禁止预填）"
+      ],
+      "strengths": "同一带工具请求在四协议下的完整示例、Anthropic tool_result 紧邻与排序规则、Kimi 多协议入口和兼容验收矩阵实用",
+      "weaknesses": "全场最长、通用建议大量重复，违背「不允许越来越长」；智谱对比误读为 Chat 接口，DeepSeek Responses 只列固定值"
+    },
+    "pplx-best": {
+      "orientation": 6,
+      "taxonomy": 6,
+      "mainstream": 6,
+      "downstream": 4,
+      "pitfalls": 6,
+      "accuracy": 6,
+      "sourcing": 5,
+      "concision": 4,
+      "overall": 4,
+      "errors": [
+        "标题「兼容性可分为五个等级」但表格列出 L0–L5 六级，自相矛盾"
+      ],
+      "unsure": [
+        "Anthropic「强调 user/assistant 交替」——现行文档允许连续同角色并自动合并",
+        "DeepSeek Responses 固定值说法"
+      ],
+      "strengths": "模型层/协议层/SDK 层区分与 L0–L5 兼容等级有助判断「兼容」程度，previous_response_id 不继承 instructions 等细节准确",
+      "weaknesses": "智谱部分空泛几乎无官方依据，与 Anthropic 对比停留在「常见模式」；Anthropic 结论引 Bedrock/文档首页；冗长"
+    }
+  },
+  "ranking": [
+    "cc-opus-sonnet",
+    "cc-opus-opus",
+    "grok-47-47",
+    "pplx-grok46",
+    "pplx-glm53",
+    "pplx-sonnet5",
+    "pplx-gemini38flash",
+    "pplx-nemotron3",
+    "pplx-gpt6sol",
+    "pplx-best",
+    "pplx-kimik3"
+  ],
+  "cost_usd": 4.237154200000001
+}

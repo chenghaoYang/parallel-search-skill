@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-grok46",
+    "harness": "pplx",
+    "model": "grok46medium"
+  },
+  "returncode": 0,
+  "seconds": 173.7,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 89
+}

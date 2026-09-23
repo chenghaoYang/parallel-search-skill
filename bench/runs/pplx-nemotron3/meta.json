@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-nemotron3",
+    "harness": "pplx",
+    "model": "nv_nemotron_3_ultra"
+  },
+  "returncode": 0,
+  "seconds": 125.6,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 45
+}

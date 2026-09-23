@@ -1,0 +1,271 @@
+{
+  "seed": 1,
+  "labels": {
+    "D1": "cc-opus-opus",
+    "D2": "justin-handbook-full",
+    "D3": "pplx-best",
+    "D4": "kimi-glm53-glm53flash",
+    "D5": "pplx-glm53",
+    "D6": "pplx-sonnet5",
+    "D7": "pplx-grok46",
+    "D8": "pplx-nemotron3",
+    "D9": "grok-47-47",
+    "D10": "pplx-kimik3",
+    "D11": "pplx-gpt6sol",
+    "D12": "cc-opus-sonnet",
+    "D13": "pplx-gemini38flash"
+  },
+  "scores": {
+    "cc-opus-opus": {
+      "orientation": 8,
+      "taxonomy": 8,
+      "mainstream": 8,
+      "downstream": 8,
+      "pitfalls": 7,
+      "accuracy": 8,
+      "sourcing": 8,
+      "concision": 8,
+      "overall": 8,
+      "errors": [],
+      "unsure": [
+        "开篇写 GPT-6 在 effort 不等于 none 时必须去掉 temperature/top_p，无法用现有知识核对",
+        "写 OpenAI 官方内测称 Responses 缓存利用率比 Chat Completions 高 40–80%",
+        "智谱 Anthropic 端「messages 含 system 返回 422、count_tokens 为 0」来自社区 issue，是否仍成立无法核对"
+      ],
+      "strengths": "一张表同时放下五代源头协议，并明确 DeepSeek 是无状态兼容子集、智谱 Anthropic 端没有字段级说明。",
+      "weaknesses": "踩坑比对照表泛，智谱结论里混进了标明二手的社区报告。"
+    },
+    "justin-handbook-full": {
+      "orientation": 8,
+      "taxonomy": 9,
+      "mainstream": 9,
+      "downstream": 9,
+      "pitfalls": 9,
+      "accuracy": 9,
+      "sourcing": 9,
+      "concision": 6,
+      "overall": 9,
+      "errors": [],
+      "unsure": [
+        "Fable 5.1、Mythos 5.1、Opus 5.5 不接受 tool_choice 的 any/tool",
+        "GPT-5.4 起 Chat Completions 在 reasoning_effort 不是 none 时不能调工具",
+        "豆包 Responses 在 response.completed 之后仍发送 data: [DONE]"
+      ],
+      "strengths": "用轮次型/条目型乘工具参数字符串/对象把协议钉死，并逐家写明忽略、报错和官方没写。",
+      "weaknesses": "拆成多层手册后链接块反复出现，读完比一屏对照表费时。"
+    },
+    "pplx-best": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 4,
+      "downstream": 5,
+      "pitfalls": 5,
+      "accuracy": 8,
+      "sourcing": 4,
+      "concision": 3,
+      "overall": 4,
+      "errors": [],
+      "unsure": [],
+      "strengths": "把兼容性拆成 L0 到 L5，并写明 DeepSeek Responses 不存会话、previous_response_id 固定为空。",
+      "weaknesses": "智谱一节改成待测清单，四套协议缺少字段级对照，引用里大量二手页面。"
+    },
+    "kimi-glm53-glm53flash": {
+      "orientation": 8,
+      "taxonomy": 8,
+      "mainstream": 8,
+      "downstream": 7,
+      "pitfalls": 8,
+      "accuracy": 6,
+      "sourcing": 7,
+      "concision": 7,
+      "overall": 7,
+      "errors": [
+        "§3.3 把智谱 /api/anthropic 的缓存差异写成命中看 prompt_tokens_details.cached_tokens，依据是通用缓存指南，这是 Chat 用量字段。",
+        "同表把该端点的 thinking 写成无 budget_tokens、力度走 reasoning_effort，依据是通用思考指南，不是 Anthropic 端点字段表。"
+      ],
+      "unsure": [
+        "Responses 流式事件写成 60 多种",
+        "max_output_tokens 最小值为 16",
+        "百炼 seed 默认 1234"
+      ],
+      "strengths": "DeepSeek 对 OpenAI、智谱对 Anthropic 都有并排表，坑按踩中概率排列。",
+      "weaknesses": "智谱 Anthropic 列把其他产品页上的字段当成该端点已经证实的差异。"
+    },
+    "pplx-glm53": {
+      "orientation": 4,
+      "taxonomy": 5,
+      "mainstream": 4,
+      "downstream": 4,
+      "pitfalls": 5,
+      "accuracy": 6,
+      "sourcing": 3,
+      "concision": 3,
+      "overall": 4,
+      "errors": [
+        "Gemini 工具结果示例用 \"role\": \"function\" 包裹 functionResponse；现行函数调用指南把 functionResponse 放在 role 为 user 的 content 里。"
+      ],
+      "unsure": [
+        "称 DeepSeek Chat Completion 不支持在对话中途插入 tool calls，须改走 Anthropic 或 Responses"
+      ],
+      "strengths": "用同一条用户问题并列四种请求，并把工具执行留在应用侧讲清楚。",
+      "weaknesses": "正文声明不枚举字段，两个疑点没有落到可核对的差异，参考文献大量是论坛和转载。"
+    },
+    "pplx-sonnet5": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 5,
+      "downstream": 6,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 5,
+      "concision": 4,
+      "overall": 6,
+      "errors": [],
+      "unsure": [
+        "称 DeepSeek Chat Completion 不支持在对话中途插入 tool calls，须改走 Anthropic 或 Responses"
+      ],
+      "strengths": "智谱对话补全的温度上限、json_object、finish_reason 和 clear_thinking 写得具体。",
+      "weaknesses": "点名的智谱对比停在 Chat 形状和 Anthropic 的结构差异，后半重复适配器设计。"
+    },
+    "pplx-grok46": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 5,
+      "downstream": 6,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 5,
+      "concision": 4,
+      "overall": 6,
+      "errors": [],
+      "unsure": [
+        "示例仍使用模型名 deepseek-reasoner",
+        "四协议对照表把 Responses 的最大输出写成「供应商定义字段」，没有写出 max_output_tokens"
+      ],
+      "strengths": "DeepSeek Responses 相对官方写到了 developer 当 user、不支持 summary 和 encrypted_content。",
+      "weaknesses": "中间表示和架构建议反复出现，四套协议没有收成一张可查的字段表。"
+    },
+    "pplx-nemotron3": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 5,
+      "downstream": 5,
+      "pitfalls": 5,
+      "accuracy": 8,
+      "sourcing": 6,
+      "concision": 3,
+      "overall": 5,
+      "errors": [],
+      "unsure": [],
+      "strengths": "写明 DeepSeek Responses 用固定占位值（store 为 false、previous_response_id 为 null），轮廓兼容不等于行为相同。",
+      "weaknesses": "分类轴到第 6 节才出现，智谱部分是待验证清单，正文很长。"
+    },
+    "grok-47-47": {
+      "orientation": 9,
+      "taxonomy": 8,
+      "mainstream": 8,
+      "downstream": 8,
+      "pitfalls": 8,
+      "accuracy": 9,
+      "sourcing": 9,
+      "concision": 9,
+      "overall": 8,
+      "errors": [],
+      "unsure": [
+        "DeepSeek 在 Responses 里把 developer 当成 user",
+        "百炼北京主机在中英文文档里的地域写法不一致"
+      ],
+      "strengths": "开头七条就能建立全局，对照表对没有原句的枚举留空，两个疑点都有可执行结论。",
+      "weaknesses": "厂商面比长表窄，Responses 的 SSE 事件全名和若干枚举故意空着。"
+    },
+    "pplx-kimik3": {
+      "orientation": 4,
+      "taxonomy": 5,
+      "mainstream": 4,
+      "downstream": 3,
+      "pitfalls": 4,
+      "accuracy": 6,
+      "sourcing": 5,
+      "concision": 3,
+      "overall": 3,
+      "errors": [
+        "开篇把 DeepSeek 与 OpenAI、Anthropic、Gemini 并列为四个主要原生协议家族。"
+      ],
+      "unsure": [],
+      "strengths": "五种交互原语的表能把无状态消息列表和带 ID 续接的 Responses、Interactions 分开。",
+      "weaknesses": "下游用「通常近似 OpenAI」带过，两个疑点没有字段结论，后半是通用适配架构。"
+    },
+    "pplx-gpt6sol": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 4,
+      "downstream": 4,
+      "pitfalls": 5,
+      "accuracy": 8,
+      "sourcing": 4,
+      "concision": 3,
+      "overall": 4,
+      "errors": [],
+      "unsure": [
+        "Anthropic 工具结果必须紧邻工具调用并按特定顺序发送，正文没有写明顺序",
+        "部分 Claude 文档链接指向旧的 docs.anthropic.com 路径"
+      ],
+      "strengths": "把四套协议收成输入容器、工具闭环和选型表，并提醒 Kimi 同时有三种入口。",
+      "weaknesses": "DeepSeek 相对官方文档、智谱相对 Anthropic 没有字段级结论，参考文献后半难追溯。"
+    },
+    "cc-opus-sonnet": {
+      "orientation": 9,
+      "taxonomy": 9,
+      "mainstream": 9,
+      "downstream": 9,
+      "pitfalls": 8,
+      "accuracy": 9,
+      "sourcing": 9,
+      "concision": 9,
+      "overall": 9,
+      "errors": [],
+      "unsure": [
+        "Chat Completions 的 store 写成默认 false 且只为蒸馏和评测，未并列迁移指南里新账号默认存储的冲突",
+        "Responses 托管工具写成 16 类",
+        "方舟 Anthropic 端 cache_creation_input_tokens 恒为 0"
+      ],
+      "strengths": "开头八条给出两个疑点的结论，同一套维度贯穿四套协议和各家兼容入口的字段对照。",
+      "weaknesses": "智谱 Anthropic 端只能写到官方没有字段表，方舟和 Qwen 的 Responses 不支持清单仍空着。"
+    },
+    "pplx-gemini38flash": {
+      "orientation": 5,
+      "taxonomy": 6,
+      "mainstream": 5,
+      "downstream": 6,
+      "pitfalls": 6,
+      "accuracy": 7,
+      "sourcing": 4,
+      "concision": 4,
+      "overall": 5,
+      "errors": [],
+      "unsure": [
+        "把 Qwen 的思考保留写成类似 clear_thinking / preserve-thinking，clear_thinking 更像智谱的参数名"
+      ],
+      "strengths": "开头就写明 DeepSeek 带 tools 必须回传 reasoning_content，并写明其 Responses 不在服务端存会话。",
+      "weaknesses": "后文重复通用流式和适配建议，智谱只对比了 Chat 形状，参考文献混入大量非官方链接。"
+    }
+  },
+  "ranking": [
+    "cc-opus-sonnet",
+    "justin-handbook-full",
+    "grok-47-47",
+    "cc-opus-opus",
+    "kimi-glm53-glm53flash",
+    "pplx-grok46",
+    "pplx-sonnet5",
+    "pplx-gemini38flash",
+    "pplx-nemotron3",
+    "pplx-best",
+    "pplx-gpt6sol",
+    "pplx-glm53",
+    "pplx-kimik3"
+  ],
+  "cost_usd": 0.85882572,
+  "judge": "grok",
+  "model": "grok-4.7"
+}

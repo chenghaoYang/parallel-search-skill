@@ -1,0 +1,26 @@
+{
+  "id": "pplx-scale-4",
+  "fanout": 4,
+  "searches": [
+    {
+      "index": 1,
+      "returncode": 0,
+      "bytes": 7130
+    },
+    {
+      "index": 2,
+      "returncode": 1,
+      "bytes": 0
+    },
+    {
+      "index": 3,
+      "returncode": 0,
+      "bytes": 5848
+    },
+    {
+      "index": 4,
+      "returncode": 0,
+      "bytes": 12956
+    }
+  ]
+}

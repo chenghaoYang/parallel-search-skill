@@ -1,0 +1,74 @@
+{
+  "arm": {
+    "id": "cc-opus-opus",
+    "harness": "claude-code",
+    "skill": "deep-search",
+    "lead": "opus",
+    "worker": "opus",
+    "max_budget_usd": 150
+  },
+  "returncode": 0,
+  "seconds": 1198.1,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "duration_ms": 597359,
+  "num_turns": 20,
+  "total_cost_usd": 35.4415484,
+  "modelUsage": {
+    "claude-opus-5-5": {
+      "inputTokens": 1302,
+      "outputTokens": 624046,
+      "cacheReadInputTokens": 48296387,
+      "cacheCreationInputTokens": 1630135,
+      "webSearchRequests": 0,
+      "costUSD": 35.186485399999995,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 370258,
+      "canonicalModel": "claude-opus-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    },
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 215263,
+      "outputTokens": 7960,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.25506300000000004,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "thinkingTokens": 0,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  },
+  "subagent_stats": {
+    "spawned": 10,
+    "requested": {
+      "background": 0,
+      "foreground": 0,
+      "unset": 10
+    },
+    "started_in_background": 10,
+    "max_depth": 1,
+    "spawned_by_subagents": 0,
+    "completed": 0,
+    "failed": 0,
+    "killed": {
+      "parent": 0,
+      "user": 0,
+      "system": 10
+    },
+    "refused": {
+      "depth_limit": 0,
+      "concurrency_limit": 0,
+      "budget": 0
+    },
+    "by_type": {
+      "research-worker": 10
+    }
+  },
+  "permission_denials": []
+}

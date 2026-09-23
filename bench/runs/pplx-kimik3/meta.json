@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-kimik3",
+    "harness": "pplx",
+    "model": "kimik3thinking"
+  },
+  "returncode": 0,
+  "seconds": 109.9,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 45
+}

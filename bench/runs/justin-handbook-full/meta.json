@@ -1,0 +1,9 @@
+{
+  "arm": {
+    "id": "justin-handbook-full",
+    "harness": "external",
+    "source": "https://github.com/justinatusa/llm-api-protocols",
+    "commit": "d1d3f5d (2026-09-24 00:14 +0800)",
+    "note": "README 的阅读顺序拼接全部 13 个 md：README → 第 0 层 → taxonomy → 第 1 层 field-atlas → 第 2 层 details/*（sources 最后）"
+  }
+}

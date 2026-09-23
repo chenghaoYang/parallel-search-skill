@@ -1,0 +1,175 @@
+{
+  "pplx-best": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 5.5,
+    "downstream": 4.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 4.0,
+    "overall": 4.5,
+    "mean_rank": 10.0,
+    "errors": [
+      "§4.3 标题「兼容性可分为五个等级」，表中却列出 L0–L5 共六级"
+    ]
+  },
+  "pplx-gpt6sol": {
+    "orientation": 6.0,
+    "taxonomy": 7.0,
+    "mainstream": 6.5,
+    "downstream": 5.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.5,
+    "sourcing": 5.5,
+    "concision": 2.5,
+    "overall": 5.0,
+    "mean_rank": 7.0,
+    "errors": []
+  },
+  "pplx-gemini38flash": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 6.5,
+    "downstream": 5.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 5.0,
+    "mean_rank": 6.0,
+    "errors": []
+  },
+  "pplx-sonnet5": {
+    "orientation": 5.5,
+    "taxonomy": 7.0,
+    "mainstream": 5.5,
+    "downstream": 5.5,
+    "pitfalls": 6.5,
+    "accuracy": 7.5,
+    "sourcing": 5.0,
+    "concision": 3.0,
+    "overall": 5.0,
+    "mean_rank": 6.5,
+    "errors": []
+  },
+  "pplx-kimik3": {
+    "orientation": 5.0,
+    "taxonomy": 5.5,
+    "mainstream": 5.0,
+    "downstream": 3.0,
+    "pitfalls": 6.0,
+    "accuracy": 5.0,
+    "sourcing": 5.0,
+    "concision": 3.0,
+    "overall": 3.5,
+    "mean_rank": 12.0,
+    "errors": [
+      "DeepSeek 小节称「不要默认把 reasoning 字段原样回注到下一轮上下文」，与 DeepSeek 带 tools 时必须完整回传 reasoning_content（否则 400）的规则相反",
+      "§2.4 建议「不要默认把 reasoning 字段原样回注到下一轮上下文」——与 DeepSeek 带 tools 时必须回传 reasoning_content、否则 400 的文档规则相悖",
+      "开篇「以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」——DeepSeek 是兼容实现而非独立原生协议族",
+      "引言称「以 OpenAI、Anthropic、Google Gemini、DeepSeek 为四个主要原生协议家族」——DeepSeek 是兼容实现而非原生协议家族，后文也这样描述"
+    ]
+  },
+  "pplx-glm53": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 6.5,
+    "downstream": 4.5,
+    "pitfalls": 7.0,
+    "accuracy": 6.5,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 4.5,
+    "mean_rank": 10.0,
+    "errors": [
+      "§2.1 表「多候选」行称 Responses「常以一个 response 的 items 表达」——Responses 不支持多候选，output items 是同一次生成的顺序条目而非候选"
+    ]
+  },
+  "pplx-grok46": {
+    "orientation": 6.0,
+    "taxonomy": 6.5,
+    "mainstream": 6.0,
+    "downstream": 5.5,
+    "pitfalls": 7.0,
+    "accuracy": 5.5,
+    "sourcing": 6.0,
+    "concision": 3.5,
+    "overall": 5.0,
+    "mean_rank": 7.0,
+    "errors": [
+      "§10.1 参数表把 Responses 的最大输出写成「供应商定义字段」——OpenAI Responses 明确使用 max_output_tokens",
+      "§2.1 速查表称 Anthropic 结构化输出「主要通过 tool schema / prompt 约束」——Anthropic 已有原生 JSON Schema 结构化输出（output_format → output_config.format）",
+      "参数迁移表把 Responses 的「最大输出」写成「供应商定义字段」，OpenAI Responses 实为 `max_output_tokens`",
+      "速查表写 Anthropic 结构化输出「主要通过 tool schema / prompt 约束」，忽略其原生 structured outputs（output_format→output_config.format、strict 工具）"
+    ]
+  },
+  "pplx-nemotron3": {
+    "orientation": 6.0,
+    "taxonomy": 7.0,
+    "mainstream": 6.0,
+    "downstream": 4.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.5,
+    "sourcing": 6.0,
+    "concision": 3.0,
+    "overall": 4.5,
+    "mean_rank": 9.5,
+    "errors": []
+  },
+  "cc-opus-opus": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 9.0,
+    "downstream": 9.5,
+    "pitfalls": 8.5,
+    "accuracy": 8.0,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 2.0,
+    "errors": []
+  },
+  "cc-opus-sonnet": {
+    "orientation": 9.0,
+    "taxonomy": 9.5,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 9.0,
+    "accuracy": 8.5,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 1.0,
+    "errors": []
+  },
+  "grok-47-47": {
+    "orientation": 7.0,
+    "taxonomy": 6.5,
+    "mainstream": 7.0,
+    "downstream": 8.5,
+    "pitfalls": 8.0,
+    "accuracy": 8.5,
+    "sourcing": 9.0,
+    "concision": 7.0,
+    "overall": 7.5,
+    "mean_rank": 4.0,
+    "errors": []
+  },
+  "kimi-glm53-glm53flash": {
+    "orientation": 9.0,
+    "taxonomy": 8.0,
+    "mainstream": 8.5,
+    "downstream": 8.0,
+    "pitfalls": 9.0,
+    "accuracy": 7.0,
+    "sourcing": 8.5,
+    "concision": 9.0,
+    "overall": 8.5,
+    "mean_rank": 3.0,
+    "errors": [
+      "§3.1 表把百炼/Qwen 的「B: responses」标为「—」，但百炼已提供 OpenAI 兼容 Responses 端点",
+      "§3.2 称 DeepSeek「/beta 仅 FIM 与 strict」——Chat Prefix Completion（前缀续写）同样走 /beta，「仅」不准确"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-best",
+    "harness": "pplx",
+    "model": "pplx_pro"
+  },
+  "returncode": 0,
+  "seconds": 148.9,
+  "model_reported": "pplx_pro",
+  "citations": 45
+}

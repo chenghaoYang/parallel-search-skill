@@ -1,0 +1,11 @@
+{
+  "arm": {
+    "id": "pplx-glm53",
+    "harness": "pplx",
+    "model": "glm_5_3_thinking"
+  },
+  "returncode": 0,
+  "seconds": 139.0,
+  "model_reported": "gpt56_terra_thinking",
+  "citations": 128
+}

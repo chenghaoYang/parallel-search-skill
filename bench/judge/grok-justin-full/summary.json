@@ -1,0 +1,182 @@
+{
+  "pplx-best": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 4.5,
+    "downstream": 5.0,
+    "pitfalls": 5.5,
+    "accuracy": 8.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 4.5,
+    "mean_rank": 11.0,
+    "errors": []
+  },
+  "pplx-gpt6sol": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 4.5,
+    "downstream": 5.0,
+    "pitfalls": 5.5,
+    "accuracy": 8.0,
+    "sourcing": 4.5,
+    "concision": 3.0,
+    "overall": 4.5,
+    "mean_rank": 9.5,
+    "errors": []
+  },
+  "pplx-gemini38flash": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 5.0,
+    "downstream": 6.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.5,
+    "sourcing": 4.5,
+    "concision": 4.0,
+    "overall": 5.0,
+    "mean_rank": 7.5,
+    "errors": []
+  },
+  "pplx-sonnet5": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 5.0,
+    "downstream": 6.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.0,
+    "sourcing": 4.5,
+    "concision": 3.5,
+    "overall": 5.5,
+    "mean_rank": 9.0,
+    "errors": [
+      "速查表把 Anthropic 结构化输出写成「主要通过 tool schema / prompt 约束」，漏掉已 GA 的 output_config.format"
+    ]
+  },
+  "pplx-kimik3": {
+    "orientation": 5.0,
+    "taxonomy": 6.0,
+    "mainstream": 4.5,
+    "downstream": 4.5,
+    "pitfalls": 5.0,
+    "accuracy": 7.0,
+    "sourcing": 5.0,
+    "concision": 3.5,
+    "overall": 4.0,
+    "mean_rank": 11.0,
+    "errors": [
+      "开篇把 DeepSeek 与 OpenAI、Anthropic、Gemini 并列为四个主要原生协议家族。"
+    ]
+  },
+  "pplx-glm53": {
+    "orientation": 5.0,
+    "taxonomy": 6.0,
+    "mainstream": 4.5,
+    "downstream": 5.0,
+    "pitfalls": 5.5,
+    "accuracy": 7.0,
+    "sourcing": 4.0,
+    "concision": 3.5,
+    "overall": 4.5,
+    "mean_rank": 11.0,
+    "errors": [
+      "Gemini 工具结果示例用 \"role\": \"function\" 包裹 functionResponse；现行函数调用指南把 functionResponse 放在 role 为 user 的 content 里。"
+    ]
+  },
+  "pplx-grok46": {
+    "orientation": 5.5,
+    "taxonomy": 6.5,
+    "mainstream": 5.0,
+    "downstream": 6.0,
+    "pitfalls": 6.0,
+    "accuracy": 7.5,
+    "sourcing": 5.0,
+    "concision": 4.0,
+    "overall": 5.5,
+    "mean_rank": 6.0,
+    "errors": []
+  },
+  "pplx-nemotron3": {
+    "orientation": 5.5,
+    "taxonomy": 6.0,
+    "mainstream": 5.0,
+    "downstream": 4.5,
+    "pitfalls": 5.5,
+    "accuracy": 8.0,
+    "sourcing": 5.5,
+    "concision": 3.0,
+    "overall": 4.5,
+    "mean_rank": 11.0,
+    "errors": []
+  },
+  "cc-opus-opus": {
+    "orientation": 8.5,
+    "taxonomy": 8.0,
+    "mainstream": 8.0,
+    "downstream": 8.0,
+    "pitfalls": 7.0,
+    "accuracy": 7.5,
+    "sourcing": 8.0,
+    "concision": 8.5,
+    "overall": 8.0,
+    "mean_rank": 3.5,
+    "errors": [
+      "generateContent 结构化输出写成 responseFormat.text{mimeType,schema}，该接口字段是 responseMimeType 加 responseJsonSchema/responseSchema，response_format 属于 Interactions"
+    ]
+  },
+  "cc-opus-sonnet": {
+    "orientation": 9.0,
+    "taxonomy": 9.0,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 8.0,
+    "accuracy": 8.5,
+    "sourcing": 9.0,
+    "concision": 9.0,
+    "overall": 9.0,
+    "mean_rank": 1.5,
+    "errors": []
+  },
+  "grok-47-47": {
+    "orientation": 9.0,
+    "taxonomy": 8.0,
+    "mainstream": 7.5,
+    "downstream": 8.0,
+    "pitfalls": 7.5,
+    "accuracy": 9.0,
+    "sourcing": 9.0,
+    "concision": 8.5,
+    "overall": 8.0,
+    "mean_rank": 3.5,
+    "errors": []
+  },
+  "kimi-glm53-glm53flash": {
+    "orientation": 8.5,
+    "taxonomy": 8.0,
+    "mainstream": 8.0,
+    "downstream": 7.5,
+    "pitfalls": 8.0,
+    "accuracy": 6.5,
+    "sourcing": 7.5,
+    "concision": 7.5,
+    "overall": 7.5,
+    "mean_rank": 5.0,
+    "errors": [
+      "§3.3 把智谱 /api/anthropic 的缓存差异写成命中看 prompt_tokens_details.cached_tokens，依据是通用缓存指南，这是 Chat 用量字段。",
+      "同表把该端点的 thinking 写成无 budget_tokens、力度走 reasoning_effort，依据是通用思考指南，不是 Anthropic 端点字段表。"
+    ]
+  },
+  "justin-handbook-full": {
+    "orientation": 8.5,
+    "taxonomy": 9.5,
+    "mainstream": 9.0,
+    "downstream": 9.0,
+    "pitfalls": 9.0,
+    "accuracy": 9.0,
+    "sourcing": 9.5,
+    "concision": 6.5,
+    "overall": 9.0,
+    "mean_rank": 1.5,
+    "errors": []
+  }
+}

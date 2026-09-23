@@ -1,0 +1,658 @@
+{
+ "query": "产出文档 帮用户了解llm时代有关api 请求协议上的不同\n\nseed keywords: chat completions.  Responses messages. Google genre atecontent协议\n\nsome user aware variation: deepseek 官方的response协议或许跟openai 官方释放docs中有很多不同\n\n起码先4个主流，然后下游其他模型厂适配有什么不同，例如智谱的message对比Anthropic官方的不同\n\n以及其他用户需要知道的问题\n\n不允许仅扩展而不收束，最终文档应该详细但快速建立认知和对比，帮助用户了解细节，以及额外可能需要知道的相关scope下的任何信息。希望建立taxonomy\n\n直接在回答正文里输出完整文档（Markdown），不要生成、附加或引用文件。",
+ "answer": "# LLM 时代 API 请求协议：从 Chat Completions 到 Responses、Messages 与 Gemini `generateContent`\n\nLLM API 的主要差异，不在于“都能传一段 prompt、回一段文本”，而在于它们如何表达**对话历史、多模态内容、推理、工具调用、结构化输出、流式事件和会话状态**。实践中，OpenAI Chat Completions 已成为最广泛的兼容层；但它不是统一标准，更不是功能语义的完整交集。\n\n如果只记住一句话：**不要把“OpenAI-compatible”理解成“OpenAI-equivalent”。**它通常意味着基础的请求路径、鉴权和 `messages → choices[0].message` 外壳相近；到了 tool calling、thinking/reasoning、多模态、JSON Schema、流式事件、上下文回传等能力，行为和字段往往显著分叉。DeepSeek 同时提供 OpenAI 与 Anthropic 兼容入口，但其 reasoning 回传规则就是一个典型例子：带工具的后续请求必须完整回传历史 `reasoning_content`，否则会收到 400 错误。[1][2]\n\n***\n\n## 1. 先建立分类法\n\n理解 LLM 协议时，建议不要按“厂商 API 名称”死记，而是按下面六个层次拆解。任何一个模型接口都可以放进这个 taxonomy。\n\n| 层次 | 要回答的问题 | 典型字段或对象 | 最常见的兼容性误区 |\n|---|---|---|---|\n| HTTP 外壳 | 请求发到哪里、怎么认证、如何流式传输？ | `POST /v1/chat/completions`、`Authorization`、SSE | 路径一样，不代表请求/响应对象完全一样 |\n| 上下文模型 | 传入的是 `messages`、`contents`、`input`，还是服务端会话 ID？ | `messages[]`、`contents[]`、`input[]` | 将“整段历史由客户端回传”和“服务端保存会话”混为一谈 |\n| 内容模型 | 一条消息是纯字符串，还是由多种 typed parts/blocks 组成？ | `content: \"...\"`、`content[]`、`parts[]` | 以为 `content` 永远是字符串 |\n| 控制面 | 系统指令、采样参数、最大输出、停止条件、JSON 输出如何表达？ | `system`、`instructions`、`temperature`、`max_tokens` | 相同字段名不保证同样默认值、范围或优先级 |\n| 执行面 | 工具、内置检索、代码执行、MCP、推理如何参与调用链？ | `tools`、`tool_calls`、`function_call`、`reasoning` | 把“模型请求调用工具”误当成“模型已执行工具” |\n| 输出与事件 | 最终答案、工具调用、引用、拒答、token 使用量、流事件如何返回？ | `choices[]`、`output[]`、`candidates[]`、SSE event | 只解析文本字段，遗漏工具调用、拒答与终止原因 |\n\n因此，所谓“协议适配”至少包含三件不同的工作：\n\n1. **语法适配**：字段名、JSON 结构、HTTP 路径、SSE 格式相互转换。  \n2. **语义适配**：同名参数的实际含义、默认值、约束与生命周期对齐。  \n3. **能力降级或增强**：一个协议无法原样表达另一个协议的原生能力时，决定丢弃、模拟，还是保留扩展字段。\n\n最危险的是只做第一层：JSON 能发出去、接口能返回 200，并不代表 Agent、工具循环、多轮推理或结构化输出真的正确。\n\n***\n\n## 2. 四个核心协议家族\n\n截至目前，最值得建立直接认知的四个主流家族是：\n\n1. OpenAI **Chat Completions**\n2. OpenAI **Responses**\n3. Anthropic **Messages**\n4. Google Gemini **`generateContent`**\n\n它们共同覆盖对话、多模态、工具和流式生成，但其“基本单位”完全不同。\n\n| 协议家族 | 主端点/调用模型 | 输入的核心单位 | 输出的核心单位 | 协议设计中心 |\n|---|---|---|---|---|\n| OpenAI Chat Completions | `POST /v1/chat/completions` | `messages[]` | `choices[].message` | 一轮对话补全 |\n| OpenAI Responses | `POST /v1/responses` | `input`，可为字符串或 typed `input` items | `output[]` typed items | 多步骤、工具、推理与多模态执行 |\n| Anthropic Messages | `POST /v1/messages` | `messages[]`，每条含 typed `content` blocks | 单个 assistant `content[]` blocks | 内容块与显式工具循环 |\n| Gemini `generateContent` | `models/{model}:generateContent` | `contents[]`，每条含 `parts[]` | `candidates[].content.parts[]` | 多模态 `Part` 组合与候选响应 |\n\nOpenAI 官方将两代接口的核心区别总结为：Chat Completions 的输入和输出都是 **Messages**；Responses 则使用 `input` 和 `output` 的 **typed Items**。在 Responses 中，`message` 只是 item 的一种，`reasoning`、`function_call`、`function_call_output` 等也是一等对象。[3]\n\n### 2.1 OpenAI Chat Completions：事实上的兼容层\n\nChat Completions 的典型请求如下：\n\n```json\nPOST /v1/chat/completions\n\n{\n  \"model\": \"example-model\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"你是一个严谨的技术助手。\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"解释 HTTP 流式响应。\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"stream\": false\n}\n```\n\n典型响应：\n\n```json\n{\n  \"id\": \"chatcmpl_xxx\",\n  \"object\": \"chat.completion\",\n  \"created\": 0,\n  \"model\": \"example-model\",\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"HTTP 流式响应通常使用……\"\n      },\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 0,\n    \"completion_tokens\": 0,\n    \"total_tokens\": 0\n  }\n}\n```\n\n这个模型的认知重点是：\n\n- 上下文由客户端在每次请求时通过 `messages[]` 传入。\n- 输出通常在 `choices[]` 中；多候选生成的抽象仍被保留。\n- 核心成功路径是读取 `choices[0].message.content`。\n- 工具调用通常挂在 assistant message 的 `tool_calls[]` 上。\n- 这是目前开源推理服务、国内模型平台、聚合平台最爱声明“兼容”的协议。\n\nOpenAI 对 Chat Completions 的定义仍是：根据一组构成对话的 messages 生成响应；其文档也建议新项目优先考虑 Responses，以使用其较新的平台能力。[4]\n\n**它适合什么：**\n\n- 已有 OpenAI SDK、LangChain、LiteLLM、各类 Agent 框架。\n- 单轮或普通多轮聊天。\n- 以文本/图像输入、函数调用、JSON 输出为主的可移植应用。\n- 希望以最低接入成本切换供应商的场景。\n\n**它不再天然适合什么：**\n\n- 把推理步骤、工具调用结果、文件检索、代码解释器事件等视为原生对象并可靠保存。\n- 需要精确表达复杂 agent trajectory。\n- 希望减少“把厂商扩展字段偷偷塞进 assistant message”的协议债务。\n\n***\n\n### 2.2 OpenAI Responses：从“消息补全”转向“执行轨迹”\n\nResponses API 不是简单把 Chat Completions 改名。它改变了程序的基本数据模型：你不再只处理“历史消息 + 下一条 assistant 消息”，而是处理一个**输入 items 与输出 items 的执行过程**。\n\n一个概念化请求：\n\n```json\nPOST /v1/responses\n\n{\n  \"model\": \"example-model\",\n  \"instructions\": \"你是一个严谨的技术助手。\",\n  \"input\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"input_text\",\n          \"text\": \"北京现在天气如何？\"\n        }\n      ]\n    }\n  ],\n  \"tools\": [\n    {\n      \"type\": \"function\",\n      \"name\": \"get_weather\",\n      \"description\": \"查询某城市天气\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"city\": { \"type\": \"string\" }\n        },\n        \"required\": [\"city\"]\n      }\n    }\n  ]\n}\n```\n\n概念化输出：\n\n```json\n{\n  \"id\": \"resp_xxx\",\n  \"output\": [\n    {\n      \"type\": \"reasoning\",\n      \"id\": \"rs_xxx\"\n    },\n    {\n      \"type\": \"function_call\",\n      \"call_id\": \"call_xxx\",\n      \"name\": \"get_weather\",\n      \"arguments\": \"{\\\"city\\\":\\\"北京\\\"}\"\n    }\n  ]\n}\n```\n\n工具执行后，应用应将工具结果作为新的 input item 回传，而不是“伪造一段 user 文本”：\n\n```json\n{\n  \"model\": \"example-model\",\n  \"input\": [\n    {\n      \"type\": \"function_call_output\",\n      \"call_id\": \"call_xxx\",\n      \"output\": \"{\\\"temperature_c\\\": 21, \\\"condition\\\": \\\"晴\\\"}\"\n    }\n  ]\n}\n```\n\nResponses 的价值在于它让以下对象获得明确类型与生命周期：\n\n- 用户/助手消息：`message`\n- 推理相关对象：`reasoning`\n- 工具请求：`function_call`\n- 工具结果：`function_call_output`\n- 不同模态的输入/输出 content part\n- 内置工具产生的执行事件与结果\n\n换言之，Chat Completions 更像“对话文本的下一步补全”，Responses 更像“模型驱动工作流的一次执行”。官方迁移材料明确指出，Chat Completions 用 `messages` 同时承载输入和输出；Responses 则以 `input` / `output` 的 typed Items 表达，且 `function_call`、`function_call_output` 与消息同属 item。[3]\n\n**迁移时的重要误区：**\n\n- 不要把 Responses 的 `output` 当成单一 assistant 文本；它可能先含 reasoning 或 function call。\n- 不要假设 `output_text`、`message.content[0].text`、`choices[0].message.content` 三者可机械互换。\n- 设计自己的持久化层时，应保留**原始 typed output**，而非只存最终可见文本。\n- 如果适配供应商声称支持 Responses，仍应逐项验证：reasoning、内置工具、结构化输出、流事件、会话/前一响应关联是否为原生支持，还是做了 Chat Completions 反向封装。\n\n***\n\n### 2.3 Anthropic Messages：内容块优先，而非“一个 content 字符串”\n\nAnthropic Messages API 的关键不是 `/v1/messages` 这个路径，而是它从设计上就将一条 message 的 `content` 视为**内容块数组**。纯字符串只是一个简写。\n\n概念化请求：\n\n```json\nPOST /v1/messages\n\n{\n  \"model\": \"claude-example\",\n  \"max_tokens\": 1024,\n  \"system\": \"你是一个严谨的技术助手。\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"分析这张图片。\"\n        },\n        {\n          \"type\": \"image\",\n          \"source\": {\n            \"type\": \"base64\",\n            \"media_type\": \"image/png\",\n            \"data\": \"...\"\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\n概念化响应：\n\n```json\n{\n  \"id\": \"msg_xxx\",\n  \"type\": \"message\",\n  \"role\": \"assistant\",\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"图片中包含……\"\n    }\n  ],\n  \"stop_reason\": \"end_turn\",\n  \"usage\": {\n    \"input_tokens\": 0,\n    \"output_tokens\": 0\n  }\n}\n```\n\nAnthropic 文档体系中，每一条输入消息都有 `role` 与 `content`；`content` 可为字符串，或由不同类型的 content blocks 组成的数组，而字符串等价于单个 `text` block。[5][6]\n\n它的结构特征如下：\n\n- `system` 通常是顶层请求字段，不是对话 `messages[]` 内普通的一条 system message。\n- 主对话角色的基本抽象集中于 `user` 和 `assistant`。\n- 文本、图片、文档、工具调用、工具结果、thinking 等都可表示为 content block。\n- 工具调用会出现在 assistant 的 `tool_use` block 中。\n- 工具结果不是 OpenAI 风格的顶层 `role: \"tool\"` 消息，而常被作为后续 user message 内的 `tool_result` block 回传。\n- 流式传输围绕“消息开始、内容块开始、内容块增量、内容块结束、消息增量、消息结束”组织。\n\n工具调用的核心形态：\n\n```json\n{\n  \"role\": \"assistant\",\n  \"content\": [\n    {\n      \"type\": \"tool_use\",\n      \"id\": \"toolu_xxx\",\n      \"name\": \"get_weather\",\n      \"input\": {\n        \"city\": \"北京\"\n      }\n    }\n  ]\n}\n```\n\n应用执行工具后，继续发送：\n\n```json\n{\n  \"role\": \"user\",\n  \"content\": [\n    {\n      \"type\": \"tool_result\",\n      \"tool_use_id\": \"toolu_xxx\",\n      \"content\": \"北京：晴，21°C\"\n    }\n  ]\n}\n```\n\nAnthropic 的工具循环要求应用从 `tool_use` block 取得 `id`、`name` 和 `input`，执行本地工具后，以匹配的 `tool_result` 回传。其流式协议则依次发出 `message_start`、content block 相关事件、`message_delta` 和 `message_stop`。[6]\n\n**为什么这会影响适配：**\n\n把 Anthropic 转成 OpenAI Chat Completions 时，最容易丢失的是“一个 assistant turn 内多个异构 blocks 的顺序和边界”。例如模型可输出：\n\n1. `thinking`；\n2. `text`；\n3. `tool_use`；\n4. 后续继续输出 text 或另一个工具调用。\n\n如果你的内部模型只保存 `assistant.content: string` 和 `assistant.tool_calls[]`，可能无法无损保存这些 block 的交错顺序，也很难保证重放时的语义一致。\n\n***\n\n### 2.4 Gemini `generateContent`：`Content` 与 `Part` 的多模态模型\n\nGemini 的经典 REST 调用以模型动作作为路径的一部分：\n\n```text\nPOST /v1beta/models/{model}:generateContent\n```\n\n它的核心结构不是 `messages[]`，而是：\n\n```text\ncontents[] -> Content -> parts[] -> Part\n```\n\n概念化请求：\n\n```json\n{\n  \"systemInstruction\": {\n    \"parts\": [\n      {\n        \"text\": \"你是一个严谨的技术助手。\"\n      }\n    ]\n  },\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"描述这张图中的内容。\"\n        },\n        {\n          \"inlineData\": {\n            \"mimeType\": \"image/jpeg\",\n            \"data\": \"...\"\n          }\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0.2\n  }\n}\n```\n\n概念化响应：\n\n```json\n{\n  \"candidates\": [\n    {\n      \"content\": {\n        \"role\": \"model\",\n        \"parts\": [\n          {\n            \"text\": \"这张图展示了……\"\n          }\n        ]\n      },\n      \"finishReason\": \"STOP\"\n    }\n  ],\n  \"usageMetadata\": {\n    \"promptTokenCount\": 0,\n    \"candidatesTokenCount\": 0,\n    \"totalTokenCount\": 0\n  }\n}\n```\n\nGemini 的 `contents` 是多轮上下文；每个 `Content` 由 `role` 与有序 `parts[]` 组成。`Part` 可以承载 `text`、内联数据、文件数据、`functionCall`、`functionResponse`、thought 及 thought signature 等多种形式。[7]\n\n关键差异包括：\n\n- Gemini 常用 `role: \"model\"`，不是 `assistant`。\n- 一条 content 的载荷是有序 `parts[]`，不是一个统一 `content` 字段。\n- 多模态在 `Part` 层自然表达：`text`、`inlineData`、`fileData` 等并列。\n- 函数调用与函数结果也以 `functionCall` / `functionResponse` 的 Part 形式存在。\n- 一个响应可以有多个 `candidates[]`，最终需要选择其中一个 candidate。\n- `systemInstruction` 与对话 `contents[]` 分开。\n- 安全拒绝、候选状态和用量元数据通常在 response 的不同层中表达，不能只盯住 `candidates[0].content.parts[0].text`。\n\nGoogle 的 `GenerateContentResponse` 可包含多个候选响应，且 API 定义了 `PromptFeedback`、阻断原因、usage metadata 等对象；流式调用会返回一串 `GenerateContentResponse` 实例。[8]\n\n***\n\n## 3. 四种协议逐维度对比\n\n### 3.1 上下文、角色与消息结构\n\n| 维度 | OpenAI Chat Completions | OpenAI Responses | Anthropic Messages | Gemini `generateContent` |\n|---|---|---|---|---|\n| 输入容器 | `messages[]` | `input`，字符串或 items | `messages[]` | `contents[]` |\n| 基础上下文单位 | Message | Typed Item | Message + Content Block | Content + Part |\n| 常见角色 | `system`、`developer`、`user`、`assistant`、`tool` | message item 中的 `developer`、`system`、`user`、`assistant` 等 | 主要为 `user`、`assistant`；系统指令顶层表达 | 常见为 `user`、`model` |\n| 系统指令 | 常见为 `system` / `developer` message | `instructions` 或 input message | 顶层 `system` | `systemInstruction` |\n| 纯文本简写 | 多数场景 `content: \"text\"` | `input: \"text\"` 或 content part | `content: \"text\"` | `parts: [{\"text\": \"...\"}]` |\n| 多模态结构 | `content` 可为 parts 数组 | typed input/output content parts | typed content blocks | typed `Part` |\n| 服务器会话 | 传统模式多由客户端回传历史 | 可使用 response/会话相关能力，具体依赖接口能力 | 通常客户端回传历史 | 通常客户端回传 `contents[]` 历史 |\n\n一个实用判断法：\n\n- 如果 API 的核心对象是 **message**，优先考虑“谁说了什么”；\n- 如果核心对象是 **item**，优先考虑“系统发生了什么步骤”；\n- 如果核心对象是 **block / part**，优先考虑“这一轮中包含哪些有序的异构内容”。\n\n### 3.2 工具调用：最容易“看起来兼容、实际不兼容”的部分\n\n所有主流协议都支持某种函数/工具调用，但工具循环的“消息归属、关联 ID、参数编码、结果回传位置、并行调用方式”并不一致。\n\n| 协议 | 模型请求工具的位置 | 参数形态 | 工具结果如何回传 | 关联 ID |\n|---|---|---|---|---|\n| Chat Completions | assistant `tool_calls[]` | 通常 `function.arguments` 为 JSON 字符串 | `role: \"tool\"` message | `tool_call_id` |\n| Responses | `output[]` 中 `function_call` item | 常见为 `arguments` 字符串 | `function_call_output` input item | `call_id` |\n| Anthropic Messages | assistant `content[]` 中 `tool_use` block | `input` 为 JSON 对象 | user `content[]` 中 `tool_result` block | `tool_use_id` |\n| Gemini | response `parts[]` 中 `functionCall` | `args` 为结构化对象 | 后续 `parts[]` 中 `functionResponse` | 通常依函数调用/响应关系处理，具体字段依实现版本 |\n\n**不要把工具调用当成模型执行工具。**模型只是在输出一个“建议调用 X，参数是 Y”的结构。你的应用仍需：\n\n1. 解析模型请求的所有工具调用；\n2. 校验工具名、权限和参数；\n3. 执行外部系统操作；\n4. 将成功结果或错误结果以正确协议形态回传；\n5. 继续请求模型，直到得到最终答案或达到循环上限。\n\n以 Cohere 的 V2 Chat 为例，其工具循环也是典型的“模型先生成 `tool_calls`，应用执行，再把带 `tool_call_id` 的 tool message 回传，最后得到基于工具结果的响应”的模式。 这说明工具调用的基本控制流具有行业共性，但 JSON 外壳不应被视为标准。[9]\n\n### 3.3 推理/Thinking：字段存在不代表可随意保存或回传\n\n推理模型带来的最大协议变化，是模型输出除了最终可见答案外，还可能包含 reasoning/thinking 相关数据。不同平台对其可见性和回传规则差别很大。\n\n| 形态 | 典型表达 | 是否应视作普通文本 | 后续轮次是否应回传 |\n|---|---|---|---|\n| OpenAI Responses 风格 | 独立 `reasoning` item | 否，应保留类型与顺序 | 依平台与工作流机制处理 |\n| DeepSeek Chat 风格 | assistant message 的 `reasoning_content` | 否，独立于 `content` | 带 `tools` 时必须完整回传 |\n| Anthropic 风格 | `thinking` content block | 否，属于 typed block | 按官方模型与工具规则处理 |\n| Qwen/OpenAI-compatible 风格 | `reasoning_content` 扩展字段 | 否 | 可由参数决定保留或忽略 |\n\nDeepSeek 的 thinking mode 在 assistant message 中将 `reasoning_content` 与最终 `content` 并列；没有工具时，历史 reasoning 不必回传，回传也可能被忽略；但请求携带 `tools` 时，历史所有 assistant turns 的 `reasoning_content` 都必须原样回传，否则 API 返回 400。[2]\n\nQwen 的 OpenAI-compatible Chat 文档也表明，thinking 内容可以放在 `reasoning_content` 中，并通过类似 `clear_thinking` / preserve-thinking 的控制决定历史 reasoning 是否作为后续上下文；若需要保留，历史内容必须完整、未修改、顺序不变。[10][11]\n\n因此，应用应区分至少三类数据：\n\n- **展示给终端用户的答案**：最终可见文本或富内容。\n- **发送回模型的上下文材料**：可能含隐藏 reasoning、工具调用、工具结果、签名。\n- **可审计的运行轨迹**：需要按权限、保留期与安全政策单独处理。\n\n不要为了“节省 token”或“数据库结构简单”盲目剥离 reasoning 字段；也不要默认将所有推理文本展示给用户。正确做法是按具体供应商、模型和请求模式实现**协议级的 round-trip preservation**。\n\n### 3.4 流式响应：不要只拼 `delta.content`\n\n流式输出通常使用 Server-Sent Events（SSE），但 SSE 只是传输包装；不同协议对事件类型、事件顺序和完成标志的定义差异很大。\n\n| 协议 | 常见流式认知模型 | 典型增量内容 | 最终完成标记 |\n|---|---|---|---|\n| Chat Completions | 一串 completion chunks | `choices[].delta.content`、`tool_calls` 增量 | `finish_reason`，常见 `[DONE]` 结束 |\n| Responses | 具名 response events | output item/part 的 added、delta、done | response completed/failed 等事件 |\n| Anthropic | block 生命周期事件流 | `content_block_delta` | `message_stop` |\n| Gemini | 多个 response 实例或流式候选更新 | candidate/content/part 更新 | 候选结束原因、流结束 |\n\nAnthropic 的流事件有非常明确的生命周期：`message_start` 后是一个或多个 `content_block_start`、对应的 `content_block_delta`、`content_block_stop`；随后有 `message_delta`，最终为 `message_stop`。[6]\n\n对于工具调用，不能只把所有 delta 当成普通字符串拼接：\n\n- 工具参数 JSON 可能跨多个 chunk 才完整。\n- 先出现工具名/调用 ID，后续才逐渐出现参数字符串。\n- 单个响应可能并行产生多个工具调用。\n- 文本和工具调用、reasoning 或引用事件可能交错。\n- 最终 token usage 或 finish reason 往往只在末尾出现。\n\n**推荐实现方式：**\n\n- 用 `(response_id, choice/index, content_block/index, tool_call/index)` 等稳定标识组织状态。\n- 为每个 tool call 单独累积参数字符串。\n- 只在收到完整事件或终止事件后 JSON parse 工具参数。\n- 将“可显示文本”、“模型动作”、“运行元数据”分别累积。\n- 网络中断时区分：连接断开、模型完成、内容被安全阻断、工具调用未完成、服务端错误。\n\n***\n\n## 4. DeepSeek、智谱与下游适配的真实差异\n\n### 4.1 “OpenAI-compatible”的三个层级\n\n一个厂商写“兼容 OpenAI API”时，至少可能指以下三种不同承诺：\n\n| 兼容层级 | 通常意味着什么 | 不能据此推断什么 |\n|---|---|---|\n| SDK/连接兼容 | 可以复用 OpenAI SDK，替换 `base_url`、API key 和模型名 | 所有 OpenAI 参数都有效 |\n| Chat schema 兼容 | 接受 `model`、`messages`、`tools` 等常见字段，返回 `choices[].message` | 字段默认值、角色支持、工具流程和流式事件一致 |\n| 功能语义兼容 | 特定功能的行为和边界也可互换 | 这需要逐项测试，几乎不能只靠营销语判断 |\n\nDeepSeek 官方说明其 API 可以通过不同配置以 OpenAI/Anthropic 格式访问，并提供了 Anthropic 兼容 base URL。 但 DeepSeek 又为 thinking mode 定义了专用 `reasoning_content` 字段及特殊的工具多轮回传要求。 这正好说明：**外层兼容不等于完整的状态机兼容。**[1][2][12]\n\n### 4.2 DeepSeek：外壳兼容，推理与工具状态有专有约束\n\nDeepSeek Chat Completions 的核心响应仍然是熟悉的 OpenAI 形态：\n\n```json\n{\n  \"choices\": [\n    {\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"最终答案\",\n        \"reasoning_content\": \"推理内容\",\n        \"tool_calls\": []\n      }\n    }\n  ]\n}\n```\n\n需要特别注意：\n\n- `reasoning_content` 是 DeepSeek thinking mode 的专用扩展，和最终 `content` 并列。[12]\n- 工具调用中，流的首个 tool-call chunk 承载 `id`、`type`、`function` 等字段，后续 chunk 可能只补充函数参数。[12]\n- 只要请求携带 `tools`，多轮对话必须把所有历史 `reasoning_content` 原样带回。[2]\n- DeepSeek 也开始提供 Responses API 形态；其文档明确声明此 API 是无状态的，responses/conversations 不存储在服务端，仍需自行管理上下文。[13]\n\n**适配建议：**\n\n- 内部 canonical model 不要只定义 `AssistantMessage { content, tool_calls }`；至少加入 `reasoning` 或不透明的 `provider_state`。\n- 对 DeepSeek 建立“带工具”和“不带工具”两种上下文序列化策略。\n- 不能在工具循环中把历史 assistant message 重新格式化、删字段、重排字段后再回传。\n- 流式解析应逐个 tool call 聚合，而不是将所有 `function.arguments` 混拼。\n\n### 4.3 智谱 / Z.AI GLM：基础 Chat Completions 接近，但不应假设 Anthropic 语义\n\nZ.AI 的 Chat Completion 文档采用了熟悉的 `messages[]` 结构，支持 system、user、assistant、tool 等消息类型；当出现 `tool_calls` 时，`content` 通常为空。 这意味着它在应用接入层可以较自然地接入 OpenAI Chat Completions 风格的工具循环。[14]\n\n概念化的 GLM/OpenAI-compatible message：\n\n```json\n{\n  \"role\": \"assistant\",\n  \"content\": \"\",\n  \"tool_calls\": [\n    {\n      \"id\": \"call_xxx\",\n      \"type\": \"function\",\n      \"function\": {\n        \"name\": \"search_docs\",\n        \"arguments\": \"{\\\"query\\\":\\\"LLM API protocol\\\"}\"\n      }\n    }\n  ]\n}\n```\n\n这与 Anthropic 的相同意图并不是同一种表达：\n\n```json\n{\n  \"role\": \"assistant\",\n  \"content\": [\n    {\n      \"type\": \"tool_use\",\n      \"id\": \"toolu_xxx\",\n      \"name\": \"search_docs\",\n      \"input\": {\n        \"query\": \"LLM API protocol\"\n      }\n    }\n  ]\n}\n```\n\n两者的关键不同：\n\n| 问题 | 智谱/GLM 常见 Chat 格式 | Anthropic Messages |\n|---|---|---|\n| 工具调用放在哪里 | `assistant.tool_calls[]` | `assistant.content[]` 的 `tool_use` block |\n| 工具参数 | 常为 JSON 字符串 `arguments` | 原生 JSON 对象 `input` |\n| 工具结果 | `role: \"tool\"` message | user message 中 `tool_result` block |\n| 文本与工具交错 | 通常以 message 字段组合 | 可以在内容块序列中严格排序 |\n| 系统提示 | 常见 `role: \"system\"` message | 顶层 `system` 参数 |\n| 思维/推理 | 需看具体模型和版本扩展 | thinking block 具有独立类型 |\n\n因此，如果你从 GLM/OpenAI-compatible 迁移到 Anthropic，不能只做字段重命名：\n\n- `tool_calls[].function.arguments` 需要 JSON parse 成对象，成为 `tool_use.input`。\n- `tool` role 的结果消息要改写为包含 `tool_result` blocks 的 user message。\n- 顶层 system prompt 需要从消息数组抽取。\n- 需要避免让不合法的 assistant/user 轮次顺序进入 Anthropic 格式。\n- 多模态内容要从 OpenAI-style parts 映射为 Anthropic blocks，而非假定同一 `type` 词汇可直传。\n\nZ.AI 还提供 MCP server calling 能力，文档称其可在 `chat/completions` 中直接连接并调用 MCP servers；这属于在 OpenAI 风格外壳下叠加的**厂商专有执行能力**，不应被当作通用 OpenAI `tools` 的等价物。[15]\n\n### 4.4 Qwen、Mistral、Cohere：三种常见“兼容但不同”的模式\n\n#### Qwen：OpenAI 兼容外壳 + reasoning 扩展\n\n阿里云 Model Studio 支持以 OpenAI-compatible Chat API 调用模型，但它明确说明兼容接口仍有参数、功能和行为差异；其 Responses 文档也直接强调“compatible with OpenAI to reduce migration cost, but differs in parameters, functionality, and behavior”。[16]\n\nQwen/Model Studio 常见差异：\n\n- assistant response 可能增加 `reasoning_content`。[10]\n- 历史 thinking 是否进入下轮上下文可由专有参数控制。\n- 视觉模型可使用 OpenAI 风格 content array，但模型/能力组合有自己的限制。[17]\n- 同一平台可能同时提供 DashScope 原生 SDK、OpenAI-compatible Chat 与 OpenAI-compatible Responses，能力覆盖并不完全相同。[18]\n\n#### Mistral：Chat Completions 兼容，但 content 可为异构事件数组\n\nMistral Chat Completion 以 `messages[]` 为输入、assistant message 为输出，角色包括 system、user、assistant、tool。 但其输出 `content` 既可以是字符串，也可以是由不同类型 chunk 构成的列表；引用和工具调用等事件可以和文本交错。[19]\n\n这意味着下游若强制写成：\n\n```ts\nconst text = response.choices[0].message.content as string;\n```\n\n会在部分功能中失效。更稳健的内部模型应将 content 视为：\n\n```ts\ntype Content =\n  | { kind: \"text\"; text: string }\n  | { kind: \"image\"; /* ... */ }\n  | { kind: \"citation\"; /* ... */ }\n  | { kind: \"tool_call\"; /* ... */ }\n  | { kind: \"provider_extension\"; raw: unknown };\n```\n\n#### Cohere：原生 V2 Chat 是消息驱动，但兼容层另算\n\nCohere V2 Chat 也使用 `messages[]`，并支持 `user`、`assistant`、`tool`、`system` 角色；响应包含生成的 `message`、`id`、`finish_reason` 与 `meta`。 它支持 `tool_calls` 和可选的 tool choice 控制。[20][21]\n\n不过 Cohere 同时也有 OpenAI SDK Compatibility API。 这应被理解为**第二个入口/翻译层**，而不是其原生 V2 API 的精确复制。工程上要明确：你究竟在适配 Cohere 原生 V2，还是通过 OpenAI compatibility endpoint 调 Cohere；二者可用参数和输出细节可能不同。[22]\n\n***\n\n## 5. 一个统一内部协议应如何设计\n\n如果你的产品需要支持多个供应商，最好的策略通常不是将所有东西强行存成 OpenAI Chat Completions，也不是让业务层直接面对每个厂商 SDK，而是定义一个**能保留语义的内部 canonical protocol**。\n\n### 5.1 推荐的最小内部数据模型\n\n```ts\ntype Role =\n  | \"developer\"\n  | \"system\"\n  | \"user\"\n  | \"assistant\"\n  | \"tool\"\n  | \"model\";\n\ntype ContentPart =\n  | {\n      type: \"text\";\n      text: string;\n    }\n  | {\n      type: \"image\";\n      source: {\n        kind: \"url\" | \"base64\" | \"file_id\";\n        mimeType?: string;\n        value: string;\n      };\n    }\n  | {\n      type: \"document\";\n      source: unknown;\n    }\n  | {\n      type: \"tool_call\";\n      callId: string;\n      name: string;\n      argumentsJson: string;\n      rawArguments?: unknown;\n    }\n  | {\n      type: \"tool_result\";\n      callId: string;\n      content: ContentPart[];\n      isError?: boolean;\n    }\n  | {\n      type: \"reasoning\";\n      text?: string;\n      opaqueState?: unknown;\n      visibility: \"hidden\" | \"provider_controlled\" | \"displayable\";\n    }\n  | {\n      type: \"citation\";\n      data: unknown;\n    }\n  | {\n      type: \"provider_extension\";\n      provider: string;\n      raw: unknown;\n    };\n\ntype Turn = {\n  id?: string;\n  role: Role;\n  parts: ContentPart[];\n  providerMetadata?: Record<string, unknown>;\n};\n\ntype GenerationRequest = {\n  model: string;\n  instructions?: ContentPart[];\n  turns: Turn[];\n  tools?: ToolDefinition[];\n  toolChoice?: \"auto\" | \"none\" | \"required\" | { name: string };\n  outputSchema?: unknown;\n  generation?: {\n    temperature?: number;\n    topP?: number;\n    maxOutputTokens?: number;\n    stopSequences?: string[];\n  };\n  providerOptions?: Record<string, unknown>;\n};\n\ntype GenerationResult = {\n  id?: string;\n  output: Turn[];\n  finishReason?: string;\n  usage?: {\n    inputTokens?: number;\n    outputTokens?: number;\n    totalTokens?: number;\n    cachedInputTokens?: number;\n  };\n  raw?: unknown;\n};\n```\n\n这套模型的重点不是“字段多”，而是避免过早丢失不可逆信息：\n\n- `parts[]` 而不是 `content: string`；\n- 工具调用与工具结果均为显式 typed parts；\n- `reasoning` 与最终 answer 分离；\n- `provider_extension` 是受控的逃生口，而不是把未知字段静默丢弃；\n- 保存 `raw` 以便调试、审计和未来协议升级；\n- 内部 `Role` 容忍 `model` 与 `assistant` 的差异，但在 provider adapter 中再做转换。\n\n### 5.2 适配器职责\n\n建议将每个供应商实现成双向 adapter：\n\n```text\n业务 / Agent Runtime\n        ↓\nCanonical Request\n        ↓\nProvider Request Adapter\n        ↓\nOpenAI / Anthropic / Gemini / DeepSeek / GLM API\n        ↓\nProvider Response Adapter\n        ↓\nCanonical Result + Raw Provider Payload\n        ↓\n业务 / UI / 持久化 / 观测\n```\n\n每个 adapter 都要明确处理：\n\n1. **角色映射**  \n   `assistant ↔ model`、顶层 system ↔ system message、developer 是否支持。\n\n2. **内容映射**  \n   文本、图片、文件、音频、视频、URL、base64、file ID 的映射，以及不支持时的明确失败或降级策略。\n\n3. **工具映射**  \n   JSON Schema 方言、`arguments` string/object 差异、工具结果所在位置、多个并行调用、工具错误表示。\n\n4. **推理映射**  \n   是否保留、是否回传、是否可展示、是否需要签名或 opaque state、是否会影响 token/cost。\n\n5. **结构化输出映射**  \n   `json_object` 与 `json_schema` 的支持范围、schema 严格性、工具调用和 JSON 输出是否可同时启用。\n\n6. **流式映射**  \n   将 provider SSE 转成内部事件，例如 `text_delta`、`reasoning_delta`、`tool_call_delta`、`usage`、`completed`、`error`。\n\n7. **错误映射**  \n   HTTP 400/401/429/5xx、内容审核拦截、上下文长度、schema 无效、工具参数无法解析、模型拒答。\n\n### 5.3 不要做“最低公分母”适配\n\n很多团队为了多模型切换，最后只保留：\n\n```json\n{\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"...\" }\n  ]\n}\n```\n\n这可以完成 demo，却会使高级能力无处安放。更好的策略是把能力分为三档：\n\n| 档位 | 策略 | 示例 |\n|---|---|---|\n| 可移植核心 | 在所有供应商上稳定支持 | 文本、多轮历史、基本温度参数、单个函数调用 |\n| 规范化扩展 | 内部有统一表达，但允许不同实现质量 | 多模态 parts、并行工具调用、JSON Schema、reasoning |\n| Provider 原生能力 | 显式挂在 `providerOptions` 或 extension 上 | Anthropic prompt caching、Gemini thought signature、Mistral 内置工具、GLM MCP 调用 |\n\n这样既能实现跨厂商的基本可替换性，也不会为了“统一”而牺牲高级能力。\n\n***\n\n## 6. 实战检查清单\n\n在选择、替换或适配一个 LLM API 前，应至少验证以下问题，而不是只看“支持 OpenAI SDK”。\n\n### 请求与消息\n\n- 该接口要求的真实路径、API 版本、认证 header 是什么？\n- 请求是无状态的吗？是否需要每一轮完整回传历史？\n- 系统提示放在 `system` message、`developer` message、顶层字段，还是 `instructions`？\n- 支持哪些角色？`developer`、`tool`、`model` 是否有效？\n- assistant 历史消息能否回传？是否支持 assistant prefix/prefill？\n- `content` 是 string、array，还是必须为 blocks/parts？\n- 多模态内容用 URL、base64、file ID、上传 API 还是 provider-hosted file reference？\n\n### 生成控制与结构化输出\n\n- `max_tokens`、`max_output_tokens`、`max_completion_tokens` 的含义是否一致？\n- `temperature`、`top_p`、`seed`、stop sequences 的范围、默认值和模型支持情况是什么？\n- JSON mode 只保证“合法 JSON”，还是保证满足 JSON Schema？\n- JSON Schema 是否支持 strict mode？不支持的 JSON Schema 关键字怎样处理？\n- 当输出受 schema 约束时，工具调用是否仍可用？\n- 是否有模型特定的 reasoning effort、thinking budget 或深度推理开关？\n\nMistral 的文档就区分 `json_object` 与 `json_schema`：前者保证 JSON，后者保证符合你提供的 schema，并且 JSON mode 时仍需要在提示中要求模型输出 JSON。[23]\n\n### 工具与 Agent 循环\n\n- tools 的定义是否采用 JSON Schema？schema 支持到什么程度？\n- 模型是返回 JSON 字符串参数，还是 JSON 对象？\n- 一轮能否返回多个/并行 tool calls？\n- 工具结果在 `tool` role、`tool_result` block，还是专门 output item 中回传？\n- tool result 是否允许富内容、图片、文档、结构化 JSON 或错误标记？\n- 需要保留哪些 ID：`tool_call_id`、`tool_use_id`、`call_id`？\n- 工具调用期间是否必须完整回传 hidden reasoning？\n- 是否有内置工具、远程 MCP、代码执行、搜索等与用户定义 function tools 不同的生命周期？\n\n### 流式与可靠性\n\n- SSE 的终止标志是什么？`[DONE]`、`message_stop`、response completed event，还是连接关闭？\n- 文本、reasoning、工具参数、引用是否各有独立 delta？\n- 是否会在末尾才返回 usage？中途断线时如何处理计费与重试？\n- 同一个 request 是否可安全重试？是否支持 idempotency key？\n- 流式工具调用的参数何时才保证是合法 JSON？\n- 是否应将原始 SSE events 持久化用于复盘和故障恢复？\n\n### 成本、隐私与安全\n\n- 输入、缓存输入、输出、reasoning、工具调用、音视频是否分别计费？\n- 供应商是否保存 prompt、response 或 conversations？\n- 历史 reasoning 是否会显著增加上下文 token 与成本？\n- 是否需要在日志中脱敏 API key、个人数据、工具返回数据和内部 reasoning？\n- 用户是否能诱导模型调用敏感工具？工具层是否独立做鉴权和参数验证？\n- 是否需要区分“模型拒答”“内容被安全拦截”“工具失败”“网络失败”？\n\n***\n\n## 7. 推荐的决策原则\n\n**如果你只需要多供应商文本聊天：**  \n优先以 OpenAI Chat Completions 作为接入层，但将响应解析写成可容忍扩展字段的代码；不要只假设 `content` 是非空字符串。\n\n**如果你做的是 Agent、代码助手、检索/浏览/执行工作流：**  \n优先采用 item/block/part 级别的内部状态模型。Responses、Anthropic Messages 和 Gemini 的设计都表明，未来重点不只是“下一句文本”，而是“模型生成并协调多种执行对象”。[3][6][7]\n\n**如果你要支持 reasoning 模型：**  \n将 reasoning 定义为独立、权限受控、供应商特定的状态。不要把它和最终回答拼接，也不要未经验证地删除或修改后回传。\n\n**如果供应商宣称兼容 OpenAI：**  \n建立一份 capability matrix，逐项跑集成测试：文本、多轮、system/developer、图像、JSON Schema、单/并行工具调用、工具结果、多轮 thinking、SSE、usage、错误码、上下文上限。不要用一次“Hello world 返回 200”判定兼容性。\n\n**如果你需要从 Anthropic 迁到 OpenAI-style，或反向迁移：**  \n把迁移当作**对话状态机转换**，而不是字段 rename。尤其要处理：top-level system、block/part 序列、工具参数的 string/object 转换、工具结果位置、thinking 生命周期与流事件模型。\n\n***\n\n## 结论\n\nLLM API 正在从单纯的“prompt → text completion”演化为多模态、工具驱动、可流式执行的应用协议。Chat Completions 仍是最重要的互操作基线；Responses 代表 item/执行轨迹导向的方向；Anthropic 强调有序 content blocks；Gemini 将多模态 `Part` 放在核心位置。\n\n真正稳健的工程方案不是押注某一种 JSON 外壳，而是：\n\n1. 用自己的 canonical typed content model 保存对话与执行状态；  \n2. 将每个供应商协议实现为可测试的双向 adapter；  \n3. 把 reasoning、tool calls、tool results、citations、stream events 当成一等数据；  \n4. 对“OpenAI-compatible”逐项验证语义，而非仅验证请求能否发出；  \n5. 在可移植性与原生能力之间显式选择，而不是让能力在静默转换中丢失。",
+ "citations": [
+  {
+   "title": "DeepSeek API Docs: Your First API Call",
+   "url": "https://api-docs.deepseek.com/",
+   "snippet": "The DeepSeek API uses an API format compatible with OpenAI/Anthropic. By modifying the configuration, you can use the OpenAI/Anthropic SDK or softwares compatible with the OpenAI/Anthropic API to access the DeepSeek API."
+  },
+  {
+   "title": "Thinking Mode - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+   "snippet": "The DeepSeek model supports the thinking mode: before outputting the final answer, the model will first output a chain-of-thought reasoning to improve the accuracy of the final response."
+  },
+  {
+   "title": "Migrate to the Responses API - OpenAI Developers",
+   "url": "https://developers.openai.com/api/docs/guides/migrate-to-responses",
+   "snippet": "The input to, and result of, a call to Chat completions is an array of *Messages*, while the Responses API uses *Items*. ... A message is a type of Item, as is a function_call or function_call_output. ... Chat Completions uses messages as both input and output. Responses uses input and output arrays of typed Items. A message is one Item type, alongside Items such as reasoning, function_call, and function_call_output. Chat Completions conceptResponses mapping ... messages[]input, as a string or..."
+  },
+  {
+   "title": "Chat Completions Overview | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/chat-completions/overview",
+   "snippet": "The Chat Completions API endpoint will generate a model response from a list of messages comprising a conversation."
+  },
+  {
+   "title": "Anthropic Claude Messages API - Amazon Bedrock",
+   "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html",
+   "snippet": "This section provides inference parameters and code examples for using the Anthropic Claude Messages API."
+  },
+  {
+   "title": "API usage primer for Claude - Claude Platform Docs",
+   "url": "https://platform.claude.com/docs/en/claude_api_primer",
+   "snippet": "This guide is designed to give Claude the basics of using the Claude API. It gives explanation and examples of model IDs/the basic messages API, tool use, streaming, thinking, and nothing else."
+  },
+  {
+   "title": "Generate content with the Gemini API - Google Cloud Documentation",
+   "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/models/inference",
+   "snippet": "Use the Model API for Gemini in Gemini Enterprise Agent Platform to create custom applications. Review the Gemini model request body, model parameters, response body, and sample requests and responses."
+  },
+  {
+   "title": "Generating content | Gemini API - Google AI for Developers",
+   "url": "https://ai.google.dev/api/generate-content",
+   "snippet": "If successful, the response body contains an instance of GenerateContentResponse. ... If successful, the response body contains a stream of GenerateContentResponse instances. JSON representation PromptFeedback - JSON representation BlockReason UsageMetadata - JSON representation ModelStatus - JSON representation ModelStage Response from the model supporting multiple candidate responses. ... Fields id ... Optional. Unique identifier of the tool call. The server returns the tool response with..."
+  },
+  {
+   "title": "Basic usage of tool use (function calling) - Cohere Documentation",
+   "url": "https://docs.cohere.com/docs/tool-use-overview",
+   "snippet": "An overview of using Cohere's tool use capabilities, enabling developers to build agentic workflows (API v2)."
+  },
+  {
+   "title": "Alibaba Cloud Model Studio:OpenAI compatible - Chat",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/qwen-api-via-openai-chat-completions",
+   "snippet": "OpenAI compatible - Chat,Alibaba Cloud Model Studio:You can call models using the OpenAI compatible Chat API. This document describes the input and output parameters and provides call examples."
+  },
+  {
+   "title": "OpenAI chat - QwenCloud",
+   "url": "https://docs.qwencloud.com/api-reference/chat/openai-chat",
+   "snippet": "Compatible Chat API"
+  },
+  {
+   "title": "Chat Completions API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+   "snippet": "Creates a model response for the given chat conversation."
+  },
+  {
+   "title": "Responses API - DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/api/create-response/",
+   "snippet": "Creates a model response in the OpenAI Responses API format."
+  },
+  {
+   "title": "Chat Completion - Overview - Z.AI DEVELOPER DOCUMENT",
+   "url": "https://docs.z.ai/api-reference/llm/chat-completion",
+   "snippet": "> Fetch the complete documentation index at: https://docs.z.ai/llms.txt ... messages: type: array description: >- The current conversation message list as the model’s prompt input, provided in JSON array format, e.g.,{“role”: “user”, “content”: “Hello”}. Possible message types include system messages, user messages, assistant messages, and tool messages. Note: The input ... tool_calls: type: array description: >- Tool call messages generated by the model. When this field is provided, content..."
+  },
+  {
+   "title": "MCP Calling - Overview - Z.AI DEVELOPER DOCUMENT",
+   "url": "https://docs.z.ai/guides/capabilities/mcp-call",
+   "snippet": "> Fetch the complete documentation index at: https://docs.z.ai/llms.txt ... MCP server calling is based on the Model Context Protocol (MCP) standard, dynamically connecting and calling tools and resources provided by external MCP servers in chat/completions. Through MCP server calling, you can extend the model's capability boundaries, implementing various functions such as search, visual understanding, file processing, data analysis, and more, providing powerful tool ecosystem support for AI..."
+  },
+  {
+   "title": "Create a response - Alibaba Cloud Model Studio",
+   "url": "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen-api-via-openai-responses",
+   "snippet": "Use the OpenAI-compatible Responses API to call the Qwen model. This topic describes the input and output parameters and provides a call example."
+  },
+  {
+   "title": "Call Qwen VL models through the OpenAI interface",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/qwen-vl-compatible-with-openai",
+   "snippet": "Call Qwen VL models through the OpenAI interface,Alibaba Cloud Model Studio:Qwen vision models on Alibaba Cloud Model Studio are compatible with the OpenAI interface specification. You only need to modify three parameters to migrate your existing OpenAI applications to Model ..."
+  },
+  {
+   "title": "Make your first API call to Qwen - Alibaba Cloud Model Studio",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/first-api-call-to-qwen",
+   "snippet": "Make your first API call to Qwen,Alibaba Cloud Model Studio:Alibaba Cloud Model Studio supports API calls to models through OpenAI-compatible interfaces and the DashScope SDK."
+  },
+  {
+   "title": "Chat completions | Mistral Docs",
+   "url": "https://docs.mistral.ai/studio/conversations/chat-completion",
+   "snippet": "Documentation for the deployment and usage of Mistral AI's LLMs"
+  },
+  {
+   "title": "Using the Cohere Chat API for Text Generation",
+   "url": "https://docs.cohere.com/docs/chat-api",
+   "snippet": "How to use the Chat API endpoint with Cohere LLMs to generate text responses in a conversational interface"
+  },
+  {
+   "title": "Chat - Cohere Documentation",
+   "url": "https://docs.cohere.com/reference/chat",
+   "snippet": "Generates a text response to a user message and streams it down, token by token."
+  },
+  {
+   "title": "Using Cohere models via the OpenAI SDK",
+   "url": "https://docs.cohere.com/docs/compatibility-api",
+   "snippet": "The document serves as a guide for Cohere's Compatibility API, which allows developers to seamlessly use Cohere's models using OpenAI's SDK."
+  },
+  {
+   "title": "Chat Endpoints - Mistral AI Documentation",
+   "url": "https://docs.mistral.ai/api/endpoint/chat",
+   "snippet": "Welcome to Mistral AI's Api Reference"
+  },
+  {
+   "title": "Completions | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/python/resources/chat/subresources/completions",
+   "snippet": "chat.completions.create(CompletionCreateParamskwargs) -> ChatCompletion POST/chat/completions chat.completions.delete(strcompletion_id) -> ChatCompletionDeleted DELETE/chat/completions/{completion_id} chat.completions.list(CompletionListParamskwargs) -> SyncCursorPage[ChatCompletion] GET/chat/completions chat.completions.retrieve(strcompletion_id) -> ChatCompletion GET/chat/completions/{completion_id} chat.completions.update(strcompletion_id, CompletionUpdateParamskwargs) -> ChatCompletion..."
+  },
+  {
+   "title": "Gemini API reference | Google AI for Developers",
+   "url": "https://ai.google.dev/api",
+   "snippet": "Standard content generation (generateContent): A standard REST endpoint that processes your request and returns the model's full response in a single package. This is best for non-interactive tasks where you can wait for the entire result. ... The following is an example request with the API key included in the header: curl \"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent\" \\ -H \"x-goog-api-key: $GEMINI_API_KEY\" \\ -H 'Content-Type: application/json' \\ -X..."
+  },
+  {
+   "title": "Chat Completions | OpenAI API Reference",
+   "url": "https://platform.openai.com/docs/api-reference/chat",
+   "snippet": "The Chat Completions API endpoint will generate a model response from a list of messages comprising a conversation. ... ... Creates a model response for the given chat conversation. ... A list of messages comprising the conversation so far. Depending on the model you use, different message types (modalities) are supported, like text, images, and audio. ... Returns a chat completion object, or a streamed sequence of chat completion chunk objects if the request is streamed. ... Get the messages..."
+  },
+  {
+   "title": "Introducing advanced tool use on the Claude Developer Platform",
+   "url": "https://www.anthropic.com/engineering/advanced-tool-use",
+   "snippet": "Claude can now discover, learn, and execute tools dynamically to enable agents that take action in the real world. Here’s how."
+  },
+  {
+   "title": "Native API (/messages) | API References - Zenlayer Docs",
+   "url": "https://docs.console.zenlayer.com/api-reference/compute/aig/chat-completion/anthropic-claude/anthropic-claude-message",
+   "snippet": "[Native API (/messages)](https://docs.console.zenlayer.com/api-reference/ai/aig/chat-completion/anthropic-claude/anthropic-claude-message.md)"
+  },
+  {
+   "title": "Text generation | Gemini API - Google AI for Developers",
+   "url": "https://ai.google.dev/gemini-api/docs/text-generation",
+   "snippet": "Get started building text generation and multi-turn interaction apps with the Gemini API"
+  },
+  {
+   "title": "Completions | OpenAI API Reference",
+   "url": "https://developers.openai.com/api/reference/cli/resources/chat/subresources/completions",
+   "snippet": "$ openai chat:completions retrieve GET/chat/completions/{completion_id} ... POST/chat/completions/{completion_id} ... Represents a chat completion response returned by model, based on the provided input. ... If the audio output modality is requested, this object contains data about the audio response from the model."
+  },
+  {
+   "title": "Create a Message - Fireworks AI Docs",
+   "url": "https://docs.fireworks.ai/api-reference/anthropic-messages",
+   "snippet": "Send a structured list of input messages with text and/or image content, and the model will generate the next message in the conversation. ... Each input message must be an object with a role and content. ... If the final message uses the assistant role, the response content will continue immediately from the content in that message. ... Each input message content may be either a single string or an array of content blocks, where each block has a specific type. Using a string for content is..."
+  },
+  {
+   "title": "Gemini Interactions API - Google AI for Developers",
+   "url": "https://ai.google.dev/api/interactions-api",
+   "snippet": "The content of the response. ... Indicates the model should return video. document Indicates the model should return documents."
+  },
+  {
+   "title": "Chat Completions Guide - OpenAI Platform",
+   "url": "https://platform.openai.com/docs/guides/chat-completions",
+   "snippet": "Learn how to use the OpenAI API to generate text from a prompt. Learn about message types and available text formats like JSON and Structured Outputs."
+  },
+  {
+   "title": "vllm.entrypoints.anthropic.protocol",
+   "url": "https://docs.vllm.ai/en/stable/api/vllm/entrypoints/anthropic/protocol/",
+   "snippet": "AnthropicContentBlock – Content block in message ... AnthropicContentBlock(BaseModel): \"\"\"Content block in message\"\"\" type: Literal[ \"text\", \"image\", \"tool_use\", \"tool_result\", \"tool_reference\", \"thinking\", \"redacted_thinking\", ] text: str None = None # For image content source: dict[str, Any] None = None # For tool use/result id: str None = None tool_use_id: str None = None name: str None = None input: dict[str, Any] None = None content: str list[dict[str, Any]] None = None is_error: bool..."
+  },
+  {
+   "title": "Getting started - generateContent API | Google AI for Developers",
+   "url": "https://ai.google.dev/gemini-api/docs/generate-content/get-started",
+   "snippet": "Get started with the Gemini API for Developers using generateContent"
+  },
+  {
+   "title": "OpenAI Platform",
+   "url": "https://platform.openai.com/docs/guides/text-generation/chat-completions-response-format",
+   "snippet": "Explore developer resources, tutorials, API docs, and dynamic examples to get the most out of OpenAI's platform."
+  },
+  {
+   "title": "Anthropic Messages - Introduction to Langdock - Docs",
+   "url": "https://docs.langdock.com/en/developer/completion-api/anthropic",
+   "snippet": "messages[*].content Content can be a string or an array of text, image, tool_use, tool_result, and thinking blocks. Anthropic document blocks are not supported. ... Each input message must be an object with a role and content. ... Each input message content may be either a single string or an array of content blocks, where each block has a specific type. Using a string for content is shorthand for an array of one content block of type \"text\". ... input_schema: [JSON..."
+  },
+  {
+   "title": "Native API (/chat/completions) | API References - Zenlayer Docs",
+   "url": "https://docs.console.zenlayer.com/api-reference/ai/aig/chat-completion/zai-glm/zai-glm-chat-completion",
+   "snippet": "Markdown versions of documentation pages are available by appending .md to page URLs; this page is available as [Markdown](https://docs.console.zenlayer.com/api-reference/ai/aig/chat-completion/zai-glm/zai-glm-chat-completion.md). ... Request URL: > https://gateway.theturbo.ai/v1/chat/completions ... Parameter Name Type Required Description Example ... messages array Yes The list of chat messages, in a format compatible with OpenAI. Each object in the array contains role and content. [{\"role\":..."
+  },
+  {
+   "title": "Language Model API Overview - Tencent Cloud",
+   "url": "https://www.tencentcloud.com/document/product/1300/80632",
+   "snippet": "Tencent is a leading influencer in industries such as social media, mobile payments, online video, games, music, and more. Leverage Tencent's vast ecosystem of key products across various verticals as well as its extensive expertise and networks to gain a competitive edge and make your own impact in these industries."
+  },
+  {
+   "title": "Tool Calls | DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/guides/tool_calls/",
+   "snippet": "Tool Calls allows the model to call external tools to enhance its capabilities."
+  },
+  {
+   "title": "Z.AI (Zhipu AI) - LiteLLM",
+   "url": "https://docs.litellm.ai/docs/providers/zai",
+   "snippet": "https://z.ai/"
+  },
+  {
+   "title": "Introducing DeepSeek-V3",
+   "url": "https://api-docs.deepseek.com/news/news1226",
+   "snippet": "The DeepSeek API uses an API format compatible with OpenAI/Anthropic. By modifying the configuration, you can use the OpenAI/Anthropic SDK or softwares compatible with the OpenAI/Anthropic API to access the DeepSeek API."
+  },
+  {
+   "title": "GLM-4.5: Reasoning, Coding, and Agentic Abililties - Z.ai",
+   "url": "https://z.ai/blog/glm-4.5",
+   "snippet": "It provides 128k context length and native function calling capacity. ... The Z.ai API platform offers OpenAI-compatible interfaces for both GLM-4.5 and GLM-4.5-Air models. For comprehensive API documentation and integration guidelines, please refer to https://docs.z.ai/guides/llm/glm-4.5. ... Just generate one line at a time to simulate the user's message. Do not give away all the instruction at once. Only provide the information that is necessary for the current step."
+  },
+  {
+   "title": "DeepSeek API Upgrade",
+   "url": "https://api-docs.deepseek.com/news/news0725/",
+   "snippet": "Now Supporting Chat Prefix Completion, FIM, Function Calling and JSON Output"
+  },
+  {
+   "title": "thinking_mode_api_example_to...",
+   "url": "https://api-docs.deepseek.com/api_samples/thinking_mode_api_example_tool_call/",
+   "snippet": "reasoning_content = response.choices.message.reasoning_content ... tool_calls = response.choices.message.tool_calls"
+  },
+  {
+   "title": "Z.ai API Platform — Start building with GLM-5.3",
+   "url": "https://z.ai/model-api",
+   "snippet": "At Z.ai, we are developing safe and beneficial Artificial General Intelligence to help solve humanity's most complex challenges. GLM-5.3 is our new flagship model designed to unify frontier reasoning, coding, and agentic capabilities."
+  },
+  {
+   "title": "Change Log | DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/updates/",
+   "snippet": "Date: 2026-09-10"
+  },
+  {
+   "title": "Top-Level Request...",
+   "url": "https://api-docs.deepseek.com/guides/responses_api/",
+   "snippet": "To meet the demand for Codex, our API now supports the Responses API format, with the base_url being https://api.deepseek.com."
+  },
+  {
+   "title": "Chat Completions API",
+   "url": "https://api-docs.deepseek.com/api/create-chat-completion",
+   "snippet": "Creates a model response for the given chat conversation."
+  },
+  {
+   "title": "glm-5.3 (Zhipu AI) · Cloudflare AI docs · Cloudflare Workers ...",
+   "url": "https://developers.cloudflare.com/workers-ai/models/glm-5.3/",
+   "snippet": "GLM-5.3 is Z.ai's flagship agentic coding model, pairing a 1M-token context window with reasoning, function calling, and structured outputs to power multi-step, tool-driven development workflows."
+  },
+  {
+   "title": "HTTP API 调用- 智谱AI开放文档",
+   "url": "https://docs.bigmodel.cn/cn/guide/develop/http/introduction",
+   "snippet": "https://open.bigmodel.cn/api/paas/v4/"
+  },
+  {
+   "title": "model-parameters-mistral-chat-completion.md",
+   "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-mistral-chat-completion.md",
+   "snippet": "{ \"messages\": [ { \"role\": \"system\"\"user\"\"assistant\", \"content\": str }, { \"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [ { \"id\": str, \"function\": { \"name\": str, \"arguments\": str } } ] }, { \"role\": \"tool\", \"tool_call_id\": str, \"content\": str } ], ... \"function\": { \"name\": str, \"description\": str, ... The following are required parameters. messages – (Required) The messages that you want to pass to the model. role – The role for the message. Valid values are: system – Sets the behavior and..."
+  },
+  {
+   "title": "Function Calling | Mistral Docs",
+   "url": "https://docs.mistral.ai/studio/conversations/function-calling",
+   "snippet": "Documentation for the deployment and usage of Mistral AI's LLMs"
+  },
+  {
+   "title": "Introducing updated APIs - Cohere",
+   "url": "https://cohere.com/blog/new-api-v2",
+   "snippet": "Cohere’s latest APIs offer new features and improvements for developers."
+  },
+  {
+   "title": "Using Connectors in Chat Completions - Mistral AI Cookbook",
+   "url": "https://docs.mistral.ai/resources/cookbooks/mistral-connectors-05-connectors-in-completions",
+   "snippet": "Learn Using Connectors in Chat Completions with practical examples and code snippets using Mistral AI's LLMs."
+  },
+  {
+   "title": "Alibaba Cloud Model Studio:Deep thinking",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/deep-thinking",
+   "snippet": "Use deep thinking models via API Model Studio,Alibaba Cloud Model Studio:Deep thinking models reason before responding, improving accuracy on complex tasks like logical reasoning and math."
+  },
+  {
+   "title": "Chat - Mistral",
+   "url": "https://docs.mistral.ai/api",
+   "snippet": "Welcome to Mistral AI's Api Reference"
+  },
+  {
+   "title": "Usage patterns for tool use (function calling) - Cohere Documentation",
+   "url": "https://docs.cohere.com/docs/tool-use-usage-patterns",
+   "snippet": "Guide on implementing various tool use patterns with the Cohere Chat endpoint such as parallel tool calling, multi-step tool use, and more (API v2)."
+  },
+  {
+   "title": "Deprecated Agents Endpoints - Mistral AI Documentation",
+   "url": "https://docs.mistral.ai/api/endpoint/deprecated/agents",
+   "snippet": "Welcome to Mistral AI's Api Reference"
+  },
+  {
+   "title": "Chat with Streaming",
+   "url": "https://docs.cohere.com/reference/chat-stream",
+   "snippet": "Generates a text response to a user message. To learn how to use the Chat API and RAG follow our Text Generation guides(https://docs.cohere."
+  },
+  {
+   "title": "OpenAI Integration",
+   "url": "https://learn.microsoft.com/en-us/agent-framework/hosting/self-hosting/openai-endpoints",
+   "snippet": "Learn how to expose Microsoft Agent Framework agents using OpenAI-compatible protocols including Chat Completions and Responses APIs."
+  },
+  {
+   "title": "OpenAI Chat Completions Protocol Field Descriptions - Tencent Cloud",
+   "url": "https://intl.cloud.tencent.com/document/product/1300/82345",
+   "snippet": "Tencent is a leading influencer in industries such as social media, mobile payments, online video, games, music, and more. Leverage Tencent's vast ecosystem of key products across various verticals as well as its extensive expertise and networks to gain a competitive edge and make your own impact in these industries."
+  },
+  {
+   "title": "Chat Completions API | openai/openai-python | DeepWiki",
+   "url": "https://deepwiki.com/openai/openai-python/4.1-chat-completions-api",
+   "snippet": "The Chat Completions API is a conversational interface for generating text, audio, and tool calls with OpenAI models. While it is supported indefinitely, the $1 is now the recommended modern interface"
+  },
+  {
+   "title": "Responses API Reference | openai/completions-responses ...",
+   "url": "https://deepwiki.com/openai/completions-responses-migration-pack/6-responses-api-reference",
+   "snippet": "This document provides comprehensive reference documentation for the OpenAI /v1/responses API endpoint, covering all parameters, content types, streaming capabilities, tools integration, and structu"
+  },
+  {
+   "title": "OpenAI Responses API Tutorial: 14 Python Examples | TECHSY",
+   "url": "https://techsy.io/en/blog/openai-responses-api-tutorial",
+   "snippet": "OpenAI Responses API tutorial with 14 runnable Python examples — built-in tools, streaming, MCP, and Chat Completions migration. Updated April 2026."
+  },
+  {
+   "title": "OpenAI Responses API Tutorial 2026: Build Stateful AI Apps in ...",
+   "url": "https://baeseokjae.github.io/posts/openai-responses-api-tutorial-2026/",
+   "snippet": "Complete OpenAI Responses API tutorial 2026: stateful conversations, built-in tools, function calling, and migration from Chat Completions."
+  },
+  {
+   "title": "OpenAI API Python Tutorial — Chat Completions, Streaming ...",
+   "url": "https://machinelearningplus.com/gen-ai/openai-api-python-tutorial/",
+   "snippet": "Learn to use the OpenAI API in Python. Master chat completions, streaming responses, error handling, retries, and async calls with runnable examples."
+  },
+  {
+   "title": "\"Responses\" API endpoint - reference documentation ...",
+   "url": "https://community.openai.com/t/responses-api-endpoint-reference-documentation-errors-and-issues/1140994",
+   "snippet": "As I continue cranking through becoming an overnight expert on new stuff, I see that what documentation is offering has some mis-statements. I’ll try to make this a report of issues and not a travel blog. Issue 1: Responses: output_text as content An input message is described as being for any role type, such as previously used with chat completions: A message input to the model with a role indicating instruction following hierarchy. Instructions given with the developer or system role take ..."
+  },
+  {
+   "title": "CLASP/docs/api-reference/anthropic-messages.md at main - GitHub",
+   "url": "https://github.com/jedarden/CLASP/blob/main/docs/api-reference/anthropic-messages.md",
+   "snippet": "Run Claude Code with any LLM provider — drop-in proxy for OpenAI, Gemini, and more. Go. - jedarden/CLASP"
+  },
+  {
+   "title": "Anthropic · Messages - LM-Kit One API",
+   "url": "https://docs.lm-kit.com/lm-kit-one/api/anthropic-messages.html",
+   "snippet": "Anthropic · Messages endpoints of the LM-Kit One REST API."
+  },
+  {
+   "title": "Create a message - OpenRouter | Documentation",
+   "url": "https://openrouter.ai/docs/api/api-reference/anthropic-messages/create-a-message",
+   "snippet": "> Creates a message using the Anthropic Messages API format. Supports text, images, PDFs, tools, and extended thinking. ... $ref: '#/components/schemas/AnthropicToolUseBlock'"
+  },
+  {
+   "title": "Anthropic | AI/ML API Documentation",
+   "url": "https://docs.aimlapi.com/api-references/text-models-llm/anthropic",
+   "snippet": "Text completions: Build advanced chat bots or text processors. Function Calling: Utilize tools for specific tasks and API calling. ... Default is unconstrained text.\"}},\"required\":[\"name\",\"format\"]}},\"required\":[\"type\",\"custom\"]}]}}],\"description\":\"Definitions of tools that the model may use.\\n If you include tools in your API request, the model may return tool_use content blocks that represent the model's use of those tools. You can then run those tools using the tool input generated by the..."
+  },
+  {
+   "title": "Anthropic Messages (Claude Code) · Docs · Surplus Intelligence",
+   "url": "https://www.surplusintelligence.ai/docs/api-reference/messages",
+   "snippet": "Buy the cheapest inference. Sell your credits. The open order book for AI models. Up to 90% off GPT 6 Astra, Claude Fable 5.1, and more."
+  },
+  {
+   "title": "Anthropic Messages Format | FastRouter.AI Docs",
+   "url": "https://docs.fastrouter.ai/api-reference/anthropic-messages-format",
+   "snippet": "Send requests in Anthropic's native format with FastRouter authentication. ... Each message has a role (user or assistant) and content.\",\"minItems\":1,\"items\":{\"type\":\"object\",\"required\":[\"role\",\"content\"],\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"user\",\"assistant\"],\"description\":\"The role of the message author. System messages are passed via the top-level system parameter.\"},\"content\":{\"description\":\"Message content. Can be a string or an array of content..."
+  },
+  {
+   "title": "Section 2 — Agentic Loops & stop_reason Handling",
+   "url": "https://ccaf-exam.guide/docs/02-agentic-loops/",
+   "snippet": "Domain 1.1 — agentic loop control flow, stop_reason values you must know, and the canonical anti-patterns."
+  },
+  {
+   "title": "Create a Message",
+   "url": "https://zenmux.ai/docs/api/anthropic/create-messages.html",
+   "snippet": "Create a Message"
+  },
+  {
+   "title": "Gemini thinking - generateContent API | Google AI for Developers",
+   "url": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+   "snippet": "-d '{ \"contents\": [ { \"parts\": [ { \"text\": \"Explain the concept of Occam'\\''s Razor and provide a simple, everyday example.\" ... You can enable thought summaries by setting includeThoughts to true in your request configuration. You can then access the summary by iterating through the response parameter's parts, and checking the thought boolean."
+  },
+  {
+   "title": "Image understanding - generateContent API",
+   "url": "https://ai.google.dev/gemini-api/docs/generate-content/image-understanding",
+   "snippet": "Get started building with Gemini's multimodal capabilities in the Gemini API"
+  },
+  {
+   "title": "Google Gen AI SDK documentation",
+   "url": "https://googleapis.github.io/python-genai/",
+   "snippet": "function_response_content = types.Content( role='tool', parts=[function_response_part] ... Generate content in a streaming format so that the model outputs streams back to you, rather than being returned as one chunk. ... {\"key\":\"request_1\", \"request\": {\"contents\": [{\"parts\": [{\"text\":"
+  },
+  {
+   "title": "Class GenerateContentResponse",
+   "url": "https://googleapis.github.io/js-genai/release_docs/classes/types.GenerateContentResponse.html",
+   "snippet": "Documentation for @google/genai"
+  },
+  {
+   "title": "[Bug]: Google AI generateContent endpoints require a different ...",
+   "url": "https://github.com/BerriAI/litellm/issues/12671",
+   "snippet": "What happened? The native https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent expects: { contents: {...}, generationConfig: {...}, [with camelCase keys] systemInstructio..."
+  },
+  {
+   "title": "Google Gemini Generate Content Schema - APIs.io",
+   "url": "https://apis.io/schemas/google-gemini/google-gemini-generate-content/",
+   "snippet": "Google Gemini Generate Content Schema is a JSON Schema published by Google Gemini, one of 25 schemas the APIs.io network indexes for this provider.Tagged areas include Agentic AI, Artificial Intell..."
+  },
+  {
+   "title": "HTTP Request to Gemini API fails with \"contents is not specified ...",
+   "url": "https://community.n8n.io/t/http-request-to-gemini-api-fails-with-contents-is-not-specified-despite-correct-configuration/208657?tl=en",
+   "snippet": "Hello, I am trying to connect n8n to the Google Gemini API, but I am getting a persistent “400 Bad request - *GenerateContentRequest.contents: contents is not specified” error. My Configuration seems correct: - Method: POST - URL: https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent?key=MY_API_KEY - Headers: Content-Type = application/json - Body (Expression): Using a valid JSON structure with a variable from my trigger. What we have already debugged: - Confirmed..."
+  },
+  {
+   "title": "Gemini Native Format: Streaming & Non-Streaming Responses",
+   "url": "https://docs.apiyi.com/en/api-capabilities/gemini/response-handling",
+   "snippet": "> Response structure of Gemini's native generateContent / streamGenerateContent: candidates/parts, thoughtSignature, SSE streaming, plus parsing and a field reference. When you call [Gemini's native format](/en/api-capabilities/gemini/native) (/v1beta generateContent), the response uses Google's candidates / parts structure, different from OpenAI compatible mode. ... Endpoint …:generateContent. The answer lives in candidates.content.parts[]: ... Each line is data: {...}, and each chunk's..."
+  },
+  {
+   "title": "Gemini generateContent and streaming via Anyone",
+   "url": "https://docs.anyone.ai/api-reference/gemini-chat",
+   "snippet": "Method Path Description ... POST /v1beta/models/{model}:generateContent Generate a response (non-streaming) POST /v1beta/models/{model}:streamGenerateContent Generate a response as a stream ... <ParamField body=\"contents\" type=\"object[]\" required> The conversation history as an array of content objects. Each object has a role and a parts array. ... <ParamField body=\"contents[].role\" type=\"string\"> The role of the content author. Use \"user\" for user turns and \"model\" for model turns. Omit for..."
+  },
+  {
+   "title": "Reasoning Model (deepseek-reasoner)",
+   "url": "https://api-docs.deepseek.com/guides/reasoning_model",
+   "snippet": "The DeepSeek API uses an API format compatible with OpenAI/Anthropic. By modifying the configuration, you can use the OpenAI/Anthropic SDK or softwares compatible with the OpenAI/Anthropic API to access the DeepSeek API."
+  },
+  {
+   "title": "deepseek-reasoning-chat.md - new-api-docs - GitHub",
+   "url": "https://github.com/QuantumNous/new-api-docs/blob/main/docs/en/api/deepseek-reasoning-chat.md",
+   "snippet": "New API official website documentation. Contribute to QuantumNous/new-api-docs development by creating an account on GitHub."
+  },
+  {
+   "title": "DeepSeek-V4-Flash Now Supports the Responses API and Codex",
+   "url": "https://apidog.com/blog/deepseek-v4-flash-responses-api-codex/",
+   "snippet": "OpenAI introduced the Responses API as the successor to Chat Completions: a single interface designed for agentic workloads, with first-class reasoning items, built-in tools, and semantic streaming events. We break the format down in How to use the OpenAI Responses API, but the short version is: it’s the format OpenAI’s agent stack, including Codex, speaks natively. ... Supported and working: input and instructions, string or item-list form stream with the full semantic event sequence..."
+  },
+  {
+   "title": "Explore DeepSeek API - Chat Completion and more - SerpApi",
+   "url": "https://serpapi.com/blog/explore-deepseek-api/",
+   "snippet": "The new OpenAI competitor is here. Explore DeepSeek API: Chat completion, JSON Output, Function Calling, multi-round conversation, and more!"
+  },
+  {
+   "title": "Deepseek Reasoner V3.1 Terminus - AI/ML API Documentation",
+   "url": "https://docs.aimlapi.com/api-references/text-models-llm/deepseek/deepseek-reasoner-v3.1-terminus",
+   "snippet": "Can be one or more of type text, or exactly one of type refusal.\"}],\"description\":\"The contents of the Assistant message. Required unless tool_calls or function_call is specified.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant. Provides the model information to differentiate between participants of the same role.\"}},\"required\":[\"role\"]}]},\"description\":\"A list of messages comprising the conversation so far. ... name\":{\"type\":\"string\",\"description\":\"The name of..."
+  },
+  {
+   "title": "DeepSeek API Docs 2026 — Quickstart & Examples",
+   "url": "https://deepseek.ai/docs",
+   "snippet": "Complete DeepSeek documentation: API reference, integration guides, and code examples."
+  },
+  {
+   "title": "Quick Start",
+   "url": "https://docs.z.ai/guides/overview/quick-start",
+   "snippet": "> Fetch the complete documentation index at: https://docs.z.ai/llms.txt ... curl -X POST \"https://api.z.ai/api/paas/v4/chat/completions\" \\ -H \"Content-Type: application/json\" \\ -H \"Accept-Language: en-US,en\" \\ -H \"Authorization: Bearer YOUR_API_KEY\" \\ -d '{ \"model\": \"glm-5.3\", \"messages\": [ { \"role\": \"system\", \"content\": \"You are a helpful AI assistant.\" }, { \"role\": \"user\", \"content\": \"Hello, please introduce yourself.\" }"
+  },
+  {
+   "title": "GLM API Guide - Tencent Cloud",
+   "url": "https://intl.cloud.tencent.com/document/product/1300/80634",
+   "snippet": "Tencent is a leading influencer in industries such as social media, mobile payments, online video, games, music, and more. Leverage Tencent's vast ecosystem of key products across various verticals as well as its extensive expertise and networks to gain a competitive edge and make your own impact in these industries."
+  },
+  {
+   "title": "Z.AI GLM Models Support · olimorris codecompanion.nvim - GitHub",
+   "url": "https://github.com/olimorris/codecompanion.nvim/discussions/2850",
+   "snippet": "Is it possible to connect GLM models to codecompanion? I've tried couple of times but couldn't make it. They provided tool guide in here."
+  },
+  {
+   "title": "Glm 5.2 - AI/ML API Documentation",
+   "url": "https://docs.aimlapi.com/api-references/text-models-llm/zhipu/glm-5.2",
+   "snippet": "\",\"enum\":[\"ephemeral\"]},\"ttl\":{\"type\":\"string\",\"enum\":[\"5m\",\"1h\"]}},\"required\":[\"type\"]}},\"required\":[\"type\",\"text\"]}}],\"description\":\"The contents of the tool message.\"},\"tool_call_id\":{\"type\":\"string\",\"description\":\"Tool call that this message is responding to.\"},\"name\":{\"type\":\"string\",\"nullable\":true,\"description\":\"An optional name for the participant. ... Provides the model information to differentiate between participants of the same..."
+  },
+  {
+   "title": "ZhipuAI API - 智谱AI",
+   "url": "https://open.bigmodel.cn/dev/api",
+   "snippet": "Learn why"
+  },
+  {
+   "title": "GLM API - Access Zhipu AI glm-5, glm-5.1, and glm-5.2 via AIsa",
+   "url": "https://aisa.one/docs/guides/chinese-llms/glm",
+   "snippet": "AIsa gives you OpenAI-compatible access to Zhipu AI's GLM family. The current AIsa catalog exposes the exact model IDs glm-5, glm-5.1, and glm-5.2; use lowercase in API calls. All three accept POST /v1/chat/completions, Anthropic-compatible POST /v1/messages, and POST /v1/responses. ... Model ID Context Capabilities Input / 1M Output / 1M Best for"
+  },
+  {
+   "title": "Glm 5",
+   "url": "https://docs.aimlapi.com/api-references/text-models-llm/zhipu/glm-5",
+   "snippet": "Provides the model information to differentiate between participants of the same role.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"tool\"],\"description\":\"The role of the author of the message — in this case, the tool.\"},\"content\":{\"type\":\"string\",\"description\":\"The contents of the tool message.\"},\"tool_call_id\":{\"type\":\"string\",\"description\":\"Tool call that this message is responding..."
+  },
+  {
+   "title": "Chat Completions - DeepInfra docs",
+   "url": "https://docs.deepinfra.com/chat/overview",
+   "snippet": "> OpenAI-compatible chat completions API — just change the base URL and model name. DeepInfra offers an OpenAI-compatible chat completions API for all [LLM models](https://deepinfra.com/models/text-generation) at the best prices for open-source model inference. ... The endpoint is: https://api.deepinfra.com/v1/openai The only changes you need to make from your existing OpenAI code: 1. Set base_url to https://api.deepinfra.com/v1/openai 2. Set api_key to your DeepInfra token 3. Set model to a..."
+  },
+  {
+   "title": "Chat Completions (OpenAI-Compatible LLMs) - Documentation | Hive",
+   "url": "https://docs.thehive.ai/docs/chat-completions-openai-compatible-llms",
+   "snippet": "How to access Hive's self-hosted large language models through the OpenAI-compatible Chat Completions API."
+  },
+  {
+   "title": "Add Compatibility for Open-Source Models like DeepSeek, Llama ...",
+   "url": "https://github.com/langflow-ai/langflow/issues/6505",
+   "snippet": "Feature Request Provide a compatible API layer that allows requests to be routed to OpenAI models or user-hosted models (e.g., DeepSeek via Ollama, Llama via vLLM, etc.). Enable format compatibilit..."
+  },
+  {
+   "title": "OpenAI-compatible APIs explained: All You Need to Know - CometAPI",
+   "url": "https://www.cometapi.com/openai-compatible-apis-explained/",
+   "snippet": "Learn what an OpenAI-compatible API is, why compatibility matters, how CometAPI works with Chat Completions and Responses API, what models you can run behind it"
+  },
+  {
+   "title": "TIP: Chat Completions API reference - as a single request, for AI ...",
+   "url": "https://community.openai.com/t/tip-chat-completions-api-reference-as-a-single-request-for-ai-understanding/1355654",
+   "snippet": "It is a constant need to expand sections of the API reference web site over and over to drill-down to particular parameters. It is dynamic, and cannot be scraped or copied. The AI models don’t trust what you provide because of pretraining, and will automatically “break” code passed through. I compiled a hugely-documented API request body to counter that. Python code that will run, a dict that mirrors JSON for also teaching in other languages, and has the maximum number of parameter keywords..."
+  },
+  {
+   "title": "Free AI Models on AIHubMix",
+   "url": "https://aihubmix.com/blog/free-ai-models-on-aihubmix",
+   "snippet": "Free AI Models: The Ultimate Guide to Building with Zero-Cost AI in 2026 on AIHubMix"
+  },
+  {
+   "title": "DeepSeek API Guide: Pricing, Models & Setup",
+   "url": "https://deepseek-usa.ai/docs/api/",
+   "snippet": "Build with the DeepSeek API using current V4 models. Compare pricing, create an API key, make your first call, and plan secure production use."
+  },
+  {
+   "title": "Migration guides | Mistral Docs",
+   "url": "https://docs.mistral.ai/resources/migration-guides",
+   "snippet": "Migrate to Mistral from OpenAI or self-hosted Llama with minimal code changes."
+  },
+  {
+   "title": "Beta Conversations",
+   "url": "https://docs.mistral.ai/api/endpoint/beta/conversations",
+   "snippet": "Welcome to Mistral AI's Api Reference"
+  },
+  {
+   "title": "mistral-ai-chat-completions-openapi.yml - GitHub",
+   "url": "https://github.com/api-evangelist/mistral-ai/blob/main/openapi/mistral-ai-chat-completions-openapi.yml",
+   "snippet": "Mistral AI is a French artificial intelligence company that develops and provides frontier large language models and APIs for developers and enterprises."
+  },
+  {
+   "title": "Open AI Responses API vs. Chat Completions vs. Messages API",
+   "url": "https://portkey.ai/blog/open-ai-responses-api-vs-chat-completions-vs-anthropic-anthropic-messages-api",
+   "snippet": "A side-by-side comparison of OpenAI's Chat Completions, Responses API, and Anthropic's Messages API, covering key differences, use cases, and how to avoid vendor lock-in with Portkey."
+  },
+  {
+   "title": "Mistral Nemo | AI/ML API Documentation",
+   "url": "https://docs.aimlapi.com/api-references/text-models-llm/mistral-ai/mistral-nemo",
+   "snippet": "Provides the model information to differentiate between participants of the same role.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"tool\"],\"description\":\"The role of the author of the message — in this case, the tool.\"},\"content\":{\"type\":\"string\",\"description\":\"The contents of the tool message.\"},\"tool_call_id\":{\"type\":\"string\",\"description\":\"Tool call that this message is responding..."
+  },
+  {
+   "title": "Need help understanding function calls : r/MistralAI - Reddit",
+   "url": "https://www.reddit.com/r/MistralAI/comments/1ngqo3f/need_help_understanding_function_calls/",
+   "snippet": "Need help understanding function calls"
+  },
+  {
+   "title": "AIKit and Mistral - Errors with ChatCompletion - 4D Forum",
+   "url": "https://discuss.4d.com/t/aikit-and-mistral-errors-with-chatcompletion/36685",
+   "snippet": "Your error message mentions “extra inputs not permitted”, how are your formatting your object that you POST to /v1/chat/completions ? Graf.Arnd ..."
+  },
+  {
+   "title": "How can I use function calling with response format (structured ...",
+   "url": "https://community.openai.com/t/how-can-i-use-function-calling-with-response-format-structured-output-feature-for-final-response/965784",
+   "snippet": "Hi everyone, I’m developing a chatbot using GPT-4o and integrating tools to fetch external data for generating user responses. With the introduction of the response_format feature, I’d like to produce responses in a specific JSON schema after making tool calls, rather than defaulting to plain text. However, the documentation doesn’t cover scenarios where both tool calls and the response_format parameter are used simultaneously. https://platform.openai.com/docs/guides/structured-outputs/introd..."
+  },
+  {
+   "title": "Tool Execution",
+   "url": "https://docs.cohere.com/docs/building-an-agent-with-cohere",
+   "snippet": "This page describes building a generative-AI powered agent with Cohere."
+  },
+  {
+   "title": "Tool calling",
+   "url": "https://docs.cohere.com/docs/migrating-v1-to-v2",
+   "snippet": "The document serves as a reference for developers looking to update their existing Cohere API v1 implementations to the new v2 standard."
+  },
+  {
+   "title": "About API Reference",
+   "url": "https://docs.cohere.com/reference/about",
+   "snippet": "Cohere's NLP platform provides customizable large language models and tools for developers to build AI applications."
+  },
+  {
+   "title": "chat-api.mdx - cohere-developer-experience - GitHub",
+   "url": "https://github.com/cohere-ai/cohere-developer-experience/blob/main/fern/pages/v2/text-generation/chat-api.mdx?plain=1",
+   "snippet": "Docs, Snippets, Guides. Contribute to cohere-ai/cohere-developer-experience development by creating an account on GitHub."
+  },
+  {
+   "title": "[Feature]: Add API v2 support for Cohere · Issue #6980 · BerriAI/litellm",
+   "url": "https://github.com/BerriAI/litellm/issues/6980",
+   "snippet": "The Feature In September 2024, Cohere released the V2 of their API. Add support for the api_version parameter for the Cohere models. Here's the migration guide from v1 to v2. Overview of the main A..."
+  },
+  {
+   "title": "Cohere | AutoGen 0.2 - Microsoft Open Source",
+   "url": "https://microsoft.github.io/autogen/0.2/docs/topics/non-openai-models/cloud-cohere/",
+   "snippet": "Open In Colab"
+  },
+  {
+   "title": "Cohere Chat API — Documentation, OpenAPI - APIs.io",
+   "url": "https://apis.io/apis/cohere/chat-api/",
+   "snippet": "Cohere Chat API is one of 9 APIs that Cohere publishes on the APIs.io network, described by a machine-readable OpenAPI specification and an AsyncAPI event-driven specification.Tagged areas include ..."
+  },
+  {
+   "title": "Introduction to the Cohere Chat API - LinkedIn",
+   "url": "https://www.linkedin.com/learning/mastering-large-language-models-with-the-cohere-api/introduction-to-the-cohere-chat-api",
+   "snippet": "Gain insights into the Cohere Chat API, its functionalities, and how it revolutionizes the creation of conversational AI systems. This knowledge is instrumental in developing intuitive and engaging AI-driven chat interfaces."
+  },
+  {
+   "title": "Alibaba Cloud Model Studio:OpenAI compatible - Chat",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/compatibility-of-openai-with-dashscope",
+   "snippet": "Call Qwen models via OpenAI API_Alibaba Cloud Model Studio(Model Studio),Alibaba Cloud Model Studio:The Qwen models on Model Studio support OpenAI compatible interfaces. You can migrate your existing OpenAI code to Model Studio by changing only the API key, base URL, and model name."
+  },
+  {
+   "title": "Alibaba Cloud Model Studio - Text generation",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/text-generation",
+   "snippet": "Text generation,Alibaba Cloud Model Studio:A text generation model generates text from natural language prompts for applications such as chatbots, content creation, document summarization, and code generation."
+  },
+  {
+   "title": "Qwen3.8-27B Practical Guide: Control Reasoning Depth and ...",
+   "url": "https://www.alibabacloud.com/blog/qwen3-8-27b-practical-guide-control-reasoning-depth-and-extend-context-to-1m-tokens_603509",
+   "snippet": "Qwen3.8-27B is a compact, deployment-friendly dense model built on the Qwen3.5 architecture, with native vision-language understanding and flexible thinking control."
+  },
+  {
+   "title": "Alibaba Cloud Model Studio:Code capabilities (Qwen-Coder)",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/qwen-coder",
+   "snippet": "Qwen-Coder model capabilities,Alibaba Cloud Model Studio:Qwen-Coder is a language model designed for code tasks. You can use the API to generate code, complete code, and call tools to interact with external systems."
+  },
+  {
+   "title": "Qwen3.6-Max-Preview: Smarter, Sharper, Still Evolving",
+   "url": "https://qwen.ai/blog?id=qwen3.6-max-preview",
+   "snippet": "Qwen Studio offers comprehensive functionality spanning chatbot, image and video understanding, image generation, document processing, web search integration, tool utilization, and artifacts."
+  },
+  {
+   "title": "Text Generation API Reference - Alibaba Cloud",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/qwen-api-reference/",
+   "snippet": "Text Generation API Reference,Alibaba Cloud Model Studio:Model Studio offers multiple interfaces for text generation models:"
+  },
+  {
+   "title": "Alibaba Cloud Model Studio:OpenAI-compatible - Batch (file input)",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/batch-interfaces-compatible-with-openai",
+   "snippet": "OpenAI Batch API,Alibaba Cloud Model Studio:Alibaba Cloud Model Studio provides an OpenAI-compatible Batch File API. Submit requests in bulk through files. The system processes them asynchronously and returns results when all requests complete ..."
+  },
+  {
+   "title": "Streaming output for Qwen models - Alibaba Cloud Model Studio",
+   "url": "https://www.alibabacloud.com/help/en/model-studio/stream",
+   "snippet": "Streaming output for Qwen models,Alibaba Cloud Model Studio:In real-time chat or long-text generation applications, long wait times degrade user experience and may trigger server-side timeouts, causing tasks to fail. Streaming output addresses these issues by ..."
+  },
+  {
+   "title": "Qwen-Omni-Alibaba Cloud Model Studio(Model Studio) - 阿里云文档",
+   "url": "https://help.aliyun.com/en/model-studio/qwen-omni",
+   "snippet": "Use Qwen-Omni over HTTP to understand text, images, audio, and video. Choose Qwen3.8-Omni-Flash for text analysis and Qwen3.5-Omni for speech output."
+  }
+ ],
+ "model": "gpt56_terra_thinking",
+ "requested_model": "gemini38flashthinking"
+}

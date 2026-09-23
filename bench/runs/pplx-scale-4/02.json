@@ -1,0 +1,58 @@
+{
+ "query": "只查 Anthropic 官方 Messages API 文档：创建消息的 HTTP 路径是什么？系统提示是顶层参数还是消息里的一种 role？输入消息允许哪些 role？请附官方 URL，并引用原句。",
+ "answer": "创建 Anthropic Messages API 消息的 HTTP 路径是：\n\n```http\nPOST /v1/messages\n```\n\n官方文档原句：“`POST /v1/messages`”。  \n官方 URL：[Anthropic / Claude API Reference — Create a Message](https://platform.claude.com/docs/en/api/messages/create)[1]\n\n## 系统提示的位置\n\n系统提示应通过请求体**顶层**的 `system` 参数提供，而不是作为常规输入消息中的 `role: \"system\"`。\n\n官方原句：\n\n> “Note that if you want to include a system prompt, you can use the top-level `system` parameter — there is no `\"system\"` role for input messages in the Messages API.”\n\n即：若要加入系统提示，应使用顶层 `system`；Messages API 的输入消息中没有 `\"system\"` 角色。[1]\n\n示例：\n\n```json\n{\n  \"model\": \"claude-sonnet-4-5\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a concise assistant.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain recursion.\"\n    }\n  ]\n}\n```\n\n## 输入消息允许的 role\n\n常规 `messages` 输入数组中，允许使用：\n\n- `user`\n- `assistant`\n\n官方原句：\n\n> “You can specify a single `user`-role message, or you can include multiple `user` and `assistant` messages.”\n\n此外，官方说明每条输入消息都必须包含 `role` 和 `content`：\n\n> “Each input message must be an object with a `role` and `content`.”[1]\n\n## 注意文档中的表面矛盾\n\n同一 API 参考页的类型枚举可能显示 `role: \"user\" or \"assistant\" or \"system\"`，但该页针对**输入消息**的文字规范明确指出没有 `\"system\"` role，系统提示应使用顶层 `system`。因此，若你的问题是“创建消息请求中的 `messages` 数组应如何写”，应采用：\n\n```json\n\"messages\": [\n  { \"role\": \"user\", \"content\": \"...\" },\n  { \"role\": \"assistant\", \"content\": \"...\" }\n]\n```\n\n并把全局系统指令放在：\n\n```json\n\"system\": \"...\"\n```\n\n该结论以 Anthropic 官方 Create a Message API 文档对输入消息和系统提示的明确说明为准。[1]",
+ "citations": [
+  {
+   "title": "Create a Message - Claude API Reference",
+   "url": "https://platform.claude.com/docs/en/api/messages/create",
+   "snippet": "Send a structured list of input messages with text and/or image content, and the model will generate the next message in the conversation. The Messages…"
+  },
+  {
+   "title": "创建消息- Claude API Reference",
+   "url": "https://platform.claude.com/docs/zh-CN/api/beta/messages/create",
+   "snippet": "发送包含文本和/或图像内容的结构化输入消息列表，模型将生成对话中的下一条消息。 Messages API 可用于单次查询或无状态的多轮对话。 在我们的用户指南中了解有关 Messages API 的更多信息"
+  },
+  {
+   "title": "Create a Message - Claude API Reference",
+   "url": "https://platform.claude.com/docs/en/api/beta/messages/create",
+   "snippet": "Send a structured list of input messages with text and/or image content, and the model will generate the next message in the conversation. The Messages…"
+  },
+  {
+   "title": "使用Messages API - Claude Platform Docs",
+   "url": "https://platform.claude.com/docs/zh-TW/build-with-claude/working-with-messages",
+   "snippet": "有效使用 Messages API 的實用模式與範例"
+  },
+  {
+   "title": "创建消息- Claude API Reference",
+   "url": "https://platform.claude.com/docs/zh-CN/api/cli/beta/messages/create",
+   "snippet": "发送包含文本和/或图像内容的结构化输入消息列表，模型将生成对话中的下一条消息。 Messages API 可用于单次查询或无状态的多轮对话。 在我们的用户指南中了解有关 Messages API 的更多信息"
+  },
+  {
+   "title": "Anthropic Claude Messages API",
+   "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html",
+   "snippet": "This section provides inference parameters and code examples for using the Anthropic Claude Messages API."
+  },
+  {
+   "title": "创建消息 - Claude API Reference",
+   "url": "https://platform.claude.com/docs/zh-CN/api/go/beta/messages/create",
+   "snippet": "发送包含文本和/或图像内容的结构化输入消息列表，模型将生成对话中的下一条消息。 Messages API 可用于单次查询或无状态的多轮对话。 在我们的用户指南中了解有关 Messages API 的更多信息"
+  },
+  {
+   "title": "创建消息- Claude API Reference",
+   "url": "https://platform.claude.com/docs/zh-CN/api/go/messages/create",
+   "snippet": "发送包含文本和/或图像内容的结构化输入消息列表，模型将生成对话中的下一条消息。 Messages API 可用于单次查询或无状态的多轮对话。 在我们的用户指南中了解有关 Messages API 的更多信息"
+  },
+  {
+   "title": "Anthropic兼容-Messages - 阿里云文档",
+   "url": "https://help.aliyun.com/zh/model-studio/anthropic-api-messages",
+   "snippet": "通过兼容 Anthropic 格式的 Messages API 调用模型，查看输入输出参数说明及调用示例。"
+  },
+  {
+   "title": "Anthropic Messages API 参考",
+   "url": "https://platform.qianwenai.com/docs/api-reference/chat/anthropic",
+   "snippet": "通过 Anthropic SDK 调用 Qwen 模型"
+  }
+ ],
+ "model": "gpt56_terra_thinking",
+ "requested_model": "kimik3thinking"
+}

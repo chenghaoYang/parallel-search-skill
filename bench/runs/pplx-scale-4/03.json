@@ -1,0 +1,58 @@
+{
+ "query": "只查 Google Gemini 官方 API 文档：generateContent 的完整 HTTP URL 形态是什么？对话历史放在哪个字段？系统指令是哪个字段？它和 OpenAI 的 messages 是否同名？请附官方 URL。",
+ "answer": "答案如下，全部来自 Google 官方 Gemini API 文档（[Generating content | Gemini API](https://ai.google.dev/api/generate-content)）。\n\n## 完整 HTTP URL\n\n`generateContent` 的完整调用形态是：POST 请求，模型名放在 URL 路径里，API key 放在查询参数 `[1][9]`\n\n```\nPOST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key=$GEMINI_API_KEY\n```\n\n官方 curl 示例原文（请求头部为 `Content-Type: application/json`）：[1]\n\n```\ncurl \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY\" \\\n -H 'Content-Type: application/json' \\\n -X POST \\\n -d '{ \"contents\": [{ \"parts\":[{\"text\": \"Write a story...\"}] }] }'\n```\n\n流式版本则把方法换成 `:streamGenerateContent` 并加 `alt=sse` 参数 。[1]\n\n## 对话历史：contents\n\n对话历史放在请求体的 **`contents`** 字段（不是 OpenAI 的 `messages`）。它是一个数组，每个元素是 `{\"role\": ..., \"parts\": [...]}`，其中 `role` 取 `\"user\"` 或 `\"model\"`（OpenAI 用 `assistant`，Gemini 用 `model`）。官方多轮对话的 Shell 示例：[1]\n\n```json\n{\n  \"contents\": [\n    {\"role\": \"user\",  \"parts\": [{\"text\": \"Hello\"}]},\n    {\"role\": \"model\", \"parts\": [{\"text\": \"Great to meet you. What would you like to know?\"}]},\n    {\"role\": \"user\",  \"parts\": [{\"text\": \"I have two dogs in my house. How many paws are in my house?\"}]}\n  ]\n}\n```\n\n## 系统指令：system_instruction\n\n系统指令是请求体顶层的 **`system_instruction`**（SDK 与部分文档示例中也写作 camelCase 的 `systemInstruction`），值为一个 Content 对象 。官方函数调用示例中的用法：[1][2]\n\n```json\n{\n  \"system_instruction\": {\n    \"parts\": {\"text\": \"You are a helpful lighting system bot...\"}\n  },\n  \"contents\": {\"role\": \"user\", \"parts\": {\"text\": \"Turn on the lights please.\"}}\n}\n```\n\n## 与 OpenAI 的字段名对照\n\n不同名。对比如下 ：[2]\n\n| 概念 | OpenAI Chat Completions | Gemini generateContent |\n|---|---|---|\n| ICT对话历史 | `messages` | `contents` |\n| 助手角色 | `assistant` | `model` |\n| 系统指令 | `messages` 中的 system 消息 | 顶层 `system_instruction` |\n| 内容单元 | `content` | `parts[]` |\n\n另外注意一点：Google 也提供了 OpenAI 兼容端点（用 `messages` 格式调用 Gemini），但那是兼容层，不是上面这个原生 `generateContent` API 。[3]\n\n官方文档 URL：\n- [Generating content | Gemini API - Google AI for Developers](https://ai.google.dev/api/generate-content?hl=zh-cn)\n- 英文版：[https://ai.google.dev/api/generate-content](https://ai.google.dev/api/generate-content)",
+ "citations": [
+  {
+   "title": "Generating content | Gemini API - Google AI for Developers",
+   "url": "https://ai.google.dev/api/generate-content?hl=zh-cn",
+   "snippet": "根据输入 GenerateContentRequest 生成模型回答。如需了解详细的使用信息，请参阅文本生成指南。输入功能因模型而异，包括调优后的模型。如需了解详情，请参阅模型指南和调优指南。 ... curl \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY\" \\ -H 'Content-Type: application/json' \\ -X POST \\ -d '{ \"contents\": [{ \"parts\":[{\"text\": \"Write a story about a magic backpack.\"}] }] }' 2> /dev/null text_generation.sh ... client = genai.Client() chat = client.chats.create( model=\"gemini-3.8-flash\", history=[..."
+  },
+  {
+   "title": "OpenAI、Claude 和Gemini API 格式有什么区别？ - Nbility AI Gateway",
+   "url": "https://nbility.ai/blog/openai-claude-gemini-api-formats",
+   "snippet": "对比 OpenAI Responses 与 Chat Completions、Claude Messages、Gemini GenerateContent 的认证、消息、系统指令、流式输出、工具调用、多模态和结构化输出格式。"
+  },
+  {
+   "title": "将OpenAI 库与Gemini Enterprise Agent Platform 搭配使用",
+   "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/migrate/openai/overview?hl=zh-cn",
+   "snippet": "了解如何通过 Chat Completions API 将 OpenAI 库与 Gemini Enterprise Agent Platform 搭配使用。"
+  },
+  {
+   "title": "使用Gemini API 构建多轮对话（聊天） | Firebase AI Logic",
+   "url": "https://firebase.google.com/docs/ai-logic/chat?hl=zh-cn",
+   "snippet": "本指南介绍如何通过 Firebase AI Logic 客户端 SDK 使用 Gemini API 构建多轮对话（聊天）。"
+  },
+  {
+   "title": "使用Google Chat API 发送消息",
+   "url": "https://developers.google.com/workspace/chat/create-messages?hl=zh-cn",
+   "snippet": "如需在未来的 API 调用中检索或指定消息，您可以在请求中设置 messageId 字段来为消息命名。为消息命名后，您无需存储消息资源名称（以 name 字段表示）中系统分配的 ID，即可指定消息。 例如，如需使用 get() 方法检索消息，您可以使用资源名称来指定要检索的消息。资源名称的格式为 spaces/{space}/messages/{message}，其中 {message} 表示系统分配的 ID 或您在创建消息时设置的自定义名称。"
+  },
+  {
+   "title": "原生API (Gemini原生协议) | Test - Zenlayer Docs",
+   "url": "https://docs.console.zenlayer.com/test/ai/aig/chat-completion/google-gemini/google-gemini-generate-content",
+   "snippet": "Google Gemini 原生API ( Google 推出的多模态人工智能模型,旨在处理多种数据类型,包括文本、图像、音频、视频和代码。 本API 符合Google Gemini 接口格 ..."
+  },
+  {
+   "title": "如何正确格式化并向Google Gemini API发送聊天消息数组以实现多轮 ...",
+   "url": "https://www.volcengine.com/article/5288",
+   "snippet": "火山引擎是字节跳动旗下的云与AI服务平台。在AI时代，聚焦豆包大模型和AI云原生技术，为企业提供从 Agent 开发到部署的一站式服务，助力企业AI转型与创新发展。"
+  },
+  {
+   "title": "OpenAI兼容-Chat - 阿里云文档",
+   "url": "https://help.aliyun.com/zh/model-studio/qwen-api-via-openai-chat-completions",
+   "snippet": "通过兼容 OpenAI 格式的 Chat API 调用模型，查看输入输出参数说明及调用示例。"
+  },
+  {
+   "title": "Gemini generateContent — Google 原生格式- Anyone.ai",
+   "url": "https://docs.anyone.ai/zh/api-reference/gemini-chat",
+   "snippet": "使用Google Gemini 原生格式发送请求。 Gemini generateContent — Google 原生格式复制页面复制页面… 与Google AI SDK 和Gemini REST API 的格式一致。"
+  },
+  {
+   "title": "Gemini 原生格式调用指南- API易文档中心",
+   "url": "https://docs.apiyi.com/api-capabilities/gemini/native",
+   "snippet": "API易完整支持Gemini 官方原生格式（ /v1beta generateContent 端点）：把base_url 指向 https://api.apiyi.com ，现有Gemini 代码和官方SDK 即可无缝迁移，无需任何 ..."
+  }
+ ],
+ "model": "kimik3thinking",
+ "requested_model": "kimik3thinking"
+}

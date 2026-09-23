@@ -1,0 +1,88 @@
+{
+  "arm": {
+    "id": "cc-opus-sonnet",
+    "harness": "claude-code",
+    "skill": "deep-search",
+    "lead": "opus",
+    "worker": "sonnet",
+    "max_budget_usd": 150
+  },
+  "returncode": 0,
+  "seconds": 4970.2,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "duration_ms": 126046,
+  "num_turns": 8,
+  "total_cost_usd": 54.03169939999999,
+  "modelUsage": {
+    "claude-opus-5-5": {
+      "inputTokens": 220,
+      "outputTokens": 268525,
+      "cacheReadInputTokens": 22510674,
+      "cacheCreationInputTokens": 449044,
+      "webSearchRequests": 0,
+      "costUSD": 13.465866800000004,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 157229,
+      "canonicalModel": "claude-opus-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    },
+    "claude-sonnet-5": {
+      "inputTokens": 1914,
+      "outputTokens": 1289422,
+      "cacheReadInputTokens": 73678183,
+      "cacheCreationInputTokens": 2587437,
+      "webSearchRequests": 0,
+      "costUSD": 37.9834326,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "thinkingTokens": 702623,
+      "canonicalModel": "claude-sonnet-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    },
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 2317175,
+      "outputTokens": 53045,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 2.582399999999999,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "thinkingTokens": 0,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  },
+  "subagent_stats": {
+    "spawned": 19,
+    "requested": {
+      "background": 0,
+      "foreground": 0,
+      "unset": 19
+    },
+    "started_in_background": 19,
+    "max_depth": 1,
+    "spawned_by_subagents": 0,
+    "completed": 19,
+    "failed": 0,
+    "killed": {
+      "parent": 0,
+      "user": 0,
+      "system": 0
+    },
+    "refused": {
+      "depth_limit": 0,
+      "concurrency_limit": 0,
+      "budget": 0
+    },
+    "by_type": {
+      "research-worker": 19
+    }
+  },
+  "permission_denials": []
+}

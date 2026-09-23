@@ -1,0 +1,96 @@
+{
+  "task_id": "api-protocol-v2",
+  "task": "tasks/api-protocol/task.md",
+  "note": "同一份任务原文（task.md），按外层微调提示词。pplx-* 是直接调用 Perplexity skill（单次请求，答案即报告）：模型取自 Perplexity 模型选择器（2026-09-23，Pro 账号可用的 8 个；有 Thinking 变体的用 Thinking）。cc-* 是 Claude Code 外层 + deep-search skill，主 agent 和工人换模型，工人通过 pplx-safe 调 Perplexity 检索、用 WebFetch 打开原页。",
+  "pplx_adapt": "Perplexity 只能单次回答，没有 spawn / 轮次 / refine。去掉 task.md 里只对多 agent 外层有意义的三句（大规模并行调研…、不停的refine…、不允许文章越来越长），其余原样；末尾加一句「直接在回答正文里输出完整文档（Markdown），不要生成、附加或引用文件。」原因：不加这句时 Perplexity 把「产出文档」当成生成文件，正文只剩 1–2k 字的文件摘要，文件本身 pplx-web 拿不到，且无论选哪个模型都由 gpt56_terra 作答。",
+  "arms": [
+    {
+      "id": "pplx-best",
+      "harness": "pplx",
+      "model": "pplx_pro"
+    },
+    {
+      "id": "pplx-gpt6sol",
+      "harness": "pplx",
+      "model": "gpt6_sol_thinking"
+    },
+    {
+      "id": "pplx-gemini38flash",
+      "harness": "pplx",
+      "model": "gemini38flashthinking"
+    },
+    {
+      "id": "pplx-sonnet5",
+      "harness": "pplx",
+      "model": "claude50sonnetthinking"
+    },
+    {
+      "id": "pplx-kimik3",
+      "harness": "pplx",
+      "model": "kimik3thinking"
+    },
+    {
+      "id": "pplx-glm53",
+      "harness": "pplx",
+      "model": "glm_5_3_thinking"
+    },
+    {
+      "id": "pplx-grok46",
+      "harness": "pplx",
+      "model": "grok46medium"
+    },
+    {
+      "id": "pplx-nemotron3",
+      "harness": "pplx",
+      "model": "nv_nemotron_3_ultra"
+    },
+    {
+      "id": "cc-opus-opus",
+      "harness": "claude-code",
+      "skill": "deep-search",
+      "lead": "opus",
+      "worker": "opus",
+      "max_budget_usd": 150
+    },
+    {
+      "id": "cc-opus-sonnet",
+      "harness": "claude-code",
+      "skill": "deep-search",
+      "lead": "opus",
+      "worker": "sonnet",
+      "max_budget_usd": 150
+    },
+    {
+      "id": "kimi-glm53-glm53flash",
+      "harness": "kimi-code",
+      "lead": "zhipuai-coding-plan/glm-5.3",
+      "worker": "zhipuai-coding-plan/glm-5.3-flash",
+      "max_parallel": 3,
+      "note": "GLM Coding Plan 限并发：第 1 次启动时主 agent 卡在 APIEmptyResponseError 重试 10+ 分钟，改为同时最多 3 个工人（KIMI_CODE_AGENT_SWARM_MAX_CONCURRENCY=3 + 提示词要求分批）。"
+    },
+    {
+      "id": "grok-47-47",
+      "harness": "grok-build",
+      "lead": "grok-4.7",
+      "worker": "grok-4.7"
+    },
+    {
+      "id": "justin-handbook-layer0",
+      "harness": "external",
+      "source": "https://github.com/justinatusa/llm-api-protocols@d1d3f5d",
+      "note": "外部参照：只取第 0 层导读"
+    },
+    {
+      "id": "justin-handbook-full",
+      "harness": "external",
+      "source": "https://github.com/justinatusa/llm-api-protocols@d1d3f5d",
+      "note": "外部参照：全部三层按 README 阅读顺序拼接"
+    }
+  ],
+  "excluded": [
+    "Perplexity Agentic research（pplx_agentic_research, mode agentic_research）：经 pplx-web 请求立即返回空答案（EMPTY，1.4s）。",
+    "Perplexity Deep research（pplx_alpha, mode research）：请求能返回，但 remaining_research 没有减少、实际模型是回退的 gpt56_terra，说明没有真正进入 research 模式。",
+    "grok-47-swe2（Grok Build，grok-4.7 主 + swe-2 工人）：本机 devin2api 的 Responses 返回 usage=null、缺 output_tokens_details，Grok 客户端报 serialization error（主模型和子 agent 都一样）。用户决定本轮跳过。"
+  ],
+  "quota_note": "2026-09-23 20:1x 起账号 remaining_pro=0（rest/rate-limit/all）。此后除 pplx_pro 外，所选模型都被静默回退到 gpt56_terra(_thinking)。meta.json 的 model_reported 是 Perplexity 实际使用的模型；与请求不同就说明这次比较的不是所选模型。"
+}

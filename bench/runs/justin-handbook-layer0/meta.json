@@ -1,0 +1,9 @@
+{
+  "arm": {
+    "id": "justin-handbook-layer0",
+    "harness": "external",
+    "source": "https://github.com/justinatusa/llm-api-protocols",
+    "commit": "d1d3f5d (2026-09-24 00:14 +0800)",
+    "note": "只取第 0 层导读 docs/llm-api-protocols.md"
+  }
+}

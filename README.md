@@ -31,6 +31,7 @@ A multi-agent **deep-search skill** (taxonomy first → parallel expand → conv
 | `bench/judge/` | 每遍评审的逐维分数与汇总 |
 | `bench/fetch_external.py` | 重建外部参照（justinatusa/llm-api-protocols）的评审输入；原文不收进本仓库 |
 | `archive/2026-09-23/` | 第一版 bench（Perplexity 1 路 vs 4 路）的说明与查询，公开资料笔记。原始检索在 `bench/runs/pplx-scale-*` |
+| `private/` | 不进版本库。搜索情报、对话摘录、实现前工作流稿、原始 transcript、手册副本。索引在 `private/README.md` |
 
 ## 用 skill
 

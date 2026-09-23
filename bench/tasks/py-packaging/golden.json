@@ -1,0 +1,217 @@
+{
+ "task_id": "py-packaging",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "pep751-final-pylock",
+   "claim": "PEP 751 已经是 Final（正式定案）状态的 Python 标准，规定锁文件必须命名为 pylock.toml，或匹配 pylock.<name>.toml 的模式。",
+   "groups": [
+    [
+     "PEP 751"
+    ],
+    [
+     "pylock.toml"
+    ],
+    [
+     "Final",
+     "final",
+     "已定案",
+     "已批准",
+     "accepted"
+    ]
+   ],
+   "hosts": [
+    "peps.python.org"
+   ],
+   "source": "https://peps.python.org/pep-0751/",
+   "quote": "A lock file MUST be named pylock.toml or match the regular expression r\"^pylock\\.([^.]+)\\.toml$\""
+  },
+  {
+   "id": "uv-pylock-export-not-replace",
+   "claim": "uv 目前把 pylock.toml 作为导出格式支持（uv export --format pylock.toml），项目内部仍然使用自己的 uv.lock，并没有把 uv.lock 直接换成 pylock.toml。",
+   "groups": [
+    [
+     "uv export",
+     "uv.lock"
+    ],
+    [
+     "pylock.toml"
+    ],
+    [
+     "PEP 751"
+    ]
+   ],
+   "hosts": [
+    "docs.astral.sh"
+   ],
+   "source": "https://docs.astral.sh/uv/concepts/projects/export/",
+   "quote": "uv export --format pylock.toml"
+  },
+  {
+   "id": "pip-pylock-experimental",
+   "claim": "pip 从 25.1 起有实验性的 pip lock 命令按 PEP 751 生成 pylock.toml，26.1 起又实验性支持用 -r pylock.toml 读取安装，两端都还标着 experimental。",
+   "groups": [
+    [
+     "pip lock"
+    ],
+    [
+     "pylock.toml"
+    ],
+    [
+     "experimental",
+     "实验性"
+    ]
+   ],
+   "hosts": [
+    "pip.pypa.io"
+   ],
+   "source": "https://pip.pypa.io/en/stable/news/",
+   "quote": "Add a new, experimental, pip lock command, implementing PEP 751."
+  },
+  {
+   "id": "poetry2-project-table-optional",
+   "claim": "Poetry 2.0 开始支持在 pyproject.toml 里使用标准的 [project] 表（对应 PEP 621），但这是可选项，可以和 [tool.poetry] 混用，不是强制替换。",
+   "groups": [
+    [
+     "[project]",
+     "project 表",
+     "project section"
+    ],
+    [
+     "tool.poetry"
+    ]
+   ],
+   "hosts": [
+    "python-poetry.org"
+   ],
+   "source": "https://python-poetry.org/blog/announcing-poetry-2.0.0/",
+   "quote": "Poetry 2.0 respects the project section in the pyproject.toml as originally specified in PEP 621 and now defined in the pyproject.toml specification."
+  },
+  {
+   "id": "poetry-lock-file",
+   "claim": "Poetry 的锁文件叫 poetry.lock，官方建议提交到版本库，保证所有人安装到完全一致的依赖版本。",
+   "groups": [
+    [
+     "poetry.lock"
+    ]
+   ],
+   "hosts": [
+    "python-poetry.org"
+   ],
+   "source": "https://python-poetry.org/docs/basic-usage/",
+   "quote": "Committing this file to VC is important because it will cause anyone who sets up the project to use the exact same versions of the dependencies that you are using."
+  },
+  {
+   "id": "pdm-lock-pylock-switch",
+   "claim": "PDM 默认锁文件是 pdm.lock，但已经加入实验性的 PEP 751 pylock 格式支持，可以用 pdm config lock.format pylock 切换，官方表示未来会把它变成默认格式。",
+   "groups": [
+    [
+     "pdm.lock"
+    ],
+    [
+     "pylock"
+    ]
+   ],
+   "hosts": [
+    "pdm-project.org"
+   ],
+   "source": "https://pdm-project.org/en/latest/usage/lockfile/",
+   "quote": "By default, PDM uses pdm.lock in the current directory."
+  },
+  {
+   "id": "pixi-lock-file",
+   "claim": "pixi 的锁文件叫 pixi.lock，会针对 manifest 里列出的所有环境和平台一起解析锁定，兼顾跨操作系统/架构的可复现性。",
+   "groups": [
+    [
+     "pixi.lock"
+    ]
+   ],
+   "hosts": [
+    "pixi.sh",
+    "pixi.prefix.dev"
+   ],
+   "source": "https://pixi.prefix.dev/latest/workspace/lock_file/",
+   "quote": "This file is named pixi.lock."
+  },
+  {
+   "id": "uv-workspace-monorepo",
+   "claim": "uv 用 pyproject.toml 里的 [tool.uv.workspace] 表声明 workspace members，多个包共享同一个虚拟环境和一份 uv.lock，这是 uv 原生的 monorepo 支持；Poetry 和 PDM 都没有对应的原生 workspace 表。",
+   "groups": [
+    [
+     "tool.uv.workspace",
+     "uv workspace",
+     "uv 的 workspace",
+     "uv workspaces"
+    ]
+   ],
+   "hosts": [
+    "docs.astral.sh"
+   ],
+   "source": "https://docs.astral.sh/uv/concepts/projects/workspaces/",
+   "quote": "a collection of one or more packages, called workspace members, that are managed together."
+  },
+  {
+   "id": "uv-python-install-pin",
+   "claim": "uv 自带一份可下载的 CPython/PyPy 发行版列表，可以用 uv python install 直接装某个 Python 版本，再用 .python-version 文件把版本锁给项目用，不必额外装 pyenv。",
+   "groups": [
+    [
+     "uv python install",
+     "uv python pin"
+    ]
+   ],
+   "hosts": [
+    "docs.astral.sh"
+   ],
+   "source": "https://docs.astral.sh/uv/concepts/python-versions/",
+   "quote": "uv bundles a list of downloadable CPython and PyPy distributions for macOS, Linux, and Windows."
+  },
+  {
+   "id": "pixi-python-as-conda-package",
+   "claim": "pixi 把 Python 当成普通 conda 包来装（pixi add python），默认从 conda-forge 拉取，版本管理方式和其他 conda 包一致，不像 uv 是单独下载官方 CPython 构建。",
+   "groups": [
+    [
+     "conda-forge"
+    ]
+   ],
+   "hosts": [
+    "pixi.sh",
+    "pixi.prefix.dev"
+   ],
+   "source": "https://pixi.prefix.dev/latest/",
+   "quote": "Pixi defaults to the biggest Conda package repository, conda-forge, which contains over 30,000 packages."
+  },
+  {
+   "id": "uv-build-backend-native",
+   "claim": "uv 除了兼容所有 PEP 517 构建后端外，还提供了自己的原生构建后端 uv_build，官方说它对大多数纯 Python 项目是零配置、性能更好的选择。",
+   "groups": [
+    [
+     "uv_build",
+     "uv build backend",
+     "uv 构建后端"
+    ]
+   ],
+   "hosts": [
+    "docs.astral.sh"
+   ],
+   "source": "https://docs.astral.sh/uv/concepts/build-backend/",
+   "quote": "uv supports all build backends (as specified by PEP 517), but also provides a native build backend (uv_build) that integrates tightly with uv to improve performance and user experience."
+  },
+  {
+   "id": "poetry-build-backend-core",
+   "claim": "Poetry 项目的构建后端是 poetry-core（build-backend = \"poetry.core.masonry.api\"），官方现在建议 pyproject.toml 里直接写 poetry-core，不要再直接引用 poetry 本身当后端。",
+   "groups": [
+    [
+     "poetry-core",
+     "poetry.core"
+    ]
+   ],
+   "hosts": [
+    "python-poetry.org"
+   ],
+   "source": "https://python-poetry.org/docs/pyproject/",
+   "quote": "If your pyproject.toml file still references poetry directly as a build backend, you should update it to reference poetry-core instead."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（字段名、命令、版本号、组织名）或中英双写；2026-09-24 按第一批运行修过一次过窄的英文原句针（未改主张和来源）。"
+}

@@ -9,3 +9,7 @@ bench/runs/justin-handbook-*/report.md
 __pycache__/
 *.pyc
 .DS_Store
+evolve/runs/*/*/transcript.jsonl
+evolve/runs/*/*/stderr.txt
+evolve/runs/_t*/
+evolve/candidates/*/skill/

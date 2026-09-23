@@ -75,15 +75,15 @@ def other_prompt(task, harness, worker_line, fetch):
     )
 
 
-def worker_body():
-    text = (SKILL / "agents" / "research-worker.md").read_text(encoding="utf-8")
+def worker_body(skill=SKILL):
+    text = (Path(skill) / "agents" / "research-worker.md").read_text(encoding="utf-8")
     _, front, body = text.split("---", 2)
     desc = re.search(r"^description:\s*(.+)$", front, re.M).group(1).strip()
     return desc, body.strip()
 
 
-def worker_agent(model):
-    text = (SKILL / "agents" / "research-worker.md").read_text(encoding="utf-8")
+def worker_agent(model, skill=SKILL, extra_tools=()):
+    text = (Path(skill) / "agents" / "research-worker.md").read_text(encoding="utf-8")
     _, front, body = text.split("---", 2)
     desc = re.search(r"^description:\s*(.+)$", front, re.M).group(1).strip()
     return {
@@ -91,7 +91,7 @@ def worker_agent(model):
             "description": desc,
             "prompt": body.strip(),
             "model": model,
-            "tools": ["Bash", "WebFetch", "Read", "Write", "Grep", "Glob"],
+            "tools": ["Bash", "WebFetch", "Read", "Write", "Grep", "Glob", *extra_tools],
         }
     }
 

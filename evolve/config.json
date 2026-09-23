@@ -1,0 +1,32 @@
+{
+  "note": "Fixed evaluation settings for the self-evolution loop (the analogue of autoresearch's constants in prepare.py). Do not edit during a run tag.",
+  "arms": {
+    "dev": {
+      "harness": "claude-code",
+      "lead": "sonnet",
+      "worker": "haiku",
+      "search": "websearch",
+      "params": "--rounds 3 --workers 6 --budget 9000",
+      "budget": 9000,
+      "max_budget_usd": 20,
+      "timeout_min": 60
+    },
+    "flagship": {
+      "harness": "claude-code",
+      "lead": "opus",
+      "worker": "sonnet",
+      "search": "pplx",
+      "params": "",
+      "budget": 20000,
+      "max_budget_usd": 150,
+      "timeout_min": 150
+    }
+  },
+  "dev_tasks": ["prompt-caching", "agent-protocols", "py-packaging"],
+  "holdout_tasks": ["js-runtimes", "api-protocol"],
+  "judges": [
+    {"judge": "claude", "model": "opus"},
+    {"judge": "grok", "model": "grok-4.7"}
+  ],
+  "judge_parallel": 10
+}

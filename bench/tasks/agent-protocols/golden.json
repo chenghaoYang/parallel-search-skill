@@ -1,0 +1,201 @@
+{
+ "task_id": "agent-protocols",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "mcp-sse-deprecated-2025",
+   "claim": "MCP 规范从 2025-03-26 版本开始引入 Streamable HTTP 传输取代旧的 HTTP+SSE 传输，旧的 HTTP+SSE 被正式标记为 deprecated（保留仅为向后兼容）。",
+   "groups": [
+    [
+     "Streamable HTTP"
+    ],
+    [
+     "deprecated",
+     "废弃",
+     "弃用",
+     "淘汰"
+    ]
+   ],
+   "hosts": [
+    "modelcontextprotocol.io"
+   ],
+   "source": "https://modelcontextprotocol.io/specification/2025-03-26/basic/transports",
+   "quote": "Clients and servers can maintain backwards compatibility with the deprecated HTTP+SSE transport (from protocol version 2024-11-05) as follows:"
+  },
+  {
+   "id": "mcp-sse-reclassified-2026",
+   "claim": "2026-07-28 的 MCP 规范修订更进一步，把 legacy HTTP+SSE 传输正式重新分类为「Deprecated」生命周期状态，并给出约一年的下线过渡期（offramp）。",
+   "groups": [
+    [
+     "2026-07-28"
+    ],
+    [
+     "SSE"
+    ]
+   ],
+   "hosts": [
+    "blog.modelcontextprotocol.io",
+    "modelcontextprotocol.io"
+   ],
+   "source": "https://blog.modelcontextprotocol.io/posts/2026-07-28/",
+   "quote": "The legacy HTTP+SSE transport is also considered to be officially deprecated, with a year-long offramp."
+  },
+  {
+   "id": "a2a-google-donated-lf",
+   "claim": "A2A 最初由 Google 开发，之后被捐赠给了 Linux Foundation，改为中立治理（由技术指导委员会维护）。",
+   "groups": [
+    [
+     "Google"
+    ],
+    [
+     "donated to the Linux Foundation",
+     "捐赠给",
+     "Linux Foundation"
+    ]
+   ],
+   "hosts": [
+    "a2a-protocol.org"
+   ],
+   "source": "https://a2a-protocol.org/latest/",
+   "quote": "A2A was originally developed by Google and donated to the Linux Foundation."
+  },
+  {
+   "id": "acp-ibm-merged-into-a2a",
+   "claim": "IBM Research 主导、原本给 BeeAI 平台用的 Agent Communication Protocol（ACP）已于 2025 年 8 月正式并入 A2A，团队不再把它当独立协议继续演进。",
+   "groups": [
+    [
+     "merging with the A2A",
+     "并入 A2A",
+     "并入A2A",
+     "合并",
+     "并入",
+     "merged",
+     "合入"
+    ],
+    [
+     "IBM",
+     "BeeAI"
+    ]
+   ],
+   "hosts": [
+    "lfaidata.foundation"
+   ],
+   "source": "https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/",
+   "quote": "ACP is officially merging with the A2A under the Linux Foundation"
+  },
+  {
+   "id": "acp-zed-definition",
+   "claim": "Zed 的 Agent Client Protocol（也叫 ACP）是完全不同的另一个协议：标准化「代码编辑器」和「编码 agent」之间的通信（类似 LSP 用于编辑器和语言服务之间），跟 IBM 那个 ACP 没有关系。",
+   "groups": [
+    [
+     "Agent Client Protocol"
+    ],
+    [
+     "Zed"
+    ]
+   ],
+   "hosts": [
+    "github.com",
+    "agentclientprotocol.com"
+   ],
+   "source": "https://github.com/zed-industries/agent-client-protocol",
+   "quote": "The Agent Client Protocol (ACP) standardizes communication between code editors (interactive programs for viewing and editing source code) and coding agents (programs that use generative AI to autonomously modify code)."
+  },
+  {
+   "id": "ag-ui-definition",
+   "claim": "AG-UI（Agent User Interaction Protocol）官方定义是一个开放、轻量、基于事件（event-based）的协议，用来标准化 AI agent 如何连接到面向用户的前端应用。",
+   "groups": [
+    [
+     "AG-UI"
+    ],
+    [
+     "事件",
+     "event"
+    ]
+   ],
+   "hosts": [
+    "docs.ag-ui.com"
+   ],
+   "source": "https://docs.ag-ui.com/introduction",
+   "quote": "AG-UI is an open, lightweight, event-based protocol that standardizes how AI agents connect to user-facing applications."
+  },
+  {
+   "id": "aaif-governance-members",
+   "claim": "2025 年 12 月 Linux Foundation 成立 Agentic AI Foundation（AAIF），作为 MCP、goose、AGENTS.md 等项目的中立治理之家，白金会员包括 AWS、Anthropic、Block、Bloomberg、Cloudflare、Google、Microsoft 和 OpenAI。",
+   "groups": [
+    [
+     "Agentic AI Foundation",
+     "AAIF"
+    ]
+   ],
+   "hosts": [
+    "linuxfoundation.org"
+   ],
+   "source": "https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation",
+   "quote": "Platinum members include Amazon Web Services, Anthropic, Block, Bloomberg, Cloudflare, Google, Microsoft and OpenAI."
+  },
+  {
+   "id": "microsoft-a2a-v1-ga",
+   "claim": "微软 Microsoft Foundry Agent Service 已经支持 A2A 协议：新的 a2a 工具对应 A2A 1.0 版本、状态是 GA（正式可用），旧的 0.3 版本仍留作 preview。",
+   "groups": [
+    [
+     "Foundry"
+    ],
+    [
+     "1.0",
+     "v1"
+    ]
+   ],
+   "hosts": [
+    "learn.microsoft.com"
+   ],
+   "source": "https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/agent-to-agent",
+   "quote": "Foundry agent targets support generally available A2A protocol version 1.0 and preview version 0.3."
+  },
+  {
+   "id": "anthropic-mcp-oauth",
+   "claim": "Anthropic 自家在 Messages API 里提供的 MCP connector，支持不用单独实现 MCP client 就直连远程 MCP 服务器，并原生支持 OAuth Bearer token 鉴权。",
+   "groups": [
+    [
+     "MCP connector",
+     "mcp_servers",
+     "MCP 连接器",
+     "MCP connector"
+    ],
+    [
+     "OAuth"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.claude.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector",
+   "quote": "OAuth authentication: Support for OAuth Bearer tokens for authenticated servers"
+  },
+  {
+   "id": "openai-mcp-responses-support",
+   "claim": "OpenAI 的 Responses API 支持通过 remote MCP servers（或 Secure MCP Tunnel）给模型接入新的外部能力，即官方原生支持 MCP。",
+   "groups": [
+    [
+     "Responses"
+    ],
+    [
+     "remote MCP",
+     "远程 MCP",
+     "远程MCP",
+     "server_url",
+     "hosted MCP"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+   "quote": "In addition to tools you make available to the model with function calling, you can give models new capabilities using remote MCP servers or Secure MCP Tunnel."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（字段名、命令、版本号、组织名）或中英双写；2026-09-24 按第一批运行修过一次过窄的英文原句针（未改主张和来源）。"
+}

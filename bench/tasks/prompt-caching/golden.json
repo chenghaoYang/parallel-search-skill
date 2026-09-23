@@ -1,0 +1,256 @@
+{
+ "task_id": "prompt-caching",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "openai-implicit-baseline",
+   "claim": "OpenAI 在 GPT-5.6 之前的模型只支持隐式缓存，系统按模型相关的固定间隔自动放置缓存断点，不需要用户手动设置。",
+   "groups": [
+    [
+     "implicit",
+     "隐式",
+     "自动缓存",
+     "自动命中",
+     "automatically"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/prompt-caching",
+   "quote": "Only implicit caching is supported. OpenAI places implicit breakpoints at model-dependent intervals, counted from the beginning of the hidden OpenAI system message."
+  },
+  {
+   "id": "openai-gpt56-pricing",
+   "claim": "OpenAI 从 GPT-5.6 起，缓存写入按标准输入价格的 1.25 倍计费，命中读取只需 0.1 倍。",
+   "groups": [
+    [
+     "GPT-5.6",
+     "gpt-5.6"
+    ],
+    [
+     "1.25"
+    ],
+    [
+     "0.1"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/prompt-caching",
+   "quote": "For GPT-5.6 and later, cache writes cost 1.25× the standard, uncached input-token rate. It is worth incurring this charge when you know a prefix will be reused, because subsequent reads cost only 0.1× that rate."
+  },
+  {
+   "id": "anthropic-auto-and-manual",
+   "claim": "Anthropic 现在也支持自动缓存模式：只要在请求顶层加一次 cache_control，系统就会自动把断点移到最后一个可缓存块，不用像以前一样逐块手动打点。",
+   "groups": [
+    [
+     "顶层",
+     "top-level",
+     "top level"
+    ],
+    [
+     "cache_control"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching",
+   "quote": "Add a single cache_control field at the top level of your request. The system automatically applies the cache breakpoint to the last cacheable block and moves it forward as conversations grow."
+  },
+  {
+   "id": "anthropic-cache-pricing",
+   "claim": "Anthropic 的缓存写入（5 分钟 TTL）按基础输入价格的 1.25 倍计费，命中读取只需 0.1 倍。",
+   "groups": [
+    [
+     "1.25"
+    ],
+    [
+     "0.1"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching",
+   "quote": "5-minute cache write tokens are 1.25 times the base input tokens price. Cache read tokens are 0.1 times the base input tokens price."
+  },
+  {
+   "id": "anthropic-cache-ttl",
+   "claim": "Anthropic 缓存默认只存活 5 分钟，想要更长可以加钱换成 1 小时 TTL。",
+   "groups": [
+    [
+     "5-minute",
+     "5 分钟",
+     "5分钟",
+     "five-minute",
+     "five minute",
+     "5 min",
+     "5min",
+     "5m"
+    ],
+    [
+     "1-hour",
+     "1 小时",
+     "1小时",
+     "one hour",
+     "one-hour",
+     "1h",
+     "60 分钟"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching",
+   "quote": "By default, the cache has a 5-minute lifetime. If you find that 5 minutes is too short, Anthropic also offers a 1-hour cache duration at additional cost."
+  },
+  {
+   "id": "gemini-implicit-default",
+   "claim": "Gemini 2.5 及更新模型默认自动开启隐式缓存，不需要用户做任何额外操作。",
+   "groups": [
+    [
+     "implicit",
+     "隐式"
+    ],
+    [
+     "2.5"
+    ]
+   ],
+   "hosts": [
+    "ai.google.dev"
+   ],
+   "source": "https://ai.google.dev/gemini-api/docs/caching",
+   "quote": "Implicit caching is enabled by default for all Gemini 2.5 and newer models."
+  },
+  {
+   "id": "gemini-min-tokens",
+   "claim": "Gemini 隐式缓存命中所需的最小输入 token 数因模型而不同：2.5 系列是 2,048，3.x Flash 与 3.1 Pro Preview 系列是 4,096。",
+   "groups": [
+    [
+     "2,048",
+     "2048"
+    ],
+    [
+     "4,096",
+     "4096"
+    ]
+   ],
+   "hosts": [
+    "ai.google.dev"
+   ],
+   "source": "https://ai.google.dev/gemini-api/docs/caching",
+   "quote": "Model Min token limit Gemini 3.8 Flash 4,096 Gemini 3.7 Flash 4,096 Gemini 3.6 Flash 4,096 Gemini 3.5 Flash 4,096 Gemini 3.1 Pro Preview 4,096 Gemini 2.5 Flash 2,048 Gemini 2.5 Pro 2,048"
+  },
+  {
+   "id": "deepseek-disk-cache-automatic",
+   "claim": "DeepSeek 的硬盘缓存技术默认对所有用户开启，不需要修改代码就能享受命中折扣。",
+   "groups": [
+    [
+     "硬盘缓存",
+     "disk",
+     "Context Caching on Disk",
+     "磁盘缓存"
+    ],
+    [
+     "不需要修改代码",
+     "无需修改代码",
+     "不用改代码",
+     "无需改代码",
+     "默认开启",
+     "默认启用",
+     "enabled by default",
+     "自动"
+    ]
+   ],
+   "hosts": [
+    "api-docs.deepseek.com"
+   ],
+   "source": "https://api-docs.deepseek.com/guides/kv_cache",
+   "quote": "The DeepSeek API Context Caching on Disk Technology is enabled by default for all users, allowing them to benefit without needing to modify their code."
+  },
+  {
+   "id": "deepseek-hit-miss-fields",
+   "claim": "DeepSeek 在响应的 usage 里用 prompt_cache_hit_tokens 和 prompt_cache_miss_tokens 分别记录命中和未命中的 token 数。",
+   "groups": [
+    [
+     "prompt_cache_hit_tokens"
+    ],
+    [
+     "prompt_cache_miss_tokens"
+    ]
+   ],
+   "hosts": [
+    "api-docs.deepseek.com"
+   ],
+   "source": "https://api-docs.deepseek.com/guides/kv_cache",
+   "quote": "prompt_cache_hit_tokens: The number of tokens in the input of this request that resulted in a cache hit."
+  },
+  {
+   "id": "kimi-automatic-ttl",
+   "claim": "Kimi（Moonshot）的 prompt cache 现在默认按 prompt_cache_options 自动生效，不指定时默认 TTL 是 5 分钟。",
+   "groups": [
+    [
+     "prompt_cache_options"
+    ],
+    [
+     "kimi",
+     "moonshot"
+    ]
+   ],
+   "hosts": [
+    "platform.kimi.ai",
+    "platform.moonshot.ai"
+   ],
+   "source": "https://platform.kimi.ai/docs/guide/use-context-caching-feature-of-kimi-api",
+   "quote": "When prompt_cache_options is omitted, the system uses the 5m TTL by default: eligible prefixes are written automatically"
+  },
+  {
+   "id": "qwen-implicit-cache",
+   "claim": "通义千问（DashScope）的隐式缓存是自动模式，向支持的模型发请求就会自动开启且无法手动关闭，命中至少需要 1024 token 的公共前缀。",
+   "groups": [
+    [
+     "隐式",
+     "implicit"
+    ],
+    [
+     "1024",
+     "1,024"
+    ]
+   ],
+   "hosts": [
+    "help.aliyun.com",
+    "alibabacloud.com"
+   ],
+   "source": "https://help.aliyun.com/zh/model-studio/context-cache",
+   "quote": "向支持隐式缓存的模型发送请求时，该功能会自动开启"
+  },
+  {
+   "id": "openrouter-provider-varies",
+   "claim": "OpenRouter 上大多数供应商的 prompt caching 默认自动开启，但 Anthropic 等供应商仍需要你自己在消息里加 cache_control 才能命中缓存。",
+   "groups": [
+    [
+     "cache_control"
+    ],
+    [
+     "OpenRouter",
+     "openrouter"
+    ]
+   ],
+   "hosts": [
+    "openrouter.ai"
+   ],
+   "source": "https://openrouter.ai/docs/features/prompt-caching",
+   "quote": "Most providers automatically enable prompt caching, but note that some (see Alibaba and Anthropic below) require you to enable it on a per-message basis."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（字段名、命令、版本号、组织名）或中英双写；2026-09-24 按第一批运行修过一次过窄的英文原句针（未改主张和来源）。"
+}

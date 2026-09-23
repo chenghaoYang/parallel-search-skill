@@ -1,0 +1,245 @@
+{
+ "task_id": "js-runtimes",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "node-type-stripping-no-check",
+   "claim": "Node.js 现在可以直接跑 .ts 文件，但默认只是「类型擦除」——把类型标注替换成空白后直接执行，并不做类型检查。",
+   "groups": [
+    [
+     "类型擦除",
+     "type stripping",
+     "type-stripping",
+     "strip-types",
+     "剥离类型",
+     "擦除类型"
+    ],
+    [
+     "不做类型检查",
+     "不进行类型检查",
+     "不会类型检查",
+     "不检查类型",
+     "不做类型校验",
+     "不会检查类型",
+     "no type checking",
+     "not type-check",
+     "without type checking",
+     "does not type check",
+     "doesn't type check",
+     "不做 typecheck",
+     "不 typecheck",
+     "不做类型检测"
+    ]
+   ],
+   "hosts": [
+    "nodejs.org"
+   ],
+   "source": "https://nodejs.org/api/typescript.html",
+   "quote": "Node.js will replace TypeScript syntax with whitespace, and no type checking is performed."
+  },
+  {
+   "id": "node-strip-types-thirdparty-needed",
+   "claim": "Node 的类型擦除自 v23.6.0/v22.18.0 起默认开启（不用再加 --experimental-strip-types），但只认「可擦除语法」；enum、namespace 等需要生成新代码的写法不支持，官方文档说要完整支持所有 TypeScript 语法得用 tsx 这类第三方包。",
+   "groups": [
+    [
+     "23.6",
+     "22.18"
+    ],
+    [
+     "第三方",
+     "third-party",
+     "tsx",
+     "ts-node"
+    ]
+   ],
+   "hosts": [
+    "nodejs.org"
+   ],
+   "source": "https://nodejs.org/api/typescript.html",
+   "quote": "For full support of all of TypeScript's syntax and features, including using any version of TypeScript, use a third-party package."
+  },
+  {
+   "id": "deno2-npm-specifier-packagejson",
+   "claim": "Deno 2 可以用 npm: 前缀直接 import npm 包，也看得懂 package.json；一个典型 Node 项目搬进 Deno 通常就是先装依赖再运行两条命令。",
+   "groups": [
+    [
+     "npm:"
+    ],
+    [
+     "package.json"
+    ]
+   ],
+   "hosts": [
+    "docs.deno.com"
+   ],
+   "source": "https://docs.deno.com/runtime/fundamentals/node/",
+   "quote": "Deno understands package.json, so a typical Node project runs with two commands: one to install, one to run."
+  },
+  {
+   "id": "deno-nodemodules-manual-vs-auto",
+   "claim": "没有 package.json 时 Deno 默认从全局缓存解析 npm 依赖、不生成 node_modules；一旦项目里有 package.json，就会切到需要 node_modules 的模式（也可以配置自动生成）。",
+   "groups": [
+    [
+     "node_modules"
+    ],
+    [
+     "package.json"
+    ]
+   ],
+   "hosts": [
+    "docs.deno.com"
+   ],
+   "source": "https://docs.deno.com/runtime/fundamentals/node/",
+   "quote": "By default, Deno instead resolves npm packages from a central global cache and does not create a node_modules directory."
+  },
+  {
+   "id": "deno-run-vs-check-typecheck",
+   "claim": "Deno 把「执行 TypeScript」和「类型检查」当成两件独立的事：deno run 只做类型擦除、不检查类型对不对；要做真正的类型检查得单独跑 deno check。",
+   "groups": [
+    [
+     "deno check"
+    ],
+    [
+     "deno run"
+    ]
+   ],
+   "hosts": [
+    "docs.deno.com"
+   ],
+   "source": "https://docs.deno.com/runtime/fundamentals/typescript/",
+   "quote": "Deno treats executing TypeScript and type-checking it as two separate concerns: Execution: when you deno run a TypeScript file, Deno strips the types and hands the resulting JavaScript to V8."
+  },
+  {
+   "id": "bun-ts-no-typecheck",
+   "claim": "Bun 跑/打包 .ts 文件时只是把 TypeScript 语法剥掉当 JS 执行，不做类型检查；官方文档明确说 Bun 的 bundler 不是用来替代 tsc 做类型检查或生成类型声明文件的。",
+   "groups": [
+    [
+     "typecheck",
+     "typechecking",
+     "类型检查"
+    ],
+    [
+     "tsc"
+    ]
+   ],
+   "hosts": [
+    "bun.sh",
+    "bun.com"
+   ],
+   "source": "https://bun.sh/docs/bundler",
+   "quote": "The Bun bundler is not intended to replace tsc for typechecking or generating type declarations."
+  },
+  {
+   "id": "bun-lockfile-text",
+   "claim": "Bun 从 1.2 版本起，默认锁文件格式从二进制的 bun.lockb 换成了文本格式的 bun.lock。",
+   "groups": [
+    [
+     "bun.lock"
+    ],
+    [
+     "bun.lockb"
+    ]
+   ],
+   "hosts": [
+    "bun.sh",
+    "bun.com"
+   ],
+   "source": "https://bun.sh/docs/pm/lockfile",
+   "quote": "Bun v1.2 changed the default lockfile format to the text-based bun.lock."
+  },
+  {
+   "id": "node-permission-model",
+   "claim": "Node.js 有一套已经是 Stable 阶段的权限模型，用 --permission 开启后默认拒绝一切，再用 --allow-fs-read、--allow-net 这类开关单独放权。",
+   "groups": [
+    [
+     "--permission"
+    ],
+    [
+     "--allow-fs-read",
+     "--allow-fs-write",
+     "--allow-net",
+     "--allow-child-process",
+     "--allow-worker"
+    ]
+   ],
+   "hosts": [
+    "nodejs.org"
+   ],
+   "source": "https://nodejs.org/api/permissions.html",
+   "quote": "The API exists behind a flag --permission which when enabled, will restrict access to all available permissions."
+  },
+  {
+   "id": "deno-secure-by-default",
+   "claim": "Deno 默认安全沙盒化：不主动给权限的话程序访问不了敏感 API，需要用 --allow-net、--allow-read 之类的参数或 -A/--allow-all 显式放权。",
+   "groups": [
+    [
+     "--allow-net",
+     "--allow-read"
+    ],
+    [
+     "-A",
+     "--allow-all"
+    ]
+   ],
+   "hosts": [
+    "docs.deno.com"
+   ],
+   "source": "https://docs.deno.com/runtime/fundamentals/security/",
+   "quote": "Deno is secure by default. Unless you specifically enable it, a program run with Deno has no access to sensitive APIs."
+  },
+  {
+   "id": "bun-security-scanner",
+   "claim": "Bun 没有 Deno 那种运行时权限沙盒，但从 Security Scanner API 开始可以在 bun install/add 时接入扫描器，在真正装包之前拦截已知漏洞和恶意包。",
+   "groups": [
+    [
+     "Security Scanner",
+     "security scanner",
+     "安全扫描",
+     "扫描器"
+    ]
+   ],
+   "hosts": [
+    "bun.sh",
+    "bun.com"
+   ],
+   "source": "https://bun.sh/docs/pm/security-scanner-api",
+   "quote": "Bun's package manager can scan packages before installing them, to catch supply chain attacks and known vulnerabilities."
+  },
+  {
+   "id": "node-test-runner",
+   "claim": "Node.js 自带测试运行器：node:test 模块配合 node --test 命令行方式，且测试运行器本身已经是 Stable。",
+   "groups": [
+    [
+     "node --test"
+    ],
+    [
+     "node:test"
+    ]
+   ],
+   "hosts": [
+    "nodejs.org"
+   ],
+   "source": "https://nodejs.org/api/test.html",
+   "quote": "The node:test module facilitates the creation of JavaScript tests."
+  },
+  {
+   "id": "deno-fmt-builtin",
+   "claim": "Deno 自带基于 dprint 的代码格式化工具 deno fmt，不需要像 Node/Bun 项目那样另外装 Prettier。",
+   "groups": [
+    [
+     "deno fmt"
+    ],
+    [
+     "dprint"
+    ]
+   ],
+   "hosts": [
+    "docs.deno.com"
+   ],
+   "source": "https://docs.deno.com/runtime/reference/cli/fmt/",
+   "quote": "Deno ships with a built-in code formatter based on dprint that auto-formats your code to a consistent style."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（字段名、命令、版本号、组织名）或中英双写；2026-09-24 按第一批运行修过一次过窄的英文原句针（未改主张和来源）。"
+}

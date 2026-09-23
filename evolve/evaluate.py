@@ -22,6 +22,7 @@ report  prints the summary block (grep "^score:") and writes runs/EXP/summary.js
 import hashlib
 import json
 import os
+import random
 import re
 import shutil
 import signal
@@ -43,11 +44,12 @@ DIMS = ["orientation", "taxonomy", "coverage", "doubts", "pitfalls", "accuracy",
 
 sys.path.insert(0, str(REPO / "bench"))
 sys.path.insert(0, str(ROOT))
-from run_arm import cc_prompt, collect, worker_agent  # noqa: E402
+from run_arm import GROK_ENV, cc_prompt, collect, worker_agent, worker_body  # noqa: E402
 from judge import judge_cmd  # noqa: E402
 from mech import mech  # noqa: E402
 
 SKILL_ROOT = ".claude/skills/deep-search"
+GROK = str(Path.home() / ".grok" / "bin" / "grok")
 
 
 def skill_fingerprint(skill_dir):
@@ -75,6 +77,43 @@ def dev_prompt(task, arm):
     return "\n".join(lines) + "\n"
 
 
+def grok_prompt(task, arm):
+    lines = [task.strip(), "", "---", "外层说明（Grok Build，benchmark 固定设置）：",
+             f"- 用 deep-search skill 完成上面的任务：先完整读取 {SKILL_ROOT}/SKILL.md（按需读 references/），严格按它执行。"
+             "工作目录用 ./ds（dir=./ds）。最终文档同时写到 ./report.md。"]
+    if arm.get("params"):
+        lines.append(f"- 参数：{arm['params']}。")
+    lines += [
+        f"- 工人用 spawn_subagent 派出，每次调用都必须显式传 model=\"{arm['worker']}\"（外层固定的工人模型）。"
+        f"这个外层没有 research-worker 类型：把 {SKILL_ROOT}/agents/research-worker.md 的正文（工人规则和笔记格式）整段放进每份简报。"
+        "一轮的所有工人在同一条消息里并行派出，再用一次 get_command_or_subagent_output 等全部返回后收束；不要用 sleep 或定时唤醒来等。",
+        "- 检索：工人用 web_search 找页面，再用 web_fetch 打开一手页面取原句。本次运行没有 pplx-safe。",
+        "- 当前目录之外的文件与本任务无关，不要读。",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def grok_cost(transcript, cwd):
+    """Lead + every subagent session, from `grok usage` (xAI ticks: 1 USD = 1e10)."""
+    text = transcript.read_text(encoding="utf-8", errors="replace") if transcript.exists() else ""
+    if not text:
+        return None
+    try:
+        lead = json.loads(text.splitlines()[0]).get("session_id")
+    except json.JSONDecodeError:
+        return None
+    ticks, found = 0, 0
+    for sid in [lead] + sorted(set(re.findall(r"subagent_id: ([0-9a-f-]{36})", text))):
+        out = subprocess.run([GROK, "usage", sid], cwd=cwd, capture_output=True, text=True,
+                             env=dict(os.environ, **GROK_ENV), stdin=subprocess.DEVNULL).stdout
+        try:
+            ticks += json.loads(out)["session"].get("costUsdTicks", 0)
+            found += 1
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+    return round(ticks / 1e10, 2) if found else None
+
+
 def parse_transcript(path):
     tools, result, http429 = Counter(), {}, 0
     if not path.exists():
@@ -95,9 +134,9 @@ def parse_transcript(path):
                 if isinstance(c, dict) and c.get("type") == "tool_use":
                     tools[c.get("name")] += 1
     return {
-        "spawns": tools["Agent"] + tools["Task"],
-        "followups": tools["SendMessage"],
-        "lead_web": tools["WebSearch"] + tools["WebFetch"],
+        "spawns": tools["Agent"] + tools["Task"] + tools["spawn_subagent"],
+        "followups": tools["SendMessage"] + tools["send_message_to_subagent"],
+        "lead_web": tools["WebSearch"] + tools["WebFetch"] + tools["web_search"] + tools["web_fetch"],
         "lead_tools": dict(tools),
         "cost_usd": result.get("total_cost_usd"),
         "num_turns": result.get("num_turns"),
@@ -118,18 +157,28 @@ def run_one(exp, task_id, rep, skill_dir, arm_id):
     shutil.copytree(skill_dir, work / SKILL_ROOT, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     task = (TASKS / task_id / "task.md").read_text(encoding="utf-8")
     websearch = arm["search"] == "websearch"
-    prompt = dev_prompt(task, arm) if websearch or arm.get("params") else cc_prompt(task)
-    (out / "prompt.md").write_text(prompt, encoding="utf-8")
-    disallow = ["ScheduleWakeup", "CronCreate"] + ([] if websearch else ["WebSearch"])
-    agents = worker_agent(arm["worker"], skill_dir, ("WebSearch",) if websearch else ())
-    cmd = ["claude", "-p", prompt, "--model", arm["lead"], "--output-format", "stream-json", "--verbose",
-           "--dangerously-skip-permissions", "--strict-mcp-config", "--disallowedTools", *disallow,
-           "--settings", json.dumps({"sandbox": {"enabled": False}}),
-           "--agents", json.dumps(agents, ensure_ascii=False),
-           "--max-budget-usd", str(arm["max_budget_usd"])]
     env = dict(os.environ)
     if websearch:
         env["PPLX_WEB_SCRIPT"] = "/nonexistent/pplx_web.py"
+    if arm["harness"] == "grok-build":
+        prompt = grok_prompt(task, arm)
+        desc, body = worker_body(skill_dir)
+        (work / ".grok" / "agents").mkdir(parents=True)
+        (work / ".grok" / "agents" / "research-worker.md").write_text(
+            f"---\nname: research-worker\ndescription: {desc}\nmodel: {arm['worker']}\n---\n\n{body}\n", encoding="utf-8")
+        cmd = [GROK, "-p", prompt, "-m", arm["lead"], "--output-format", "streaming-messages-json",
+               "--permission-mode", "bypassPermissions", "--always-approve", "--cwd", str(work)]
+        env.update(GROK_ENV)
+    else:
+        prompt = dev_prompt(task, arm) if websearch or arm.get("params") else cc_prompt(task)
+        disallow = ["ScheduleWakeup", "CronCreate"] + ([] if websearch else ["WebSearch"])
+        agents = worker_agent(arm["worker"], skill_dir, ("WebSearch",) if websearch else ())
+        cmd = ["claude", "-p", prompt, "--model", arm["lead"], "--output-format", "stream-json", "--verbose",
+               "--dangerously-skip-permissions", "--strict-mcp-config", "--disallowedTools", *disallow,
+               "--settings", json.dumps({"sandbox": {"enabled": False}}),
+               "--agents", json.dumps(agents, ensure_ascii=False),
+               "--max-budget-usd", str(arm["max_budget_usd"])]
+    (out / "prompt.md").write_text(prompt, encoding="utf-8")
     status, t0 = "ok", time.time()
     with open(work / "transcript.jsonl", "w", encoding="utf-8") as fo, \
             open(work / "stderr.txt", "w", encoding="utf-8") as fe:
@@ -150,6 +199,8 @@ def run_one(exp, task_id, rep, skill_dir, arm_id):
     if not (out / "report.md").exists() and (work / "ds" / "report.md").exists():
         shutil.copy2(work / "ds" / "report.md", out / "report.md")
     stats = parse_transcript(out / "transcript.jsonl")
+    if arm["harness"] == "grok-build":
+        stats["cost_usd"] = grok_cost(out / "transcript.jsonl", work)
     m = mech(out, task_id, arm["budget"])
     if status == "ok" and (rc != 0 or stats.get("is_error")):
         status = "error"
@@ -171,26 +222,65 @@ def run_dirs(exp, task_id):
         re.escape(task_id) + r"(-r\d+)?", p.name))
 
 
-def judge_once(judge, model, task_id, doc_a, doc_b):
-    work = Path(tempfile.mkdtemp(prefix="pair-"))
-    shutil.copy2(TASKS / task_id / "task.md", work / "task.md")
-    shutil.copy2(doc_a, work / "A.md")
-    shutil.copy2(doc_b, work / "B.md")
-    prompt = (ROOT / "judge_pair.md").read_text(encoding="utf-8")
-    cmd, env = judge_cmd(judge, model, prompt)
+CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+QUOTE_FRAG = re.compile(r"[「“\"'‘]([^」”\"'’]{6,60})[」”\"'’]")
+
+
+def new_codes():
+    rng = random.SystemRandom()
+    while True:
+        a, b = ("".join(rng.choice(CODE_CHARS) for _ in range(4)) for _ in range(2))
+        if a != b:
+            return sorted([a, b])
+
+
+def attribution(verdict, texts):
+    """Quoted fragments in each doc's errors: found only in that doc (own) vs only in the other doc."""
+    own = other = 0
+    codes = list(texts)
+    for c in codes:
+        o = codes[1] if c == codes[0] else codes[0]
+        for e in (verdict.get("errors") or {}).get(c, []) or []:
+            for fr in QUOTE_FRAG.findall(str(e)):
+                own += fr in texts[c] and fr not in texts[o]
+                other += fr in texts[o] and fr not in texts[c]
+    return own, other
+
+
+def judge_once(judge, model, task_id, doc_x, doc_y, x_first):
+    """Docs are named by random codes (also written on their first line); the judge answers in codes.
+    With A/B file names Grok sometimes swapped the labels. A verdict whose quoted errors mostly belong to
+    the other doc is retried once, then kept but marked suspect (excluded from scores)."""
+    last = None
     for _ in range(2):
+        c1, c2 = new_codes()
+        cx, cy = (c1, c2) if x_first else (c2, c1)
+        work = Path(tempfile.mkdtemp(prefix="pair-"))
+        shutil.copy2(TASKS / task_id / "task.md", work / "task.md")
+        texts = {}
+        for code, doc in ((cx, doc_x), (cy, doc_y)):
+            texts[code] = f"文档编号：{code}\n\n" + doc.read_text(encoding="utf-8")
+            (work / f"{code}.md").write_text(texts[code], encoding="utf-8")
+        prompt = (ROOT / "judge_pair.md").read_text(encoding="utf-8") + (
+            f"\n本次的两份文档：`{c1}.md`、`{c2}.md`（按编号字母序列出，不代表先后或好坏）。\n")
+        cmd, env = judge_cmd(judge, model, prompt)
         try:
             subprocess.run(cmd, cwd=work, capture_output=True, text=True, env=env,
                            stdin=subprocess.DEVNULL, timeout=1500)
         except subprocess.TimeoutExpired:
             continue
-        vp = work / "verdict.json"
-        if vp.exists():
-            try:
-                return json.loads(vp.read_text(encoding="utf-8"))
-            except json.JSONDecodeError:
-                vp.unlink()
-    return None
+        try:
+            v = json.loads((work / "verdict.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        own, other = attribution(v, texts)
+        v["_codes"], v["_attr"] = {"x": cx, "y": cy}, [own, other]
+        last = v
+        if other > own and other >= 2:
+            v["_suspect"] = True
+            continue
+        return v
+    return last
 
 
 def judge_job(job):
@@ -199,23 +289,32 @@ def judge_job(job):
     if not xr.exists() or not yr.exists():
         res = {"score": -2 if not xr.exists() else 2, "note": "missing report", "dims": {}}
     else:
-        a, b = (xr, yr) if order == "xy" else (yr, xr)
-        v = judge_once(j["judge"], j["model"], task_id, a, b)
+        v = judge_once(j["judge"], j["model"], task_id, xr, yr, order == "xy")
         if v is None:
             return None
-        x_label = "A" if order == "xy" else "B"
-        sign = lambda w: 0 if w not in ("A", "B") else (1 if w == x_label else -1)  # noqa: E731
-        strength = int(v.get("strength") or 0) or (1 if v.get("overall") in ("A", "B") else 0)
+        cx, cy = v["_codes"]["x"], v["_codes"]["y"]
+
+        def sign(w):
+            w = str(w or "")
+            return 1 if cx in w and cy not in w else (-1 if cy in w and cx not in w else 0)
+
+        strength = int(v.get("strength") or 0) or (1 if sign(v.get("overall")) else 0)
+        errs = v.get("errors") or {}
         res = {"score": sign(v.get("overall")) * min(strength, 2),
                "dims": {d: sign((v.get("dims") or {}).get(d)) for d in DIMS},
-               "errors_x": (v.get("errors") or {}).get(x_label, []),
-               "errors_y": (v.get("errors") or {}).get("B" if x_label == "A" else "A", []),
-               "reason": v.get("reason"), "raw": v}
+               "errors_x": errs.get(cx, []), "errors_y": errs.get(cy, []),
+               "reason": v.get("reason"), "suspect": bool(v.get("_suspect")), "raw": v}
     res.update({"task": task_id, "x": str(xdir.relative_to(RUNS)), "y": str(ydir.relative_to(RUNS)),
                 "judge": j["judge"], "model": j["model"], "order": order})
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return res
+
+
+def judges_for(exp):
+    for mp in sorted((RUNS / exp).glob("*/meta.json")):
+        return CFG["arms"][json.loads(mp.read_text(encoding="utf-8"))["arm"]].get("judges", CFG["judges"])
+    return CFG["judges"]
 
 
 def judge(exp, vs_list, tasks):
@@ -224,7 +323,7 @@ def judge(exp, vs_list, tasks):
         for xdir in run_dirs(exp, task_id):
             for vs in vs_list:
                 for ydir in run_dirs(vs, task_id):
-                    for j in CFG["judges"]:
+                    for j in judges_for(exp):
                         for order in ("xy", "yx"):
                             dest = (RUNS / exp / "judge" / task_id /
                                     f"{xdir.name}__{vs}-{ydir.name}__{j['judge']}-{order}.json")
@@ -241,7 +340,7 @@ def load_verdicts(exp, vs_list, task_id):
     rows = []
     for p in sorted((RUNS / exp / "judge" / task_id).glob("*.json")):
         r = json.loads(p.read_text(encoding="utf-8"))
-        if r["y"].split("/")[0] in vs_list:
+        if r["y"].split("/")[0] in vs_list and not r.get("suspect"):
             rows.append(r)
     return rows
 

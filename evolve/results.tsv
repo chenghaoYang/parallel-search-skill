@@ -1,1 +1,5 @@
 exp	skill_sha	score	wins	golden	chars_max	cost_usd	minutes	status	description
+e000a	bee3e764c4	0.000	-	0.933	9000	22.18	27.8	baseline	baseline v1.1 run A
+e000b	bee3e764c4	0.167	2/3	0.844	8997	23.77	26.0	baseline	baseline v1.1 run B (A/A vs e000a: per-task -0.5/+0.5/+0.5)
+e001	62bf974a71	0.083	2/3	0.822	7165	22.82	24.9	discard	终审加成稿自洽检查（一屏/家族/坑对照矩阵、重算数字）；py-packaging -0.88，sourcing -15
+e002	965c8432b1	0.500	2/3	0.878	8999	20.30	22.6	keep	边界主张（否定/排他/强制/全称/时间边界）过反证才进一屏和疑点结论；终审不许把没找到来源改成否定句

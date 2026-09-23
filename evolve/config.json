@@ -1,5 +1,5 @@
 {
-  "note": "Fixed evaluation settings for the self-evolution loop (the analogue of autoresearch's constants in prepare.py). Do not edit during a run tag.",
+  "note": "Fixed evaluation settings for the self-evolution loop (the analogue of autoresearch's constants in prepare.py). Do not edit during a run tag. From e003 on the loop runs on the Grok arms (user request 2026-09-24 03:50); dev/flagship are the Claude Code arms used for e000-e002.",
   "arms": {
     "dev": {
       "harness": "claude-code",
@@ -9,7 +9,17 @@
       "params": "--rounds 3 --workers 6 --budget 9000",
       "budget": 9000,
       "max_budget_usd": 20,
-      "timeout_min": 60
+      "timeout_min": 60,
+      "judges": [
+        {
+          "judge": "claude",
+          "model": "opus"
+        },
+        {
+          "judge": "grok",
+          "model": "grok-4.7"
+        }
+      ]
     },
     "flagship": {
       "harness": "claude-code",
@@ -19,14 +29,68 @@
       "params": "",
       "budget": 20000,
       "max_budget_usd": 150,
-      "timeout_min": 150
+      "timeout_min": 150,
+      "judges": [
+        {
+          "judge": "claude",
+          "model": "opus"
+        },
+        {
+          "judge": "grok",
+          "model": "grok-4.7"
+        }
+      ]
+    },
+    "grok": {
+      "harness": "grok-build",
+      "lead": "grok-4.7",
+      "search": "websearch",
+      "params": "--rounds 3 --workers 6 --budget 9000",
+      "budget": 9000,
+      "timeout_min": 75,
+      "judges": [
+        {
+          "judge": "grok",
+          "model": "grok-4.7"
+        }
+      ],
+      "worker": "grok-4.7"
+    },
+    "grok-swe2": {
+      "harness": "grok-build",
+      "lead": "grok-4.7",
+      "search": "websearch",
+      "params": "--rounds 3 --workers 6 --budget 9000",
+      "budget": 9000,
+      "timeout_min": 75,
+      "judges": [
+        {
+          "judge": "grok",
+          "model": "grok-4.7"
+        }
+      ],
+      "worker": "swe-2-shim",
+      "note": "swe-2 via bench/devin_shim.py (devin2api omits usage.output_tokens_details, which Grok Build rejects)"
     }
   },
-  "dev_tasks": ["prompt-caching", "agent-protocols", "py-packaging"],
-  "holdout_tasks": ["js-runtimes", "api-protocol"],
+  "dev_tasks": [
+    "prompt-caching",
+    "agent-protocols",
+    "py-packaging"
+  ],
+  "holdout_tasks": [
+    "js-runtimes",
+    "api-protocol"
+  ],
   "judges": [
-    {"judge": "claude", "model": "opus"},
-    {"judge": "grok", "model": "grok-4.7"}
+    {
+      "judge": "claude",
+      "model": "opus"
+    },
+    {
+      "judge": "grok",
+      "model": "grok-4.7"
+    }
   ],
   "judge_parallel": 10
 }

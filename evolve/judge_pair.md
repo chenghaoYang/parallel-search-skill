@@ -1,7 +1,8 @@
-你是盲评评审。当前目录里有 `task.md`（用户的原始调研任务）和两份匿名文档 `A.md`、`B.md`，是两种方法对同一任务的产出。
+你是盲评评审。当前目录里有 `task.md`（用户的原始调研任务）和两份匿名文档，是两种方法对同一任务的产出。
+两份文档的文件名就是它们的**文档编号**（例如 `K7QX.md`），每份文件第一行也写着 `文档编号：<编号>`。下面一律用文档编号指代文档，不要用 A/B、甲/乙、第一份/第二份。
 你不知道、也不要猜它们来自哪种方法。只用 Read 读文件，不联网。两份都读完再下结论。
 
-按用户任务的要求逐项比较，每项判 `A`、`B` 或 `tie`：
+按用户任务的要求逐项比较，每项填胜出文档的编号，或 `tie`：
 
 | 键 | 比什么 |
 |---|---|
@@ -14,19 +15,20 @@
 | sourcing | 关键事实能否追溯到具体来源（优先官方一手），是否诚实标出缺口和不确定 |
 | concision | 信息密度：冗长、重复、空话更少的一方胜。不要因为更长就判胜 |
 
-最后给 `overall`：哪份对这位用户的真实价值更高。`strength`：1 = 略好，2 = 明显更好；确实分不出高下就 `overall` 写 `tie`、`strength` 写 0。
+最后给 `overall`：哪份对这位用户的真实价值更高（填编号）。`strength`：1 = 略好，2 = 明显更好；确实分不出高下就 `overall` 写 `tie`、`strength` 写 0。
+`errors` 按文档编号分开列：每条错误必须出自该编号的那份文档，并引用它的原文片段（用「」括起来）。
 
-把结果写到 `verdict.json`，格式严格如下（不要写其他文件）：
+把结果写到 `verdict.json`，格式严格如下（示例里的 K7QX、M4TZ 换成真实编号；不要写其他文件）：
 
 ```json
 {
-  "dims": {"orientation": "A", "taxonomy": "tie", "coverage": "B", "doubts": "A", "pitfalls": "tie",
-           "accuracy": "A", "sourcing": "B", "concision": "A"},
-  "overall": "A",
+  "dims": {"orientation": "K7QX", "taxonomy": "tie", "coverage": "M4TZ", "doubts": "K7QX", "pitfalls": "tie",
+           "accuracy": "K7QX", "sourcing": "M4TZ", "concision": "K7QX"},
+  "overall": "K7QX",
   "strength": 1,
-  "errors": {"A": ["确信的错误，一条一句，引用原文片段"], "B": []},
+  "errors": {"K7QX": ["确信的错误，一条一句，引用原文片段「……」"], "M4TZ": []},
   "unsure": ["拿不准的可疑说法"],
-  "reason": "两三句：决定胜负的关键差别"
+  "reason": "两三句：决定胜负的关键差别（用文档编号指代）"
 }
 ```
 

@@ -23,13 +23,13 @@ def line(work):
         return None
     spawns, done = 0, (RUNS / work.parent.name / work.name / "meta.json").exists()
     for raw in t.read_text(encoding="utf-8", errors="replace").splitlines():
-        if '"tool_use"' in raw and '"parent_tool_use_id":null' in raw.replace(" ", ""):
+        if '"tool_use"' in raw and '"parent_tool_use_id":"' not in raw.replace(" ", ""):
             try:
                 ev = json.loads(raw)
             except json.JSONDecodeError:
                 continue
             spawns += sum(1 for c in ev.get("message", {}).get("content", [])
-                          if isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") in ("Agent", "Task"))
+                          if isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") in ("Agent", "Task", "spawn_subagent"))
     ds = work / "ds"
     notes = len(list((ds / "notes").glob("*.md"))) if (ds / "notes").exists() else 0
     snaps = sorted(p.name.replace("report.", "").replace(".md", "") for p in (ds / "snapshots").glob("*.md")) \

@@ -31,6 +31,8 @@ python3 evolve/evaluate.py all eNNN --skill evolve/candidates/eNNN/skill --vs <�
 （要联网并启动嵌套的 `claude -p`：在 Claude Code 沙箱里要关沙箱跑；Grok 评审需要代理时设 `PS_PROXY`。）
 
 对打：每位评审（Opus、Grok）× 两种顺序，各给 `overall ∈ {候选胜, 平, 负}` 和强度 1/2，换算成候选视角的 +2…−2，取平均。
+两份文档用随机的 4 位文档编号命名（文件名和第一行都有），评审按编号作答——用 A/B 命名时 Grok 会把整份判决的标签弄反；
+判决里引用的错误原文如果大多出自另一份文档，这份判决重评一次，仍然对不上就标 `suspect`、不计分。
 开发任务：`prompt-caching`、`agent-protocols`、`py-packaging`。留出任务：`js-runtimes`（dev 臂）、`api-protocol`（`flagship` 臂：Opus 主 → Sonnet 工人），
 只用来检查是否过拟合，**永远不参与取舍**。
 
@@ -109,11 +111,11 @@ LOOP FOREVER：
 1. 看状态：当前分支和提交、`results.tsv`、`journal.md`、`INCUMBENT`。
 2. **出候选（并行）**：派 2 个提案者 agent，各给一个方向（见下），各自产出 `evolve/candidates/eNNN/skill/`（在位 skill 的副本上改）
    和 `hypothesis.md`。一个候选只试一个想法。
-3. **筛选**：每个候选在 2 个开发任务上跑一次（轮换任务对，同一代的候选用同一对），对打在位者。
-   `score ≤ 0` → 弃。
-4. **确认**：筛选 `score > 0` 的候选，再跑剩下的那个开发任务，合并三题重新算 `score`。
-5. **收**：三题合并 `score ≥ 门槛`、`wins ≥ 2/3`、底线全守住 → 把候选复制进 `skills/deep-search/`，在 `CHANGELOG.md` 记一条，
-   `git commit`（「前进」分支），`INCUMBENT` 改成这个实验号。门槛 = max(0.25, A/A 噪声的绝对值)。
+3. **评测**：每个候选在 3 个开发任务上各跑一次，对打在位者的全部参照运行。
+   （原计划先在 2 题上筛选：A/A 显示同一 skill 两次运行单题能差 1.5 分，2 题筛选基本是抛硬币，改成直接跑 3 题。）
+4. **复测**：三题合并 `score` 落在 (+0.15, +0.50) 之间的候选，再把 3 题各跑一次（新实验号 `eNNNr`），两次合并重新算 `score`。
+5. **收**：三题合并 `score ≥ 门槛`、`wins ≥ 2/3`、没有哪题 ≤ −0.5、底线全守住 → 把候选复制进 `skills/deep-search/`，在 `CHANGELOG.md` 记一条，
+   `git commit`（「前进」分支），`INCUMBENT` 改成这个实验号。门槛：只跑一遍 3 题时 +0.50；加上复测、6 次运行合并时 +0.35（A/A 修正后是 +0.58，见 journal）。
    同一代两个候选都过门槛：收分高的；另一个在下一代和新在位者合并后重测。
    分数在 ±门槛之内、但 `skill_chars` 降了 ≥ 10%、底线全守住 → 也收（简化的胜利）。
 6. **弃**：其他情况。在位 skill 不动。
@@ -152,7 +154,7 @@ LOOP FOREVER：
 外部故障（限流、网络、账号配额）不是候选的错：修好环境后重跑，不记成候选的结果。
 
 **留出检查**：每收下 3 个改动、以及结束前，用当前在位者跑一次 `js-runtimes`（dev 臂），对打基线 skill 在同题的运行；
-结束前再跑一次 `api-protocol`（flagship 臂），对打 v1.1 在 bench 第二轮的 `cc-opus-sonnet` 成稿。开发任务上涨、留出任务不涨 = 过拟合信号，写进 journal。
+结束前再跑一次 `api-protocol`（flagship 臂），对打 bench 第二轮的 `cc-opus-sonnet` 成稿（那次用的是 v1.0）。开发任务上涨、留出任务不涨 = 过拟合信号，写进 journal。
 
 **NEVER STOP**：循环开始以后，不要停下来问人要不要继续。人可能在睡觉，他们希望你一直干到约定的截止时间（或被手动打断）。
 想法用完了就更用力地想：重读 skill 和最近的运行日志找新角度，组合之前的近似成功，试更激进的改动（重排流程、删掉整节）。

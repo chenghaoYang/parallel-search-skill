@@ -15,6 +15,22 @@ from pathlib import Path
 STATUSES = ["✅", "⚠", "⚔", "❓", "∅"]
 
 
+def cite_lines(text):
+    """Warn if the source section has no URL, or the lead summary has no [n]."""
+    lines = []
+    marker = re.search(r"^##\s*来源\s*$", text, re.M)
+    body = text[: marker.start()] if marker else text
+    src = text[marker.start() :] if marker else ""
+    if marker is None:
+        lines.append("cite: 没有来源节")
+    elif not re.search(r"https?://", src):
+        lines.append("cite: 来源节没有 https:// URL（每条照抄笔记 src，不要去掉协议或用花括号合并）")
+    screen = re.search(r"^##\s*0\.[^\n]*\n(.*?)(?=^## |\Z)", body, re.M | re.S)
+    if screen and len(screen.group(1).strip()) > 80 and not re.search(r"\[\d+\]", screen.group(1)):
+        lines.append("cite: 一屏看懂没有 [n]（概括句要带矩阵格上的 [n]，[§k] 不算）")
+    return lines
+
+
 def main(argv):
     if len(argv) < 2:
         raise SystemExit("usage: roundstat.py DIR [--budget CHARS]")
@@ -25,8 +41,9 @@ def main(argv):
                    key=lambda p: int(re.search(r"r(\d+)", p.name).group(1)))
     lengths = [(p.name, len(p.read_text(encoding="utf-8"))) for p in snaps]
     report = root / "report.md"
-    if report.exists():
-        lengths.append(("report.md", len(report.read_text(encoding="utf-8"))))
+    report_text = report.read_text(encoding="utf-8") if report.exists() else None
+    if report_text is not None:
+        lengths.append(("report.md", len(report_text)))
     print(f"budget {budget}")
     prev = None
     for name, n in lengths:
@@ -37,6 +54,9 @@ def main(argv):
             flag.append(f"+{n - prev}")
         print(f"  {name}: {n} {' '.join(flag)}")
         prev = n
+    if report_text is not None:
+        for line in cite_lines(report_text):
+            print(line)
 
     grid = root / "grid.md"
     if grid.exists():

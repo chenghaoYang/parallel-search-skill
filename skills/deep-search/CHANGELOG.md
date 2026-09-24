@@ -1,5 +1,23 @@
 # deep-search changelog
 
+## v1.3-dev（2026-09-24，evolve 候选 e003/e004/e005 人工合并；未过盲评，待强臂复验）
+
+因 Grok 余额耗尽、cc-swe2 并发限流，三个已产出候选没走完盲评流程，按证据人工合并：
+
+- **终审核验群（e005）**：审稿工人「对笔记抽查」换成「回原页逐条核验」——主 agent 先列核验清单
+  （一屏/疑点结论全条 + 坑节事实 + 被引用/⚔裁决/单源高影响矩阵格，一 URL 一判定项，按域名聚簇
+  ≤ workers 个核验工人），工人回原页判 confirmed / wrong 附原句 / not-on-page / 走样，主 agent 按判定改稿。
+  起因：e002 审稿 44 条全 supported，盲评仍点名 ≥4 条硬错——笔记本身可能就是错的源头。
+- **引文保全（e003，折进核验的改稿步）**：改句必须留该格 `[n]`、`[§k]` 不算来源、来源节 URL 照抄笔记
+  `src` 完整 `https://`；roundstat.py 新增 `cite:` 检查（无来源节/来源节无 URL/一屏无 [n] 会打出警告）。
+- **等待窗口纪律（e004）**：派出整批→返回之间只许写 `待查：` 并等整批或结束回合，不开页面不取 URL
+  不再 spawn；想开的页面写成下一轮简报。终审回原页只由核验工人做。硬规则改工具级禁令，不约束工人。
+  起因：Grok 主 agent 实测等待窗口自抓 80–170 次页面（transcript `model` 字段实锤），约 2MB 原始页面
+  进主上下文，是 Grok 臂超时主因。
+- **harness.md**：删掉「grok 自己抓更全」的错误记述；Claude Code 段补 `claude -p` 后台等待上限 600s
+  （`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`）和 devin2api/swe-2-max 入口；Grok 段补 SSRF fake-ip 拦域名。
+- **converge.md**：审稿节换核验改稿规则；「同一事实一处写全」补 `[§k]` 不是来源；来源节 URL 照抄规则。
+
 ## v1.2-dev（2026-09-24 起，evolve/ 自进化循环收下的改动）
 
 - **e002 边界主张先反证**（Claude Code dev 臂 +0.50，2/3 题胜；doubts +15、accuracy +9；单次花费反而低 11%）：

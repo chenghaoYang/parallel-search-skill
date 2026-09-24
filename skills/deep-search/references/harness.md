@@ -11,17 +11,22 @@ SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 
 | 纯 Perplexity | 一次 `pplx-safe search` | `--model`（配额用完会被静默回退，见下） | 并行进程 | bench 已测 |
 | Codex CLI / 任意带 shell 的外层 | 一个后台 `codex exec` 或 `claude -p` 进程 | 进程参数 | shell 的 `&` + `wait` | 未测 |
 
-所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等。
+所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等，也不要在这一窗口里自己打开网页。窗口里想到的缺口记进 `log.md` 的 `待查：`，留给下一轮简报。
 
 ## Claude Code（agent team）
 
 - 工人类型：有 `research-worker`（本 skill 的 `agents/research-worker.md`，或启动时 `--agents` 定义）就用它；没有就用
   `general-purpose`，并在 Agent 调用里显式传 `model`（`sonnet` / `opus`），同时把 `references/worker.md` 的规则整段放进简报。
 - 一轮的所有简报放在**同一条消息**里发出多个 Agent 调用，`name` 用 `r<轮>-<slug>`，方便之后 SendMessage 追问。
-- 工人默认在后台跑，完成时会通知你。等整批通知到齐再收束；不要轮询，也不要在等的时候自己去搜。
+- 工人默认在后台跑，完成时会通知你。等整批通知到齐再收束：发出整批后直接结束本回合，不要轮询，也不要在等的时候自己去搜或开页面。要查的记进 `log.md` 的 `待查：`。
 - 等待就是直接结束本回合。不要用 ScheduleWakeup、CronCreate、`sleep` 来「等」：headless（`claude -p`）下，
   主 agent 排了唤醒就会结束会话，进程退出时所有还在跑的工人被杀掉（bench 里 cc-opus-opus 第 1 次就这样丢了 10 个工人）。
   跑 headless 时最好直接用 `--disallowedTools ScheduleWakeup CronCreate`。
+- `claude -p` 还有一个后台等待上限：回合结束、后台工人还没回来时进程最多等 600s 就自杀（stderr 会写
+  `Background tasks still running after 600s; terminating`）。慢工人（几十分钟级）会整批被杀。外层要设
+  `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`（无限等，由外层自己的超时兜底）。
+- 模型可以不走官方额度：`claude-devin` 这类包装把 ANTHROPIC_BASE_URL 指向本地反代（devin2api 出 swe-2-max，
+  lead 和工人同模型）。对 skill 来说外层仍是 Claude Code，行为不变；只是工人和主 agent 的模型可能都和预期不同。
 - 追问优先 SendMessage 给原工人（它保留了读过的页面），比新 spawn 便宜；同样计入 turn。
 - 工人不再往下派工人。范围很大时（> 12 个实体）才考虑两层：给 sub-leader 用 `general-purpose`，让它对自己那一枝跑 R1+收束，
   只交回枝笔记（主张 + 来源），不交成稿。默认不开。
@@ -43,10 +48,9 @@ SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 
 - `spawn_subagent` 没有「选 agent 类型」的参数，项目里的 `.grok/agents/research-worker.md` 能被发现（`grok inspect`），
   但主 agent 选不到它，派出来的是 `general-purpose`。所以：**每次调用都显式传 `model`**，并把 `agents/research-worker.md` 的正文整段放进简报。
 - 用户配置里 `[subagents.models] general-purpose = ...` 会给没传 `model` 的工人定模型；显式 `model` 参数优先。
-- 工人默认后台运行；同一条消息发出整批后，用一次 `get_command_or_subagent_output`（传全部 id、`timeout_ms` 给足）等全部完成。
-- grok-4.7 主 agent 不守「主 agent 不抓网页」：bench 里它派出 R1 的 10 个工人后，等待期间自己 `web_fetch` 了 88 次，R2 又 15 次。
-  结果更全（v1 召回最高），但分工被打破、主上下文里灌进了原始页面。要严格分工，就在外层提示词里再强调一次，或试
-  `--disallowed-tools web_fetch`（是否同时去掉工人的 web_fetch 未验证）。
+- 工人默认后台运行。同一条消息发出整批时，可以同时把 `待查：` 写进 `log.md`。下一条消息只能是一次 `get_command_or_subagent_output`（传这一批全部 id，`timeout_ms` 给足），或者结束回合。这次等待返回之前，不要调用 `web_search`、`web_fetch`，不要用 shell 打开 URL，不要再 `spawn_subagent`。
+- grok-4.7 主 agent 实测会在等待窗口里自己抓页（一次运行 80–170 次 `web_search`/`web_fetch`，约 2MB 原始页面进主上下文），也是 Grok 臂运行超时/报错的主因。等待纪律靠上面的窗口规则，不要靠禁用 `web_fetch` / `web_search`——工人和终审核验工人仍然需要它们找页、取原句、回原页核对。
+- Grok 的 `web_fetch` 带 SSRF 防护，走 fake-ip 代理（198.18.x.x）时一些官方文档域会被拦（实测 api-docs.deepseek.com、docs.x.ai）。工人遇到这种情况按规则记 gaps，写明试过哪些入口，不要凭记忆补主张。
 - Grok Build 不读 macOS 系统代理；网络需要代理时，启动 grok 要显式带上 HTTPS_PROXY / NO_PROXY（bench 的 runner 读 `PS_PROXY`、`PS_NO_PROXY`）。
 - 自定义 Responses 后端的模型（bench 里是一个本地反代提供的 `swe-2`）若返回的 `usage` 缺 `output_tokens_details`，Grok 会报
   `serialization error` 直接失败，主模型和工人都一样。先用一句 `grok -p "reply ok" -m <model>` 试通再排进 bench。

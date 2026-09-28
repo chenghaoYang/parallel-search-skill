@@ -1,0 +1,53 @@
+{
+  "exp": "g000a",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "grok",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "98e621ff42",
+  "skill_chars": 14789,
+  "status": "timeout",
+  "returncode": -15,
+  "minutes": 75.0,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 112,
+  "lead_tools": {
+    "read_file": 50,
+    "list_dir": 1,
+    "run_terminal_command": 110,
+    "write": 30,
+    "spawn_subagent": 11,
+    "get_command_or_subagent_output": 2,
+    "web_fetch": 112,
+    "Web search:": 17,
+    "grep": 8,
+    "search_replace": 175
+  },
+  "cost_usd": 9.63,
+  "num_turns": null,
+  "is_error": null,
+  "terminal_reason": null,
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 8991,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.917,
+    "golden_missed": [
+      "pixi-python-as-conda-package"
+    ],
+    "urls": 59,
+    "traceable": 0.983,
+    "notes": {
+      "files": 11,
+      "claims": 220,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 8991
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/g000a/py-packaging"
+}

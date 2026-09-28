@@ -1,0 +1,78 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「uv 能读(0.12.0+)/导出+hash(0.12.11+)」：uv 0.6.15 的 release notes 已写明初步支持 pylock.toml（uv export -o pylock.toml、uv pip compile 输出、uv pip sync / uv pip install -r pylock.toml），这里的起始版本写错了，会误导用户对 uv 支持程度的判断",
+    "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」：conda 同样能下载安装解释器（conda create -n env python=3.x）；同一条又说「conda/pixi 把 Python 当普通包」，把 pixi 同时归进两边，自相矛盾",
+    "pixi 的 D2 Workspace 一栏写「原生`[environments]`+`[feature]`组合」：这是 pixi 的多环境机制，不是 monorepo 多包 workspace（多包靠根 [workspace] 加子包 [package]，即 pixi-build 路径）",
+    "引用对不上号：pip 一栏「「the package installer for Python」，PyPA维护[22]」里的 [22] 是 Poetry 的 managing-environments 页面；Poetry D7「`run`要求项目内[30]」里的 [30] 是 PDM CHANGELOG"
+  ],
+  "errors_y": [
+    "「唯一有官方 GH Action 的一体化工具」：PDM 同属其 A 族一体化工具，且有官方 pdm-project/setup-pdm；它自己的 D10 表也写了「官方`pdm-project/setup-pdm`」，前后矛盾",
+    "「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」：依赖组本来就写在 [tool.poetry.group.<name>.dependencies]，不在这张表；而且 Poetry 2.2 起已支持 PEP 735 标准 [dependency-groups]，截至 2026-09 这条已过时",
+    "「34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」：分项加起来是 33，不是 34"
+  ],
+  "reason": "QGBN 在用户点名的疑点上更可信：uv 从 0.6.15 起就支持 pylock.toml，并给出具体 release 出处。它对 pixi 多包 workspace 的描述是对的，结论先行，一屏就能看懂；坑点也更好操作，比如 pip 合并所有 index 与 uv first-index 的依赖混淆风险，以及从旧锁文件迁移必须重新 uv lock。V4GW 覆盖更广，字段级细节、CI 缓存对象对比和逐页引用都更好，但在锁文件、workspace、Python 版本这几个核心维度上有多处实质错误，新项目怎么选的建议也放到了第 8 条才出现。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "QGBN",
+      "taxonomy": "V4GW",
+      "coverage": "V4GW",
+      "doubts": "QGBN",
+      "pitfalls": "QGBN",
+      "accuracy": "QGBN",
+      "sourcing": "V4GW",
+      "concision": "tie"
+    },
+    "overall": "QGBN",
+    "strength": 1,
+    "errors": {
+      "QGBN": [
+        "「唯一有官方 GH Action 的一体化工具」：PDM 同属其 A 族一体化工具，且有官方 pdm-project/setup-pdm；它自己的 D10 表也写了「官方`pdm-project/setup-pdm`」，前后矛盾",
+        "「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」：依赖组本来就写在 [tool.poetry.group.<name>.dependencies]，不在这张表；而且 Poetry 2.2 起已支持 PEP 735 标准 [dependency-groups]，截至 2026-09 这条已过时",
+        "「34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」：分项加起来是 33，不是 34"
+      ],
+      "V4GW": [
+        "「uv 能读(0.12.0+)/导出+hash(0.12.11+)」：uv 0.6.15 的 release notes 已写明初步支持 pylock.toml（uv export -o pylock.toml、uv pip compile 输出、uv pip sync / uv pip install -r pylock.toml），这里的起始版本写错了，会误导用户对 uv 支持程度的判断",
+        "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」：conda 同样能下载安装解释器（conda create -n env python=3.x）；同一条又说「conda/pixi 把 Python 当普通包」，把 pixi 同时归进两边，自相矛盾",
+        "pixi 的 D2 Workspace 一栏写「原生`[environments]`+`[feature]`组合」：这是 pixi 的多环境机制，不是 monorepo 多包 workspace（多包靠根 [workspace] 加子包 [package]，即 pixi-build 路径）",
+        "引用对不上号：pip 一栏「「the package installer for Python」，PyPA维护[22]」里的 [22] 是 Poetry 的 managing-environments 页面；Poetry D7「`run`要求项目内[30]」里的 [30] 是 PDM CHANGELOG"
+      ]
+    },
+    "unsure": [
+      "两份都说 Poetry 不能下载解释器（QGBN「Poetry 明确不会（BYOP）」；V4GW「pip、Poetry 要求 Python 已装好」），但 Poetry 2.1 起似乎有实验性的 `poetry python install`",
+      "QGBN「内部 index 缺凭证时会静默回退到公共 PyPI」：uv 现行文档说 first-index 策略遇到 401/403 会停止继续搜索，这条可能已过时，或只适用于未认证时返回 404 的私有源",
+      "conda 26.5 的锁文件支持两份说法相反：QGBN 说「实验性支持原生导出 conda-lock.yaml/兼容 pixi.lock」，V4GW 说「支持读conda-lock.yaml/pixi.lock」；另外 QGBN 把 conda org 下的 conda-lock 称作「第三方」也不太准确",
+      "QGBN 说 pixi 多包 workspace/pixi publish「v0.75.0(2026-07-29)起」进入稳定版，以及 PDM workspace「v2.28.0(2026-06)」，均无法核实",
+      "V4GW pip 一栏「无默认后端」：没有 [build-system] 时，pip 按文档回退到 setuptools.build_meta:__legacy__",
+      "V4GW「Poetry 官方 2019 年就把 monorepo 请求关闭为「not planned」(#936)」：GitHub 的 not planned 状态 2022 年才有，关闭时间存疑",
+      "V4GW「Poetry 解析器…未公开算法名」：Poetry 的 mixology 是公认的 PubGrub 实现；V4GW 写的 Poetry「solver.min-release-age」配置项是否存在无法确认",
+      "QGBN pixi D7「无`[build-system]`默认setuptools」，含义和出处不清"
+    ],
+    "reason": "QGBN 在用户点名的疑点上更可信：uv 从 0.6.15 起就支持 pylock.toml，并给出具体 release 出处。它对 pixi 多包 workspace 的描述是对的，结论先行，一屏就能看懂；坑点也更好操作，比如 pip 合并所有 index 与 uv first-index 的依赖混淆风险，以及从旧锁文件迁移必须重新 uv lock。V4GW 覆盖更广，字段级细节、CI 缓存对象对比和逐页引用都更好，但在锁文件、workspace、Python 版本这几个核心维度上有多处实质错误，新项目怎么选的建议也放到了第 8 条才出现。",
+    "_codes": {
+      "x": "V4GW",
+      "y": "QGBN"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

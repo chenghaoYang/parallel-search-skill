@@ -1,0 +1,3 @@
+[run] c004/agent-protocols: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $0.622019
+[run] c004/prompt-caching: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $1.0183715000000002
+[run] c004/py-packaging: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $0.7834004999999999

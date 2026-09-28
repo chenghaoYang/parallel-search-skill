@@ -1,0 +1,81 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "写「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」，conda 同样会下载并管理 Python，同文 D3 也写了 `create -n env python=3.x`。",
+    "把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」，这是多环境/feature，不是 uv、PDM 那种多包 monorepo。",
+    "D10 总述「均按锁文件哈希做 cache key」，同表 pip 的 key 基于 requirements.txt，conda 还要手配缓存，并非全都按锁文件。",
+    "pip 行「PyPA维护[22]」的 [22] 是 Poetry 的 managing-environments 页面，不是 pip 的出处。",
+    "Poetry 行「run要求项目内[30]」的 [30] 是 PDM CHANGELOG，不能支撑这条 Poetry 结论。"
+  ],
+  "errors_y": [
+    "开头把 uv 说成「唯一有官方 GH Action 的一体化工具」，同文 D10 已写 PDM 有「官方`pdm-project/setup-pdm`」，一体化工具里并非只有 uv。",
+    "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，Poetry 的依赖组在 `[tool.poetry.group.<name>.dependencies]`，不在 `[tool.poetry.dependencies]`。",
+    "坑里写 Poetry「只有社区维护的几个替代品」，GitHub 官方 actions/setup-python 就支持 `cache: poetry`，不是只有社区方案。"
+  ],
+  "reason": "8F72 开头就能选型，矩阵把锁文件、workspace、解释器和构建后端对齐，pixi 多包机制和私有源回退也写到能避坑。GCQW 的页级来源、迁移指南和 CI 缓存对象更全，PEP 751 与 Poetry 2 的版本也更好核对，但把 pixi 多环境当成 monorepo，开头还漏了 conda 的解释器管理。要快速建立正确对比，8F72 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "8F72",
+      "taxonomy": "tie",
+      "coverage": "GCQW",
+      "doubts": "GCQW",
+      "pitfalls": "8F72",
+      "accuracy": "tie",
+      "sourcing": "GCQW",
+      "concision": "8F72"
+    },
+    "overall": "8F72",
+    "strength": 1,
+    "errors": {
+      "8F72": [
+        "开头把 uv 说成「唯一有官方 GH Action 的一体化工具」，同文 D10 已写 PDM 有「官方`pdm-project/setup-pdm`」，一体化工具里并非只有 uv。",
+        "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，Poetry 的依赖组在 `[tool.poetry.group.<name>.dependencies]`，不在 `[tool.poetry.dependencies]`。",
+        "坑里写 Poetry「只有社区维护的几个替代品」，GitHub 官方 actions/setup-python 就支持 `cache: poetry`，不是只有社区方案。"
+      ],
+      "GCQW": [
+        "写「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」，conda 同样会下载并管理 Python，同文 D3 也写了 `create -n env python=3.x`。",
+        "把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」，这是多环境/feature，不是 uv、PDM 那种多包 monorepo。",
+        "D10 总述「均按锁文件哈希做 cache key」，同表 pip 的 key 基于 requirements.txt，conda 还要手配缓存，并非全都按锁文件。",
+        "pip 行「PyPA维护[22]」的 [22] 是 Poetry 的 managing-environments 页面，不是 pip 的出处。",
+        "Poetry 行「run要求项目内[30]」的 [30] 是 PDM CHANGELOG，不能支撑这条 Poetry 结论。"
+      ]
+    },
+    "unsure": [
+      "uv 的 pylock 版本线：8F72 写 0.6.15+ 即可导出/安装，GCQW 写 0.12.0 起可读、0.12.11 起导出并校验 hash，无法判断哪边更符合 2026-09。",
+      "conda 26.5 是 8F72 的「原生导出 conda-lock.yaml」还是 GCQW 的「支持读 conda-lock.yaml/pixi.lock」，动词不同，不能确定谁错。",
+      "8F72 的 pixi v0.75.0（2026-07-29）起多子包稳定、最新 v0.81.0（2026-09-15），版本号和日期无法核实。",
+      "8F72「内部 index 缺凭证会静默回退公共 PyPI、不报错不警告」在 2026-09 是否仍成立、是否完全无警告，不能确定。",
+      "8F72「pip 安装 pylock 不支持 extras/dependency-groups」作者自己标成 weak，无法核实。",
+      "8F72「PEP751 定位是锁文件的 wheel 格式」若按字面理解成 wheel 包格式则不成立，更像比喻，不当硬错。",
+      "GCQW「2019 年就把 monorepo 请求关闭」是否把 #936 的提出年份写成关闭年份，不能确定。",
+      "GCQW 称 Poetry 有「solver.min-release-age」，不能确定这是不是 Poetry 的配置项。",
+      "GCQW 称 poetry 缓存的是「每个项目的 virtualenv 目录而非包缓存」：对象是 virtualenv 大体可信，是否就在项目目录里不能确定。"
+    ],
+    "reason": "8F72 开头就能选型，矩阵把锁文件、workspace、解释器和构建后端对齐，pixi 多包机制和私有源回退也写到能避坑。GCQW 的页级来源、迁移指南和 CI 缓存对象更全，PEP 751 与 Poetry 2 的版本也更好核对，但把 pixi 多环境当成 monorepo，开头还漏了 conda 的解释器管理。要快速建立正确对比，8F72 略胜。",
+    "_codes": {
+      "x": "GCQW",
+      "y": "8F72"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

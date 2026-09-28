@@ -1,0 +1,53 @@
+{
+  "exp": "e001",
+  "task": "agent-protocols",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e001/skill",
+  "skill_sha": "62bf974a71",
+  "skill_chars": 14025,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 29.9,
+  "spawns": 15,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 12,
+    "Read": 26,
+    "Write": 9,
+    "Agent": 15,
+    "ListAgents": 22,
+    "Edit": 10
+  },
+  "cost_usd": 9.936036800000009,
+  "num_turns": 11,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 19,
+  "mech": {
+    "chars": 7165,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.8,
+    "golden_missed": [
+      "anthropic-mcp-oauth",
+      "openai-mcp-responses-support"
+    ],
+    "urls": 0,
+    "traceable": 0.0,
+    "notes": {
+      "files": 14,
+      "claims": 224,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.final.md": 7165,
+      "report.r1.md": 5763,
+      "report.r2.md": 6955,
+      "report.r3.md": 7106
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e001/agent-protocols"
+}

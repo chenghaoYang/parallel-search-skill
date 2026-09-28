@@ -1,0 +1,68 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 0,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "大厂矩阵把 Google 的 MCP 标为「❓ 未查到官方 MCP 支持声明」，开头也写「Google……未查到明确的 MCP 声明」：Google 有一手 MCP 支持（ADK 的 MCP 工具、Gemini CLI 的 MCP server 配置、Google Cloud 官方托管 MCP 服务公告），这一格和摘要结论都有误导。",
+    "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27……并入 AAIF」：按文中自己的日期，2025-06-23→2026-08-27 约 14 个月，不是「近一年」。",
+    "未决节写「ACP-IBM 的鉴权细节……仅二手来源（workos.com 博客）[9]」，但 [9] 是 ibm.com 页面，来源表里也没有 workos.com，引用前后对不上。"
+  ],
+  "errors_y": [
+    "「MCP强制OAuth2.1+PKCE」：MCP 规范写明 authorization 对实现是 OPTIONAL，stdio 应从环境变量取凭据；PKCE 只在实现 HTTP 鉴权时才是必需。",
+    "前后矛盾：要点3说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑4却说「判断兼容性看运行时 `protocolVersion` 协商结果」。",
+    "Google 的 ACP-Zed 一格标为「⚠Gemini CLI首个集成方(Zed页列出)」（图例 ⚠=仅二手）：Gemini CLI 的 ACP 是 Google 自己在 gemini-cli 里实现的，Google Developers Blog 也发过官方公告，属于一手确认。"
+  ],
+  "reason": "B 在协议本体上明显更深（核心抽象、状态、版本演进、成熟度、RFC 级鉴权），坑也更能照着做（按域名和仓库区分两个 ACP、新版 MCP 的升级风险、版本号语义、治理锁定风险），大厂矩阵里 Google 的 MCP 也判对了。A 开头更容易建立全局认知，证据分级更严，SSE 的细分更准，自家变体也选得更贴题；但把 Google 的 MCP 支持判成 ❓ 是核心矩阵的明显失误，协议层对比也偏薄。B 自己也有「MCP 强制 OAuth」和版本协商前后矛盾的错误，所以只算略胜。",
+  "raw": {
+    "dims": {
+      "orientation": "A",
+      "taxonomy": "B",
+      "coverage": "B",
+      "doubts": "tie",
+      "pitfalls": "B",
+      "accuracy": "A",
+      "sourcing": "A",
+      "concision": "tie"
+    },
+    "overall": "B",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "大厂矩阵把 Google 的 MCP 标为「❓ 未查到官方 MCP 支持声明」，开头也写「Google……未查到明确的 MCP 声明」：Google 有一手 MCP 支持（ADK 的 MCP 工具、Gemini CLI 的 MCP server 配置、Google Cloud 官方托管 MCP 服务公告），这一格和摘要结论都有误导。",
+        "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27……并入 AAIF」：按文中自己的日期，2025-06-23→2026-08-27 约 14 个月，不是「近一年」。",
+        "未决节写「ACP-IBM 的鉴权细节……仅二手来源（workos.com 博客）[9]」，但 [9] 是 ibm.com 页面，来源表里也没有 workos.com，引用前后对不上。"
+      ],
+      "B": [
+        "「MCP强制OAuth2.1+PKCE」：MCP 规范写明 authorization 对实现是 OPTIONAL，stdio 应从环境变量取凭据；PKCE 只在实现 HTTP 鉴权时才是必需。",
+        "前后矛盾：要点3说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑4却说「判断兼容性看运行时 `protocolVersion` 协商结果」。",
+        "Google 的 ACP-Zed 一格标为「⚠Gemini CLI首个集成方(Zed页列出)」（图例 ⚠=仅二手）：Gemini CLI 的 ACP 是 Google 自己在 gemini-cli 里实现的，Google Developers Blog 也发过官方公告，属于一手确认。"
+      ]
+    },
+    "unsure": [
+      "ACP-Zed 版本两份冲突：A 写「v1.9.1（2026-09-18）」，B 写「包版本v0.13.6(预1.0)」。",
+      "ACP-IBM 并入 A2A 的日期：A 写 2025-08-27，B 写 2025-08-25。",
+      "B 称 MCP 2026-07-28 版「remove protocol-level sessions and the `Mcp-Session-Id` header」、协议完全无状态，并称 HTTP+SSE 经「SEP-2596」正式弃用、有 12 个月弃用窗口。",
+      "A 称 Gemini CLI「原生 `--acp`」（早期参数是 `--experimental-acp`），以及 Copilot CLI 于 2026-01-28 以 `--acp` 进入 public preview。",
+      "A 写 ACP-IBM 传输是「REST/JSON-RPC over HTTP、WebSocket」：IBM ACP 改版后是 REST 风格，是否支持 WebSocket 存疑。",
+      "B 写 AG-UI 有「17种事件」，早期文档写的是 16 种。",
+      "B 的 D4 状态行：「ACP-Zed 客户端存会话线程」（session/load 由 agent 恢复会话）和「AG-UI 前端只管展示」（RunAgentInput 由客户端带上 state/messages）。",
+      "B 提到的「Claude Managed Agents」和来源「adk.dev/mcp」，以及 A 引用的「learn.chatgpt.com」，不确定是否存在。",
+      "A 称 ACP-Zed 计划移交的独立基金会「不是 AAIF」；B 的 MCP 鉴权列了 RFC 9207。"
+    ],
+    "reason": "B 在协议本体上明显更深（核心抽象、状态、版本演进、成熟度、RFC 级鉴权），坑也更能照着做（按域名和仓库区分两个 ACP、新版 MCP 的升级风险、版本号语义、治理锁定风险），大厂矩阵里 Google 的 MCP 也判对了。A 开头更容易建立全局认知，证据分级更严，SSE 的细分更准，自家变体也选得更贴题；但把 Google 的 MCP 支持判成 ❓ 是核心矩阵的明显失误，协议层对比也偏薄。B 自己也有「MCP 强制 OAuth」和版本协商前后矛盾的错误，所以只算略胜。"
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

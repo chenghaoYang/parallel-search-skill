@@ -1,0 +1,78 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": -1
+  },
+  "errors_x": [
+    "「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」：DeepSeek 官方原话是「几个小时到几天」，UK85 自己的表里也写「数小时到数天」，这里说成 24 小时量级偏低了"
+  ],
+  "errors_y": [
+    "Gemini 命中确认字段写成「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数（在 CachedContent 资源上是缓存体积），不能说明命中；generateContent 的隐式、显式命中都报在 `usageMetadata.cachedContentTokenCount`",
+    "把 Anthropic 归入「自动兜底」双轨（「OpenAI(5.6+)、Anthropic、Gemini、通义千问都双轨」），首条还断言「传言已过时」：Anthropic 的自动缓存仍然要在请求里加顶层 `cache_control`，J66A 自己也写了「顶层 `cache_control`」，所以在「要不要改代码」这条轴上它并没有零配置的自动路径",
+    "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认是隐式缓存，断点只是可选项，这和本文自己说的「可选显式」矛盾",
+    "分类里写「透传（自身无缓存语义）：OpenRouter；阿里云百炼代理的第三方模型也算此类的变体」，但第3节又说这些模型「遵循百炼自己的隐式缓存规则和计费，不是原厂规则」：百炼有自己的缓存语义，不算透传，前后自相矛盾"
+  ],
+  "reason": "UK85 在用户最核心的疑问上答对了：Anthropic 仍然至少要加一个顶层 cache_control，「OpenAI/DeepSeek 自动、Anthropic 要手动」这个格局基本还成立。它的「默认会不会缓存」主轴加「是否另有显式缓存」副轴的分类也清楚、贯穿全文。J66A 宣称传言已过时，把 Anthropic 归为「自动兜底」，Gemini 命中字段写错，OpenRouter 行也与自身说法矛盾；它在覆盖面（Azure/Bedrock/百炼代理）和逐条引用上更强，但这些错误正好落在用户最关心的地方，所以 UK85 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "UK85",
+      "taxonomy": "UK85",
+      "coverage": "J66A",
+      "doubts": "UK85",
+      "pitfalls": "tie",
+      "accuracy": "UK85",
+      "sourcing": "J66A",
+      "concision": "J66A"
+    },
+    "overall": "UK85",
+    "strength": 1,
+    "errors": {
+      "J66A": [
+        "Gemini 命中确认字段写成「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数（在 CachedContent 资源上是缓存体积），不能说明命中；generateContent 的隐式、显式命中都报在 `usageMetadata.cachedContentTokenCount`",
+        "把 Anthropic 归入「自动兜底」双轨（「OpenAI(5.6+)、Anthropic、Gemini、通义千问都双轨」），首条还断言「传言已过时」：Anthropic 的自动缓存仍然要在请求里加顶层 `cache_control`，J66A 自己也写了「顶层 `cache_control`」，所以在「要不要改代码」这条轴上它并没有零配置的自动路径",
+        "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认是隐式缓存，断点只是可选项，这和本文自己说的「可选显式」矛盾",
+        "分类里写「透传（自身无缓存语义）：OpenRouter；阿里云百炼代理的第三方模型也算此类的变体」，但第3节又说这些模型「遵循百炼自己的隐式缓存规则和计费，不是原厂规则」：百炼有自己的缓存语义，不算透传，前后自相矛盾"
+      ],
+      "UK85": [
+        "「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」：DeepSeek 官方原话是「几个小时到几天」，UK85 自己的表里也写「数小时到数天」，这里说成 24 小时量级偏低了"
+      ]
+    },
+    "unsure": [
+      "Kimi 是否自动缓存，两份结论相反：J66A「Kimi 反而是纯手动，必须传参才缓存」，UK85「Kimi[6] | 全自动」；我印象里 2025 年 K2 是自动缓存，更接近 UK85，但无法核实 2026 年的现行文档",
+      "DeepSeek 命中折扣：UK85「命中比未命中低95~98%」，J66A 是 0.1x；J66A 用的「$0.014 vs $0.14/M」出自 2024 年公告，拿来代表现价可能过时",
+      "UK85 写 Gemini「implicit 24h自动清」，没看到 ai.google.dev 上有对应说法；Vertex 文档只说缓存数据最多保存 24 小时，不是保证的 TTL",
+      "UK85 说 `prompt_cache_retention`「跟是否复用无关」，说法可疑",
+      "J66A 写 Kimi「按标准价写入，2次命中回本」：写入不加价就谈不上回本，前后不自洽",
+      "J66A 写通义千问最小门槛「1024 tok，两模式相同」：隐式模式的门槛可能更低",
+      "J66A 把「同前缀+`prompt_cache_key`超约15次/分钟可能miss」列为 Azure 相对原生 OpenAI 的差异，但 OpenAI 原生文档也有同样表述",
+      "两份都写 Gemini 显式缓存存储费「$0.5~1.0/M token/小时」；我印象中 Pro 档是 $4.50/M/h",
+      "智谱「五折」的出处：J66A 说是「坊间」，UK85 说是官方指南原文",
+      "J66A 的「AWS Bedrock·GPT-5.6」、Bedrock 上 Claude 的 Implicit 模式，以及智谱「另计存储费(元/M/小时)」，都无法核实",
+      "UK85 引用 OpenRouter「最低30分钟」TTL（它自己在第5节也标了存疑）",
+      "Anthropic 最小门槛分档：J66A 含 2048，UK85 没有"
+    ],
+    "reason": "UK85 在用户最核心的疑问上答对了：Anthropic 仍然至少要加一个顶层 cache_control，「OpenAI/DeepSeek 自动、Anthropic 要手动」这个格局基本还成立。它的「默认会不会缓存」主轴加「是否另有显式缓存」副轴的分类也清楚、贯穿全文。J66A 宣称传言已过时，把 Anthropic 归为「自动兜底」，Gemini 命中字段写错，OpenRouter 行也与自身说法矛盾；它在覆盖面（Azure/Bedrock/百炼代理）和逐条引用上更强，但这些错误正好落在用户最关心的地方，所以 UK85 略胜。",
+    "_codes": {
+      "x": "UK85",
+      "y": "J66A"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

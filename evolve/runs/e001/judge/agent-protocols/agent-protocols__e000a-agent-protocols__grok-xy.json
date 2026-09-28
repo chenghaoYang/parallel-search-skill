@@ -1,0 +1,74 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "MCP 日期版本链的起点写成并不存在的协议版本 2024-10-07；公开规范首版是 2024-11-05（同文坑1也写到这一版）。原文：「2024-10-07 → 2026-07-28」"
+  ],
+  "errors_y": [
+    "把删除 Mcp-Session-Id 写成连握手一起去掉，并称 protocolVersion 改放在 _meta、不再协商；版本协商在 initialize 的 protocolVersion 上，不在 _meta，同文坑4仍要求看协商结果。原文：「不只去掉握手，连会话 header 都删了；每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」",
+    "把 MCP 鉴权写成一律强制 OAuth 2.1；规范是启用 HTTP 授权时必须走 OAuth 2.1，stdio 等本地连接并不强制鉴权。原文：「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」",
+    "把 2025-03-26 已写入规范的 HTTP+SSE deprecated 说成仅仅软弃用，要到 2026-07-28 才算正式 Deprecated。原文：「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」",
+    "MCP 日期版本链的起点写成并不存在的协议版本 2024-10-07；公开规范首版是 2024-11-05。原文：「日期版：2024-10-07→2026-07-28」"
+  ],
+  "reason": "F2UL 把用户点名的两件疑事讲成能直接用的结论：IBM ACP 与 Zed ACP 互不继承，旧的 HTTP+SSE 已废弃，Streamable HTTP 仍在单次响应里用 SSE；四端分类、厂商变体和选型坑也更贴近任务。HE5K 的 D1–D10、对象字段和逐条出处更细，并写清了 A2UI 与 AG-UI 的关系，但开头把会话头删除写成无握手、protocolVersion 进入 _meta、不再协商，和 initialize 协商以及同文坑4冲突。对这位用户，F2UL 略高一档。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "F2UL",
+      "taxonomy": "HE5K",
+      "coverage": "HE5K",
+      "doubts": "F2UL",
+      "pitfalls": "F2UL",
+      "accuracy": "F2UL",
+      "sourcing": "HE5K",
+      "concision": "tie"
+    },
+    "overall": "F2UL",
+    "strength": 1,
+    "errors": {
+      "F2UL": [
+        "MCP 日期版本链的起点写成并不存在的协议版本 2024-10-07；公开规范首版是 2024-11-05（同文坑1也写到这一版）。原文：「2024-10-07 → 2026-07-28」"
+      ],
+      "HE5K": [
+        "把删除 Mcp-Session-Id 写成连握手一起去掉，并称 protocolVersion 改放在 _meta、不再协商；版本协商在 initialize 的 protocolVersion 上，不在 _meta，同文坑4仍要求看协商结果。原文：「不只去掉握手，连会话 header 都删了；每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」",
+        "把 MCP 鉴权写成一律强制 OAuth 2.1；规范是启用 HTTP 授权时必须走 OAuth 2.1，stdio 等本地连接并不强制鉴权。原文：「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」",
+        "把 2025-03-26 已写入规范的 HTTP+SSE deprecated 说成仅仅软弃用，要到 2026-07-28 才算正式 Deprecated。原文：「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」",
+        "MCP 日期版本链的起点写成并不存在的协议版本 2024-10-07；公开规范首版是 2024-11-05。原文：「日期版：2024-10-07→2026-07-28」"
+      ]
+    },
+    "unsure": [
+      "HE5K 称 2026-07-28 官方原文 remove protocol-level sessions、协议级完全无状态；2025-06-18 仍是可选会话，该日期后是否整段删除会话无法在此确认",
+      "弃用窗口冲突：HE5K「至少12个月弃用窗口」与 F2UL「相关 SEP 转正后 3 个月即可移除」",
+      "A2A 转入 AAIF 的日期冲突：HE5K「2026-08-27」与 F2UL「2026-08-17 官宣」",
+      "ACP-Zed 治理与版本冲突：HE5K「Zed+JetBrains联合治理」「包版本v0.13.6(预1.0)」对 F2UL「独立 Apache-2.0」「v1 稳定(2026-06-24)；v2 alpha」",
+      "大厂 ACP/AG-UI 格子互相矛盾：F2UL 写 OpenAI AG-UI「In Progress」、Anthropic ACP「明确拒绝」、Google ACP「✅」；HE5K 这三格分别是未列入集成列表、Zed 页列出 Claude、Zed 页列出 Gemini CLI",
+      "F2UL「ACP 撞名撞了三次」未把同文列出的 OpenAI/Stripe Agentic Commerce Protocol 算进撞名；该协议在业界常被缩写成 ACP，但是否官方缩写不能百分之百坐实",
+      "F2UL「Streamable HTTP 仍用 SSE 做单次请求内的流式响应，只是取消跨请求恢复」与 2025-03-26 起可选的会话内 Last-Event-ID 恢复是否已被 2026-07-28 取消，不能确定",
+      "HE5K 称 AG-UI 是承载 A2UI 的传输协议；两者互补大致可信，但是否就是官方层级定义不能完全确认"
+    ],
+    "reason": "F2UL 把用户点名的两件疑事讲成能直接用的结论：IBM ACP 与 Zed ACP 互不继承，旧的 HTTP+SSE 已废弃，Streamable HTTP 仍在单次响应里用 SSE；四端分类、厂商变体和选型坑也更贴近任务。HE5K 的 D1–D10、对象字段和逐条出处更细，并写清了 A2UI 与 AG-UI 的关系，但开头把会话头删除写成无握手、protocolVersion 进入 _meta、不再协商，和 initialize 协商以及同文坑4冲突。对这位用户，F2UL 略高一档。",
+    "_codes": {
+      "x": "F2UL",
+      "y": "HE5K"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

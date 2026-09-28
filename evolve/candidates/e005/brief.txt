@@ -1,0 +1,13 @@
+你是 deep-search skill 自进化实验的提案者。实验号 e005，方向：核验群：把 e002 的「边界主张反证」推广成系统性的逐格/逐条核验。证据：e000a/e000b 的 A/A 判决和 e001/e002 的判决 JSON 里，被点名的硬错仍然集中在具体事实（版本号、字段名、计费数字、支持/不支持）；e002 只覆盖进一屏和疑点结论的边界主张，矩阵里其余 ✅ 格从没被独立核验过，审稿工人只抽查 20 条。想法：给核验单独留一层 spawn——对矩阵关键格、一屏每条、用户点名疑点的结论，派只找反例/对原文的核验工人（一簇一格一工人，简报带原句和 URL），核过才进成稿。注意额度：--rounds 3 --workers 6 不变，核验工人要和扩展工人抢同一预算，所以要想清楚核验放在哪一轮、核验对象怎么挑（不能全核）。别做成又一条口号：要给出可执行的挑选规则和简报形态，并且和现有反证简报、终审审稿的分工划清——谁查什么、查完谁改稿。。当前目录就是仓库（精简副本）。
+先读 evolve/program.md（尤其「不能做什么」），再读 evolve/results.tsv、evolve/journal.md、skills/deep-search/ 全部文件。
+证据：evolve/runs/<实验号>/<任务>/（report.md、prompt.md、ds/log.md、ds/grid.md、ds/brief.md、ds/notes/、ds/audit*.md、ds/snapshots/、meta.json），
+盲评判决 evolve/runs/<实验号>/judge/**.json（reason、errors_x、errors_y、dims；x 是该实验自己的运行）。这次可用的实验号：e000a、e000b、e001、e002。
+任务原文在 bench/tasks/<任务>/task.md。
+运行设置（固定，不能改）：Grok Build，grok-4.7 主 agent → grok-4.7 或 swe-2 工人，web_search + web_fetch，参数 --rounds 3 --workers 6 --budget 9000。
+
+要做的：
+1. 从证据里找一个具体失分点或浪费（写出是哪几次运行、哪一段、判决里哪条理由），提出一个可检验的假设。不要重复 journal.md 里已经弃掉的想法，除非你能说清这次有什么不同。
+2. 执行 cp -R skills/deep-search evolve/candidates/e005/skill，只改这个副本。改动围绕这一个想法，越小越好；删规则也是合法的实验。
+3. 不写任何领域事实或任务相关提示（产品名、厂商名、字段名、结论），skill 必须对任意调研题都成立。不改其他任何文件。
+4. 写 evolve/candidates/e005/hypothesis.md：证据 → 假设 → 改动（文件、大意）→ 预期变好的维度/指标 → 风险。
+最后回复 ≤ 6 行：一句话描述（会写进 results.tsv）、改了哪些文件、预期效果。

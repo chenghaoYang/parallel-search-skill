@@ -1,0 +1,56 @@
+{
+  "exp": "e000b",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "bee3e764c4",
+  "skill_chars": 13564,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 22.3,
+  "spawns": 13,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 8,
+    "Read": 22,
+    "Write": 8,
+    "Agent": 13,
+    "ListAgents": 11,
+    "Edit": 4
+  },
+  "cost_usd": 7.183813099999998,
+  "num_turns": 4,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 14,
+  "mech": {
+    "chars": 6311,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.417,
+    "golden_missed": [
+      "openai-implicit-baseline",
+      "anthropic-cache-ttl",
+      "gemini-implicit-default",
+      "deepseek-disk-cache-automatic",
+      "deepseek-hit-miss-fields",
+      "kimi-automatic-ttl",
+      "qwen-implicit-cache"
+    ],
+    "urls": 21,
+    "traceable": 1.0,
+    "notes": {
+      "files": 12,
+      "claims": 170,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 4795,
+      "report.r2.md": 6311
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e000b/prompt-caching"
+}

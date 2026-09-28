@@ -1,0 +1,79 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」，矩阵「OpenAI GPT-5.5及更早」一行的命中价也写 0.5x：GPT-5/5.1/5.2 的缓存输入价本来就是 0.1x（GPT-5 为 $1.25→$0.125），GPT-4.1 是 0.25x，只有 GPT-4o 那一代才是 0.5x",
+    "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步」：2025-03-13 那次更新是命中时自动回溯最长的已缓存前缀，断点仍要打在 content block 上。顶层 cache_control 自动放置断点并不是那天上线的",
+    "「其余厂商是分钟/小时级精确时长」：Gemini implicit 和通义千问 implicit 都没有承诺精确 TTL，和它自己矩阵里的「implicit系统自动」「implicit∅未给精确值」相矛盾"
+  ],
+  "errors_y": [
+    "把 Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数（在 CachedContent 资源里表示缓存大小），不能说明是否命中；命中数看 usageMetadata.cachedContentTokenCount",
+    "「OpenAI(5.6+)、Anthropic、Gemini、通义千问都双轨」并定义为「自动兜底+手动可选」：Anthropic 的自动缓存仍要在请求顶层加 cache_control 才生效，并不存在不改代码就能用的默认兜底。这与它自己的分类轴「要不要改代码」、以及第0节第7条「仍要自己加 `cache_control`」都对不上",
+    "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认就是隐式缓存，断点只是可选项，和它第0节写的「可选显式」互相矛盾"
+  ],
+  "reason": "JWDK 的矩阵每格都标了官方来源，命中字段、导致失效的参数、Azure/Bedrock/百炼变体都细到字段和数值，列出的坑也更能直接照做。YT6X 的 F1/F2/F3 分类更准确，「Anthropic 仍需至少一个顶层 cache_control」这个判断更贴合用户的疑问，行文也更简洁；但它的矩阵和变体表没有引用，Anthropic 和千问缺命中字段名，旧款 OpenAI 的 0.5x 也写错了。JWDK 把 Anthropic 归进「自动兜底」、Gemini 显式命中字段写错，抵消了一部分优势，所以只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "YT6X",
+      "coverage": "JWDK",
+      "doubts": "YT6X",
+      "pitfalls": "JWDK",
+      "accuracy": "tie",
+      "sourcing": "JWDK",
+      "concision": "YT6X"
+    },
+    "overall": "JWDK",
+    "strength": 1,
+    "errors": {
+      "JWDK": [
+        "把 Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数（在 CachedContent 资源里表示缓存大小），不能说明是否命中；命中数看 usageMetadata.cachedContentTokenCount",
+        "「OpenAI(5.6+)、Anthropic、Gemini、通义千问都双轨」并定义为「自动兜底+手动可选」：Anthropic 的自动缓存仍要在请求顶层加 cache_control 才生效，并不存在不改代码就能用的默认兜底。这与它自己的分类轴「要不要改代码」、以及第0节第7条「仍要自己加 `cache_control`」都对不上",
+        "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认就是隐式缓存，断点只是可选项，和它第0节写的「可选显式」互相矛盾"
+      ],
+      "YT6X": [
+        "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」，矩阵「OpenAI GPT-5.5及更早」一行的命中价也写 0.5x：GPT-5/5.1/5.2 的缓存输入价本来就是 0.1x（GPT-5 为 $1.25→$0.125），GPT-4.1 是 0.25x，只有 GPT-4o 那一代才是 0.5x",
+        "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步」：2025-03-13 那次更新是命中时自动回溯最长的已缓存前缀，断点仍要打在 content block 上。顶层 cache_control 自动放置断点并不是那天上线的",
+        "「其余厂商是分钟/小时级精确时长」：Gemini implicit 和通义千问 implicit 都没有承诺精确 TTL，和它自己矩阵里的「implicit系统自动」「implicit∅未给精确值」相矛盾"
+      ]
+    },
+    "unsure": [
+      "Kimi 的触发方式两份说法相反：JWDK 写「Kimi 反而是纯手动，必须传参才缓存」，YT6X 写「F1默认,mode仅含implicit」。Kimi K2 系列在 2025 年是自动缓存，2026 年的文档无法核实",
+      "JWDK 的 DeepSeek「0.1x（$0.014 vs $0.14/M）」出自 2024-08 公告，可能是旧价（V3.2 为 $0.028/$0.28）；YT6X 的「约0.02x」出自 2026-09 公告，无法核实",
+      "智谱命中价：JWDK 写「≈0.25x（2元 vs 8元/M，GLM-5.3）」，YT6X 写「约0.5x」；TTL：JWDK 写「∅ 官方未写」，YT6X 写「5min自动刷新」",
+      "OpenAI GPT-5.6+ 的 TTL：JWDK 写「≥30分钟；2026-05后非ZDR组织默认24h」，YT6X 写「固定30m(仅此值)」。另外 JWDK 的「1.25x标准输入价」写入费没有按模型区分，而旧款模型写缓存一直不收费",
+      "两份都说 Gemini 显式缓存存储费约 $0.50/M/小时、2026 年底以后上涨，和已知的 $1.00–4.50/M/小时对不上，可能是之后调了价",
+      "两份的 Gemini 命中字段都写 usage.total_cached_tokens，这是 Interactions API 的口径；generateContent 用的是 usageMetadata.cachedContentTokenCount，两份都没说明",
+      "JWDK 写通义千问「1024 tok，两模式相同」，印象中隐式模式的门槛是 256",
+      "JWDK 的「OpenAI 改 `text.format`(Structured Outputs)、`reasoning.effort`、`text.verbosity` 会重写隐藏前缀指令」和「要用`session_id`做粘性路由」都无法核实",
+      "JWDK 写 Kimi「按标准价写入，2次命中回本」：按标准价写入就谈不上回本，前后矛盾，可能漏写了 1h 档的写入加价",
+      "YT6X 说「1小时档写入价接近5分钟档的2倍」，对 Anthropic 来说实际是 2/1.25=1.6 倍，说法偏宽",
+      "以下都超出我能核实的范围：Anthropic 0.05x/0.025x 的档位、顶层自动缓存 2026-02-19 的上线日期、Bedrock 上 Claude 的 Implicit 缓存、Bedrock 上的 GPT-5.6、Azure 在 GPT-5.6+ 上的细节"
+    ],
+    "reason": "JWDK 的矩阵每格都标了官方来源，命中字段、导致失效的参数、Azure/Bedrock/百炼变体都细到字段和数值，列出的坑也更能直接照做。YT6X 的 F1/F2/F3 分类更准确，「Anthropic 仍需至少一个顶层 cache_control」这个判断更贴合用户的疑问，行文也更简洁；但它的矩阵和变体表没有引用，Anthropic 和千问缺命中字段名，旧款 OpenAI 的 0.5x 也写错了。JWDK 把 Anthropic 归进「自动兜底」、Gemini 显式命中字段写错，抵消了一部分优势，所以只是略胜。",
+    "_codes": {
+      "x": "YT6X",
+      "y": "JWDK"
+    },
+    "_attr": [
+      13,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

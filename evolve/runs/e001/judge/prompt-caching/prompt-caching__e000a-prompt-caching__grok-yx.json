@@ -1,0 +1,68 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": 0,
+    "concision": 0
+  },
+  "errors_x": [],
+  "errors_y": [
+    "把 Gemini 显式缓存的命中字段写成「显式`usageMetadata.totalTokenCount`」；totalTokenCount 是本次总 token，确认命中应看 cachedContentTokenCount。",
+    "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，与同文 OpenAI 行的「可选」断点矛盾；OpenAI 隐式缓存默认生效，该参数不是必需。",
+    "写「显式：generateContent创建`cachedContents`再引用」；显式缓存是先用 cachedContents 接口创建资源，再交给 generateContent 引用。",
+    "Kimi 写「按标准价写入，2次命中回本」，同文又给命中价 0.1x（$0.30 vs $3.00/M）；写入不加价时第一次命中就已经低于原价。"
+  ],
+  "reason": "RGCS 用「普通请求不加缓存参数会不会命中」直接回答用户点名的自动/手动疑点，并把这条轴贯彻到分类、计费和失效处理。AP7F 多覆盖了 Azure、Bedrock、百炼代理和更多参数名，来源也更拆得开。拉开差距的是可执行性：AP7F 把 Gemini 显式命中记到 totalTokenCount，并把 OpenRouter 上的 OpenAI 写成仍须断点，按文操作会查错字段或加错参数，因此 RGCS 对这位用户略好一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "RGCS",
+      "taxonomy": "RGCS",
+      "coverage": "AP7F",
+      "doubts": "RGCS",
+      "pitfalls": "tie",
+      "accuracy": "RGCS",
+      "sourcing": "tie",
+      "concision": "tie"
+    },
+    "overall": "RGCS",
+    "strength": 1,
+    "errors": {
+      "AP7F": [
+        "把 Gemini 显式缓存的命中字段写成「显式`usageMetadata.totalTokenCount`」；totalTokenCount 是本次总 token，确认命中应看 cachedContentTokenCount。",
+        "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，与同文 OpenAI 行的「可选」断点矛盾；OpenAI 隐式缓存默认生效，该参数不是必需。",
+        "写「显式：generateContent创建`cachedContents`再引用」；显式缓存是先用 cachedContents 接口创建资源，再交给 generateContent 引用。",
+        "Kimi 写「按标准价写入，2次命中回本」，同文又给命中价 0.1x（$0.30 vs $3.00/M）；写入不加价时第一次命中就已经低于原价。"
+      ],
+      "RGCS": []
+    },
+    "unsure": [
+      "Kimi 现网是全自动（RGCS）还是必须传 prompt_cache_options/cache_control（AP7F），两边引用同一指南却结论相反",
+      "Gemini 隐式 TTL：RGCS 写「implicit 24h自动清」，AP7F 写官方「无法定义、不保证」，且 RGCS 一屏看懂把 DeepSeek 也收进「小时到 24 小时量级」，同文细表又写「数小时到数天」",
+      "DeepSeek 命中折扣是 AP7F 的 0.1x（$0.014 vs $0.14）还是 RGCS 的分档低 95～98%",
+      "智谱「50%」是官方指南原文（RGCS）还是坊间说法（AP7F），以及是否另按小时收存储费（仅 AP7F）",
+      "OpenAI 命中字段是 input_tokens_details（RGCS）还是 prompt_tokens_details（AP7F），可能只是 Responses 与 Chat 两套 API",
+      "RGCS 称 prompt_cache_retention「跟是否复用无关」，OpenRouter 行又写 OpenAI 无写入溢价，与直连 1.25x 是否同时成立不确定"
+    ],
+    "reason": "RGCS 用「普通请求不加缓存参数会不会命中」直接回答用户点名的自动/手动疑点，并把这条轴贯彻到分类、计费和失效处理。AP7F 多覆盖了 Azure、Bedrock、百炼代理和更多参数名，来源也更拆得开。拉开差距的是可执行性：AP7F 把 Gemini 显式命中记到 totalTokenCount，并把 OpenRouter 上的 OpenAI 写成仍须断点，按文操作会查错字段或加错参数，因此 RGCS 对这位用户略好一筹。",
+    "_codes": {
+      "x": "RGCS",
+      "y": "AP7F"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

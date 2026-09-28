@@ -1,0 +1,92 @@
+diff -ruN a/skills/deep-search/SKILL.md b/skills/deep-search/SKILL.md
+--- a/skills/deep-search/SKILL.md	2026-09-24 02:53:25
++++ b/skills/deep-search/SKILL.md	2026-09-24 04:17:01
+@@ -85,8 +85,8 @@
+ 
+ ## 终审与停止
+ 
+-1. 派 1 个（范围大时 2 个）审稿工人：只给它 `report.md` 和 `notes/`，要它抽查 ≥ 20 条具体主张（端点、字段名、参数、数值），对照笔记里的 URL 和摘录判定 `supported / unsupported / contradicted`，必要时回到原页确认。
+-2. 按审稿结果改稿：删掉或降级没有支撑的句子，改正矛盾的句子。这一步不再做新调研。「没找到来源」不等于「不支持」：没有支撑的正面主张只能删掉或标「未核实」，不许改写成相反的否定句。
++1. 派 1 个（范围大时 2 个）审稿工人：只给它 `report.md`、`notes/` 和 `references/converge.md` 的审稿标准。抽查 ≥ 20 条具体主张（端点、字段名、参数、数值），对照笔记里的 URL 和摘录判定 `supported / unsupported / contradicted`，必要时回到原页确认；并按该标准做自洽对照（一屏看懂、坑逐条对矩阵，重算条数和数字）。
++2. 按审稿结果改稿：删掉或降级没有支撑的句子，改正矛盾的句子；自洽对不上的概括句改成和矩阵、笔记原句一致。这一步不再做新调研。「没找到来源」不等于「不支持」：没有支撑的正面主张只能删掉或标「未核实」，不许改写成相反的否定句。改句必须留下该格原来的 `[n]`，`[§k]` 不能代替 `[n]`；不许把来源节的 URL 缩写或删掉。改完跑 `roundstat.py`，若有 `cite:`，就按笔记 `src` 补回完整 `https://` 和缺的 `[n]` 再交。
+ 3. 最后一步必须是收束，不能停在扩展。成稿末尾保留「未决与置信度」一节，写清还空着的格子。
+ 
+ ## 硬规则
+diff -ruN a/skills/deep-search/references/converge.md b/skills/deep-search/references/converge.md
+--- a/skills/deep-search/references/converge.md	2026-09-24 02:52:10
++++ b/skills/deep-search/references/converge.md	2026-09-24 04:18:44
+@@ -38,7 +38,7 @@
+ 
+ - 先分家族，再比细节。家族按「分类轴」划（例如：请求形状继承自谁、状态放在哪一端）。分类轴要能解释矩阵里大部分差异；解释不了就换轴，并在 `log.md` 记下换轴理由。
+ - 维度彼此正交，名字是问题而不是名词堆（「对话历史谁来保存？」好过「状态」）。
+-- 同一事实只在一个地方写全，其他地方只引用那一节。
++- 同一事实只在一个地方写全。别处可以标「见 §k」，但句中的具体事实仍带原处的 `[n]`；`[§k]` 不是来源。
+ 
+ ## 长度控制（不许越改越长）
+ 
+@@ -50,7 +50,8 @@
+ 
+ ## 引用
+ 
+-- 正文每个具体事实后面带 `[n]`，`[n]` 指向来源节。来源节里的 URL 必须来自笔记的 `src`。
++- 正文每个具体事实后面带 `[n]`，`[n]` 指向来源节。来源节里的 URL 必须来自笔记的 `src`。「一屏看懂」同样如此，不能只标 `[§k]`。
++- 来源节里的地址照抄笔记 `src` 的完整 `https://` URL。不要去掉协议，不要用花括号或省略号把几条合成一条。重写时可以删掉正文已不再引用的条目，不能把还在引用的 URL 写成缩写。
+ - 只有二手来源支撑的事实加「（二手）」，或放进第 5 节。
+ - 笔记里互相冲突的，正文写能确认的那一边，另一边和原因写进第 5 节。
+ 
+@@ -61,5 +62,6 @@
+ 1. 均匀抽取 ≥ 20 条具体主张（端点、字段、header、枚举、base URL、数值、行为规则），覆盖每一节。
+ 2. 每条判定：`supported`（笔记里有 official 主张 + 原句支撑）、`weak`（只有 secondary 或原句只部分支撑）、`unsupported`（笔记里找不到）、`contradicted`（与笔记或原页相反）。有疑问可以回原页核对。
+ 3. 写 `<dir>/audit.md`：每条一行 `判定 | 主张原文 | 依据 [C#] 或 URL | 建议改法`，最后给计数。
++4. 自洽（不改稿）：「一屏看懂」和「坑」的每条对矩阵对应格，重算条数和数字。对不上就写两边原文。
+ 
+-主 agent 收到审稿后：`contradicted` 必须改正或删除；`unsupported` 删除或移到第 5 节；`weak` 标「（二手）」或移到第 5 节。改完再跑一次 `roundstat.py`，终稿同样受 `budget` 约束。
++主 agent 收到审稿后：`contradicted` 必须改正或删除；`unsupported` 删除或移到第 5 节；`weak` 标「（二手）」或移到第 5 节。自洽对不上的概括句改成与矩阵和笔记原句一致，并带上该格的 `[n]`（`[§k]` 不算）。不许把来源节的 URL 缩写或删掉。改完再跑一次 `roundstat.py`，终稿同样受 `budget` 约束；若有 `cite:`，就按笔记 `src` 补回完整 `https://` 和缺的 `[n]` 再交。
+diff -ruN a/skills/deep-search/scripts/roundstat.py b/skills/deep-search/scripts/roundstat.py
+--- a/skills/deep-search/scripts/roundstat.py	2026-09-24 02:52:10
++++ b/skills/deep-search/scripts/roundstat.py	2026-09-24 04:17:58
+@@ -15,6 +15,22 @@
+ STATUSES = ["✅", "⚠", "⚔", "❓", "∅"]
+ 
+ 
++def cite_lines(text):
++    """Warn if the source section has no URL, or the lead summary has no [n]."""
++    lines = []
++    marker = re.search(r"^##\s*来源\s*$", text, re.M)
++    body = text[: marker.start()] if marker else text
++    src = text[marker.start() :] if marker else ""
++    if marker is None:
++        lines.append("cite: 没有来源节")
++    elif not re.search(r"https?://", src):
++        lines.append("cite: 来源节没有 https:// URL（每条照抄笔记 src，不要去掉协议或用花括号合并）")
++    screen = re.search(r"^##\s*0\.[^\n]*\n(.*?)(?=^## |\Z)", body, re.M | re.S)
++    if screen and len(screen.group(1).strip()) > 80 and not re.search(r"\[\d+\]", screen.group(1)):
++        lines.append("cite: 一屏看懂没有 [n]（概括句要带矩阵格上的 [n]，[§k] 不算）")
++    return lines
++
++
+ def main(argv):
+     if len(argv) < 2:
+         raise SystemExit("usage: roundstat.py DIR [--budget CHARS]")
+@@ -25,8 +41,9 @@
+                    key=lambda p: int(re.search(r"r(\d+)", p.name).group(1)))
+     lengths = [(p.name, len(p.read_text(encoding="utf-8"))) for p in snaps]
+     report = root / "report.md"
+-    if report.exists():
+-        lengths.append(("report.md", len(report.read_text(encoding="utf-8"))))
++    report_text = report.read_text(encoding="utf-8") if report.exists() else None
++    if report_text is not None:
++        lengths.append(("report.md", len(report_text)))
+     print(f"budget {budget}")
+     prev = None
+     for name, n in lengths:
+@@ -37,6 +54,9 @@
+             flag.append(f"+{n - prev}")
+         print(f"  {name}: {n} {' '.join(flag)}")
+         prev = n
++    if report_text is not None:
++        for line in cite_lines(report_text):
++            print(line)
+ 
+     grid = root / "grid.md"
+     if grid.exists():

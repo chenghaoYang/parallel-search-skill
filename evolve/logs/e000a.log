@@ -1,0 +1,3 @@
+[run] e000a/py-packaging: ok, 23.7 min, 8472 chars, golden 0.5, spawns 10, $6.7421965
+[run] e000a/prompt-caching: ok, 26.1 min, 7839 chars, golden 0.75, spawns 10, $6.327470400000005
+[run] e000a/agent-protocols: ok, 33.7 min, 9000 chars, golden 0.8, spawns 11, $9.1075115

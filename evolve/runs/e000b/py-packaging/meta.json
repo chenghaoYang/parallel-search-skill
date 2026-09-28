@@ -1,0 +1,57 @@
+{
+  "exp": "e000b",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "bee3e764c4",
+  "skill_chars": 13564,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 24.1,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 20,
+    "Read": 20,
+    "Write": 7,
+    "Agent": 11,
+    "ListAgents": 7,
+    "Edit": 11
+  },
+  "cost_usd": 8.165356499999996,
+  "num_turns": 15,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 13,
+  "mech": {
+    "chars": 8010,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.417,
+    "golden_missed": [
+      "poetry2-project-table-optional",
+      "pdm-lock-pylock-switch",
+      "uv-workspace-monorepo",
+      "uv-python-install-pin",
+      "pixi-python-as-conda-package",
+      "uv-build-backend-native",
+      "poetry-build-backend-core"
+    ],
+    "urls": 25,
+    "traceable": 1.0,
+    "notes": {
+      "files": 11,
+      "claims": 188,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 6467,
+      "report.r2.md": 7686,
+      "report.r3.md": 8010
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e000b/py-packaging"
+}

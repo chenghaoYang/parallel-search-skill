@@ -1,0 +1,71 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开篇写「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」，conda 同样会下载并管理 Python 解释器。",
+    "把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」，这是多环境组合，不是多包 monorepo。",
+    "写「`[project.dependencies]`管构建元数据」，这张表管的是项目依赖，不是构建后端元数据。"
+  ],
+  "errors_y": [
+    "开篇称 uv 是「唯一有官方 GH Action 的一体化工具」，同文表格却写了 PDM 的 pdm-project/setup-pdm 和 pixi 的 prefix-dev/setup-pixi。",
+    "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，依赖组不在这张表，而在 [tool.poetry.group.<name>.dependencies]。"
+  ],
+  "reason": "66UX 把 PEP 751 没有工具当作主锁文件、pip 安装侧还不支持 extras，以及 Poetry 2 并未完全改用 [project] 写清楚了，pixi 多包 workspace 和 uv 私有源回退也能直接拿来避坑。5N4P 的选型速记和六工具对照更全，但 workspace 与「谁能安装 Python」两处会把人带偏。因此 66UX 对这位用户略有更高的实用价值。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "5N4P",
+      "taxonomy": "tie",
+      "coverage": "5N4P",
+      "doubts": "66UX",
+      "pitfalls": "66UX",
+      "accuracy": "66UX",
+      "sourcing": "66UX",
+      "concision": "5N4P"
+    },
+    "overall": "66UX",
+    "strength": 1,
+    "errors": {
+      "5N4P": [
+        "开篇写「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」，conda 同样会下载并管理 Python 解释器。",
+        "把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」，这是多环境组合，不是多包 monorepo。",
+        "写「`[project.dependencies]`管构建元数据」，这张表管的是项目依赖，不是构建后端元数据。"
+      ],
+      "66UX": [
+        "开篇称 uv 是「唯一有官方 GH Action 的一体化工具」，同文表格却写了 PDM 的 pdm-project/setup-pdm 和 pixi 的 prefix-dev/setup-pixi。",
+        "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，依赖组不在这张表，而在 [tool.poetry.group.<name>.dependencies]。"
+      ]
+    },
+    "unsure": [
+      "5N4P 写 uv 读 pylock 自 0.12.0、导出带 hash 自 0.12.11 且仍为 preview，66UX 写 0.6.15+ preliminary，两套版本号对不上，无法确定哪份符合 2026-09 的现状。",
+      "5N4P 称 pixi-build 仍是 preview；66UX 称多包 workspace 自 v0.75.0（2026-07-29）起稳定，最新稳定版 v0.81.0（2026-09-15）。这些版本日期无法核对。",
+      "5N4P 写「Poetry 的 cache: poetry 缓存的是每个项目的 virtualenv 目录而非包缓存」。setup-python 实际缓存的是 cache-dir、virtualenv，还是两者，无法确定。",
+      "5N4P 写 conda 26.5+「支持读」conda-lock.yaml/pixi.lock，66UX 写「实验性原生导出」并兼容 pixi.lock。读和导出可能各说对一半，无法判定。",
+      "66UX 写 uv 内部 index 缺凭证会「静默回退到公共 PyPI，不报错不警告」。问题曾经存在，当前版本是否已修复，文中自己也标成未确认。"
+    ],
+    "reason": "66UX 把 PEP 751 没有工具当作主锁文件、pip 安装侧还不支持 extras，以及 Poetry 2 并未完全改用 [project] 写清楚了，pixi 多包 workspace 和 uv 私有源回退也能直接拿来避坑。5N4P 的选型速记和六工具对照更全，但 workspace 与「谁能安装 Python」两处会把人带偏。因此 66UX 对这位用户略有更高的实用价值。",
+    "_codes": {
+      "x": "5N4P",
+      "y": "66UX"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

@@ -1,0 +1,80 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": -1,
+    "sourcing": 1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「AG-UI 无大厂官方采用声明」（厂商矩阵里 Microsoft×AG-UI 也标「—」）：Microsoft Agent Framework 在 Microsoft Learn 上有官方的 AG-UI 集成文档和配套 hosting 包，所以这里说大厂没有官方采用是错的",
+    "「Anthropic 无独立框架,MCP即其出品」：Anthropic 有自家的 Claude Agent SDK（2025-09 由 Claude Code SDK 更名而来），和这份文档列出的 OpenAI Agents SDK、Google ADK 属于同一类",
+    "「四者官方都自称互补、可叠加，不是竞争关系」和它自己矩阵里 MCP 那一列「官方文档未提A2A/ACP/AG-UI」互相矛盾；MCP 官方并没有这样说过，这句是过度概括"
+  ],
+  "errors_y": [
+    "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」（表格里写成「OAuth2.1强制+PKCE」）：MCP 规范写的是 Authorization is OPTIONAL，HTTP 传输是 SHOULD conform，stdio 场景则不适用。把 OAuth 说成协议级强制是错的",
+    "「\"ACP\" 撞名，两个互不相关的协议」「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」：漏掉了 OpenAI+Stripe 在 2025-09 发布、至今活跃的 Agentic Commerce Protocol，它也被广泛简称为 ACP。所以 ACP 撞名不止两个，“看到 ACP 基本就是 Zed 的”这个判断也不成立"
+  ],
+  "reason": "CC2P 开篇就给出全局分工，对用户点名的 ACP 疑问答得更全（找出了 OpenAI+Stripe 的第三个 ACP，并区分了厂商原生实现和 Zed 写的适配器），把 MCP 鉴权说成推荐而非强制也是对的，篇幅也更紧凑。ZQS2 细节更多（核心抽象、版本史、成熟度、AG-UI 的大厂集成），D1–D10 维度贯穿全文，但它把 MCP OAuth 说成强制，又漏掉了第三个 ACP。CC2P 的主要失分是说 AG-UI 没有大厂采用、Anthropic 没有自家框架，整体上 CC2P 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "CC2P",
+      "taxonomy": "ZQS2",
+      "coverage": "ZQS2",
+      "doubts": "CC2P",
+      "pitfalls": "tie",
+      "accuracy": "ZQS2",
+      "sourcing": "CC2P",
+      "concision": "CC2P"
+    },
+    "overall": "CC2P",
+    "strength": 1,
+    "errors": {
+      "CC2P": [
+        "「AG-UI 无大厂官方采用声明」（厂商矩阵里 Microsoft×AG-UI 也标「—」）：Microsoft Agent Framework 在 Microsoft Learn 上有官方的 AG-UI 集成文档和配套 hosting 包，所以这里说大厂没有官方采用是错的",
+        "「Anthropic 无独立框架,MCP即其出品」：Anthropic 有自家的 Claude Agent SDK（2025-09 由 Claude Code SDK 更名而来），和这份文档列出的 OpenAI Agents SDK、Google ADK 属于同一类",
+        "「四者官方都自称互补、可叠加，不是竞争关系」和它自己矩阵里 MCP 那一列「官方文档未提A2A/ACP/AG-UI」互相矛盾；MCP 官方并没有这样说过，这句是过度概括"
+      ],
+      "ZQS2": [
+        "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」（表格里写成「OAuth2.1强制+PKCE」）：MCP 规范写的是 Authorization is OPTIONAL，HTTP 传输是 SHOULD conform，stdio 场景则不适用。把 OAuth 说成协议级强制是错的",
+        "「\"ACP\" 撞名，两个互不相关的协议」「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」：漏掉了 OpenAI+Stripe 在 2025-09 发布、至今活跃的 Agentic Commerce Protocol，它也被广泛简称为 ACP。所以 ACP 撞名不止两个，“看到 ACP 基本就是 Zed 的”这个判断也不成立"
+      ]
+    },
+    "unsure": [
+      "CC2P 的「7态枚举」：A2A v0.3 和 a2a.proto 中的 TaskState 是 8 个有效状态（另有 unspecified/unknown），v1.0.1 是否删减无法核实",
+      "CC2P 的「`gemini --acp`」：Gemini CLI 最初用的 flag 是 `--experimental-acp`，现在是否已改名无法核实",
+      "CC2P 的「唯一确认厂商原生实现是 Google Gemini CLI」和 Microsoft×ACP-Zed 标「○」：GitHub Copilot CLI 可能已原生支持 ACP，未能确认",
+      "CC2P 的「Codex CLI社区适配器」和它另一处说的「Zed 写的桥接适配器」不一致（codex-acp 应该是 Zed 写的）",
+      "AG-UI 事件数量：CC2P 写「30种类型化JSON事件」，ZQS2 写「17种事件」，两者差很多，1.0 规范的实际数目无法核实",
+      "ACP-IBM 并入 A2A 的日期：CC2P 写「2025-08-27 停止独立开发并入 A2A」，ZQS2 写「2025-08-25 并入 A2A」，LF 博客的日期是 08-29",
+      "ZQS2 的「2025-05捐LF AI&Data」，时间点不确定",
+      "ZQS2 的「2024-10-07→2026-07-28」：首个公开 spec 是 2024-11-05，2024-10-07 只是 SDK 里出现过的预发布版本号",
+      "ZQS2 第 3 条说 2026-07-28 版「没有协商」，坑 4 却说「看运行时 `protocolVersion` 协商结果」，前后不一致",
+      "ZQS2 的 Anthropic×AG-UI「✅集成列表列Claude Managed Agents/SDK」：只凭 AG-UI 自己的集成列表就判 ✅，和它对 Zed 列出的 ACP 适配器判 ⚠ 的标准不一致；Claude Managed Agents 这个产品也没法核实",
+      "ZQS2 的「⚠Gemini CLI首个集成方(Zed页列出)」：Gemini CLI 的 ACP 是 Google 在自家仓库里原生实现的，标 ⚠ 把它低估了",
+      "ZQS2 的 AG-UI「前端只管展示」：AG-UI 支持共享 state 和前端工具，这样说过于简化",
+      "CC2P 的「Copilot Studio(2026-05 GA)」引用的 [31] 是 2025 年的博客；CC2P 的「$27M 融资」无法核实",
+      "两份都提到的 MCP 2026-07-28 无状态版、A2A 2026-08-27 加入 AAIF、AG-UI 1.0.0（2026-09-17）超出我的知识范围，没有判断对错"
+    ],
+    "reason": "CC2P 开篇就给出全局分工，对用户点名的 ACP 疑问答得更全（找出了 OpenAI+Stripe 的第三个 ACP，并区分了厂商原生实现和 Zed 写的适配器），把 MCP 鉴权说成推荐而非强制也是对的，篇幅也更紧凑。ZQS2 细节更多（核心抽象、版本史、成熟度、AG-UI 的大厂集成），D1–D10 维度贯穿全文，但它把 MCP OAuth 说成强制，又漏掉了第三个 ACP。CC2P 的主要失分是说 AG-UI 没有大厂采用、Anthropic 没有自家框架，整体上 CC2P 略好。",
+    "_codes": {
+      "x": "CC2P",
+      "y": "ZQS2"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

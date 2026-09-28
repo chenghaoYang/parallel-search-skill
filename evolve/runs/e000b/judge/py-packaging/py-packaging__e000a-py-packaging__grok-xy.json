@@ -1,0 +1,70 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "称 uv 是「唯一有官方 GH Action 的一体化工具」，但同文已写 PDM 有官方 Action pdm-project/setup-pdm。",
+    "把依赖组一并写成「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，依赖组实际位于 [tool.poetry.group.<name>.dependencies]。"
+  ],
+  "errors_y": [
+    "称 uv 是「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」，PDM 同样能管依赖与 venv、用 pdm python install 装解释器，并自带 workspace。",
+    "写「conda 免费层对大型商业组织不再免费」，200 人以上收费是 Anaconda 商业仓库条款，conda 与 conda-forge 并不因此收费。"
+  ],
+  "reason": "MMHV 开头就给出新项目该选谁，并用 D1–D11 把锁文件、workspace、Python 版本、构建后端、迁移、CI 和私有源做成贯穿全文的对照；Poetry 2 对 [project] 的结论写清了两表并存，坑也落到索引回退、旧锁须重解和 CI 缓存 key。TY68 的官方链接和 PEP 751 版本命令更细，但这些对照更薄，还把 Anaconda 商业条款写成 conda 免费层失效，所以对这位用户 MMHV 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "MMHV",
+      "taxonomy": "MMHV",
+      "coverage": "MMHV",
+      "doubts": "MMHV",
+      "pitfalls": "MMHV",
+      "accuracy": "tie",
+      "sourcing": "TY68",
+      "concision": "tie"
+    },
+    "overall": "MMHV",
+    "strength": 1,
+    "errors": {
+      "MMHV": [
+        "称 uv 是「唯一有官方 GH Action 的一体化工具」，但同文已写 PDM 有官方 Action pdm-project/setup-pdm。",
+        "把依赖组一并写成「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」，依赖组实际位于 [tool.poetry.group.<name>.dependencies]。"
+      ],
+      "TY68": [
+        "称 uv 是「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」，PDM 同样能管依赖与 venv、用 pdm python install 装解释器，并自带 workspace。",
+        "写「conda 免费层对大型商业组织不再免费」，200 人以上收费是 Anaconda 商业仓库条款，conda 与 conda-forge 并不因此收费。"
+      ]
+    },
+    "unsure": [
+      "uv 的 pylock 能力冲突：MMHV 写 0.6.15+ 可导出/compile/install，TY68 写 0.12.11+/0.12.17+ 仅 preview 导出与校验。",
+      "Poetry 与 PEP 751 冲突：MMHV 写不支持且 issue #10356 无里程碑，TY68 写 2.3.0+ 可通过插件导出。",
+      "Poetry 能否自装 Python 冲突：MMHV 写明确 BYOP，TY68 写 2.1.0 起实验性 poetry python install。",
+      "conda 26.5 是否已能原生导出 conda-lock.yaml 并兼容 pixi.lock，仅 MMHV 主张；TY68 仍写 conda 无默认锁格式。",
+      "PDM 启用 pylock 的版本差一档：MMHV 写 v2.25.0，TY68 写 v2.26+。",
+      "TY68 写 uv_build「可换6种」、libmamba「提速 50-80%」，以及 Astral 于 2026-03-19 被 OpenAI 收购（已标二手），具体数字与收购无法核对。"
+    ],
+    "reason": "MMHV 开头就给出新项目该选谁，并用 D1–D11 把锁文件、workspace、Python 版本、构建后端、迁移、CI 和私有源做成贯穿全文的对照；Poetry 2 对 [project] 的结论写清了两表并存，坑也落到索引回退、旧锁须重解和 CI 缓存 key。TY68 的官方链接和 PEP 751 版本命令更细，但这些对照更薄，还把 Anaconda 商业条款写成 conda 免费层失效，所以对这位用户 MMHV 略好。",
+    "_codes": {
+      "x": "MMHV",
+      "y": "TY68"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

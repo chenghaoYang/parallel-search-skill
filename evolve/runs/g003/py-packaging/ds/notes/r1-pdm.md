@@ -1,0 +1,42 @@
+# r1-pdm
+question: PDM 官方文档里，锁文件、项目表、workspace、Python 版本、构建后端、环境、迁移、CI 缓存、私有源、依赖分组的字段名和命令是什么？它和 PEP 621、PEP 751 的关系各是什么？
+checked: https://pdm-project.org/en/latest/usage/lockfile/, https://pdm-project.org/en/latest/usage/dependency/, https://pdm-project.org/en/latest/usage/project/, https://pdm-project.org/en/latest/usage/config/, https://pdm-project.org/en/latest/usage/venv/, https://pdm-project.org/en/latest/usage/advanced/, https://pdm-project.org/en/latest/usage/workspace/, https://pdm-project.org/en/latest/reference/configuration/, https://pdm-project.org/en/latest/reference/pep621/, https://pdm-project.org/en/latest/reference/build/, https://pdm-project.org/en/latest/reference/cli/, https://pdm-project.org/en/latest/dev/changelog/, https://backend.pdm-project.org/, https://raw.githubusercontent.com/pdm-project/pdm/main/README.md, https://raw.githubusercontent.com/pdm-project/pdm/main/pdm.lock
+
+## claims
+- [C1] D1 默认锁 `pdm.lock`；`pylock` 默认 `pylock.toml`，默认格式仍 `pdm`。 | src: https://pdm-project.org/en/latest/usage/lockfile/ | quote: "default file name is `pdm.lock`) and `pylock`(default file name is `pylock.toml`). The default format is `pdm`." | type: official
+- [C2] D1/PEP 751：2.25.0 实验性 pylock，文档写将来默认；`pdm config lock.format pylock`。键默认 `pdm`，环境变量 `PDM_LOCK_FORMAT`。 | src: https://pdm-project.org/en/latest/usage/lockfile/ | quote: "Added in 2.25.0. Added experimental support for the PEP 751 pylock file format." | type: official
+- [C3] D1 导出 2.24.0：`pdm export -f/--format pylock -o/--output pylock.toml`（默认 format `requirements`）。v2.25.0（2025-06-13）改为 opt-in 锁格式。 | src: https://pdm-project.org/en/latest/usage/lockfile/ | quote: "exporting to `pylock.toml` format as defined by PEP 751." | type: official
+- [C4] D1 换锁 `-L/--lockfile` 或 `PDM_LOCKFILE`。`pdm install`/`pdm sync` 读该锁，无 `pdm install pylock.toml` 子命令。 | src: https://pdm-project.org/en/latest/usage/lockfile/ | quote: "specify another lock file with the `-L/--lockfile` option or the `PDM_LOCKFILE` environment variable" | type: official
+- [C5] D1 文档字段 `metadata.groups`、`metadata.strategy`；`--strategy/-S`，前缀 `no_` 关闭。v2.17.0 bump lock file version 到 `4.5.0`。 | src: https://pdm-project.org/en/latest/usage/lockfile/ | quote: "persisted in `metadata.strategy`" | type: official
+- [C6] D1 仓库 `pdm.lock` 的 `[metadata]` 为 `lock_version = "4.5.1"`（下划线）且 `strategy = ["inherit_metadata"]`。 | src: https://raw.githubusercontent.com/pdm-project/pdm/main/pdm.lock | quote: "lock_version = \"4.5.1\"" | type: official
+- [C7] D2/PEP 621：元数据在 `[project]`，规范 PEP 621/631/639。`project.dependencies` 为 PEP 440/508。可选组 `[project.optional-dependencies]`，`pdm install -G`。 | src: https://pdm-project.org/en/latest/reference/pep621/ | quote: "defined by PEP 621, PEP 631 and PEP 639." | type: official
+- [C8] D2 `[tool.pdm]`：`distribution`、`plugins`、`ignore_package_warnings`；子表 `scripts`、`options`、`resolution`（`allow-prereleases`、`overrides`、`excludes`、`lock_inputs`、`exclude-newer`、`no-binary`、`only-binary`、`prefer-binary`、`respect-source-order`）。 | src: https://pdm-project.org/en/latest/usage/project/ | quote: "field `distribution` under the `[tool.pdm]` table." | type: official
+- [C9] D3 workspace 实验性，Added in 2.28.0（changelog 2026-06-23 #1505）。`[tool.pdm.workspace]` 键 `members`（路径或 glob）。 | src: https://pdm-project.org/en/latest/usage/workspace/ | quote: "members = [\"packages/foo\", \"packages/bar\", \"tools/*\"]" | type: official
+- [C10] D3 `pdm add packages/foo` 或 `pdm new packages/foo` 加入；`pdm remove packages/foo` 删精确路径。`pdm install`/`lock`/`sync` 须在根目录。 | src: https://pdm-project.org/en/latest/usage/workspace/ | quote: "The following commands must be run from the workspace root" | type: official
+- [C11] D4 约束 `requires-python`。路径存 `.pdm-python`，改用 `pdm use`；`PDM_PYTHON` 忽略该文件。 | src: https://pdm-project.org/en/latest/usage/project/ | quote: "The interpreter path will be stored in `.pdm-python`" | type: official
+- [C12] D4 项目页 Added in 2.23.0：`.python-version` 或 `PDM_PYTHON_VERSION`。`python.use_python_version` 默认 True，环境变量 `PDM_USE_PYTHON_VERSION`。 | src: https://pdm-project.org/en/latest/usage/project/ | quote: "If `.python-version` is present in the project root or `PDM_PYTHON_VERSION` env var is set" | type: official
+- [C13] D4 `pdm use` 找不到会安装；`--no-version-file` 默认 False。自装 2.13.0：`pdm python install 3.9.8`，`python.install_root` 默认 `~/.local/share/pdm/python`。 | src: https://pdm-project.org/en/latest/reference/cli/ | quote: "If not found, PDM will try to install one." | type: official
+- [C14] D5 不强制单一后端。`requires = ["pdm-backend"]`，`build-backend = "pdm.backend"`。项目页称 default backend `pdm-backend`。独立包，继任 `pdm-pep517`。 | src: https://pdm-project.org/en/latest/reference/build/ | quote: "build-backend = \"pdm.backend\"" | type: official
+- [C15] D6 `python.use_venv` 默认 True（`PDM_USE_VENV`）。首次安装建 `<project_root>/.venv`。`venv.in_project` 默认 True（`PDM_VENV_IN_PROJECT`）；否则 `venv.location`=`~/.local/share/pdm/venvs`。`venv.backend` 默认 `virtualenv`。 | src: https://pdm-project.org/en/latest/usage/venv/ | quote: "create a virtualenv in `<project_root>/.venv`" | type: official
+- [C16] D7 `pdm import <filename>`（`-f/--format`、`-d/--dev`、`-G/--group`）。支持 Pipfile、Poetry、Flit、`requirements.txt`、`setup.py`。`pdm init`/`install` 可自动探测。v2.22.1 把导入的 dev 写入 `dependency-groups`。 | src: https://pdm-project.org/en/latest/usage/project/ | quote: "PDM provides `import` command" | type: official
+- [C17] D8 `cache_dir` 默认 `~/.cache/pdm`，`PDM_CACHE_DIR`。`--no-cache`/`PDM_NO_CACHE`。`install.cache` 后路径 `$(pdm config cache_dir)/packages`，`pdm cache info`。 | src: https://pdm-project.org/en/latest/reference/configuration/ | quote: "`cache_dir` | The root directory of cached files | `~/.cache/pdm` | No | `PDM_CACHE_DIR`" | type: official
+- [C18] D8 CI 点名 `pdm-project/setup-pdm@v4`，示例 `pdm sync -d -G testing`。无用户时 `export HOME=/tmp/home`。未点名 `actions/cache` 或 `PDM_CACHE_DIR`。 | src: https://pdm-project.org/en/latest/usage/advanced/ | quote: "uses: pdm-project/setup-pdm@v4" | type: official
+- [C19] D9 `[[tool.pdm.source]]` 键：`name`、`url`、`verify_ssl`（默认 true）、`username`、`password`、`type`=`index`|`find_links`、`include_packages`、`exclude_packages`。全局 `pypi.url`/`pypi.verify_ssl`，环境变量 `PDM_PYPI_URL`、`PDM_PYPI_VERIFY_SSL`。 | src: https://pdm-project.org/en/latest/usage/config/ | quote: "verify_ssl = true" | type: official
+- [C20] D9 凭据：URL `${ENV_VAR}`；或 `pdm config pypi.<name>.username`/`.password` 按 `name` 合并；否则提示。keyring 服务名 `pdm-pypi-<name>`（上传 `pdm-repository-<name>`）。 | src: https://pdm-project.org/en/latest/usage/config/ | quote: "The service name will be `pdm-pypi-<name>` for an index" | type: official
+- [C21] D10 `pdm add -dG test pytest` 写入 `[dependency-groups]`；仅 `-d/--dev` 进 `dev` 组。同名不得同时在 `[project.optional-dependencies]`。 | src: https://pdm-project.org/en/latest/usage/dependency/ | quote: "go to `dev` group under `[dependency-groups]` by default." | type: official
+- [C22] D10 v2.20.0（2024-10-31，PEP 735）起默认写 `[dependency-groups]`，未宣布弃用。v2.22.4 仍读 `tool.pdm.dev-dependencies`。 | src: https://pdm-project.org/en/latest/dev/changelog/ | quote: "written to `[dependency-groups]` table." | type: official
+- [C23] D4 跑 PDM 自身：README 要 Python 3.10+；changelog v2.27.0（2026-05-21）最低 3.10。 | src: https://raw.githubusercontent.com/pdm-project/pdm/main/README.md | quote: "PDM requires python version 3.10 or higher." | type: official
+
+## conflicts
+- 跑 PDM 的 Python：项目页「3.9 and above」（https://pdm-project.org/en/latest/usage/project/）对 README/v2.27.0 的 3.10（C23）。
+- `.python-version`：项目页「Added in 2.23.0」对 changelog v2.22.2「written when running `pdm use`」（https://pdm-project.org/en/latest/dev/changelog/）。
+- 动态版本：PEP 621 页 `[tool.pdm].version`（https://pdm-project.org/en/latest/reference/pep621/）对 backend `[tool.pdm.version]`（https://backend.pdm-project.org/metadata/）。
+- 策略：锁文件页 “three flags” `cross_platform`/`static_urls`/`direct_minimal_versions` 对 CLI 第四项 `inherit_metadata`（https://pdm-project.org/en/latest/reference/cli/）。
+- dev：指南只写 `[dependency-groups]`；v2.22.4 仍写 `tool.pdm.dev-dependencies` has groups。无 deprecated 原句。
+## gaps
+- 指南未写 PEP 751 键 `lock-version`；不能据此说导出没有它。查过 lockfile 页与 changelog。
+- 未见 `[tool.pdm.dev-dependencies]` 弃用/删除句。查过 dependency 全文与 changelog v2.29.2–v2.13。
+- 无「装任意第三方 pylock.toml」专节。CI 章未写 cache action/`PDM_CACHE_DIR`。旧 monorepo（`-e file:///${PROJECT_ROOT}/...`）与 workspace 未对照。
+
+## leads
+- `pdm-backend` 与 CLI 分开发布（import `pdm.backend`，https://backend.pdm-project.org/，继任 `pdm-pep517`，键 `[tool.pdm.build]`）。自装 CPython 署名：项目页 indygreg，README 写 astral-sh。

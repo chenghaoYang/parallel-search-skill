@@ -1,0 +1,71 @@
+{
+  "score": 2,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "MCP 版本写成「2024-10-07 → 2026-07-28」；第一个公开规范版本是 2024-11-05，不是 2024-10-07。"
+  ],
+  "errors_y": [
+    "开篇断言「没有厂商发布\"第五个独立协议\"」，同文表格却把 A2UI 写成「独立声明式 UI 协议」；Google 的 A2UI 就是另行发布的规范，这句不成立。",
+    "多处写 IBM ACP「已于 2025-08-27 归档、并入 A2A」，所引公告 URL 路径是 2025/08/29，公开并入日和仓库归档日被合成了同一天。",
+    "大厂矩阵里 Anthropic 的自家变体写成「无」，但 Claude Skills 与 Computer Use 都是该产品线的自有机制。"
+  ],
+  "reason": "V2GL 按连接两端把四个协议分成四族，写清三个 ACP 里只有 Zed 仍独立存在，并把大厂支持落到产品和治理层级，读者能直接建立选择框架。C8VT 的一手 URL 和证据分级更细，也补了 A2UI 与命令级的坑，但把 AG-UI 和 ACP-Zed 并进同一族，又把 Google 的 MCP 留成未证实，支持版图不完整。对这位用户，V2GL 的可用价值明显更高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "V2GL",
+      "taxonomy": "V2GL",
+      "coverage": "V2GL",
+      "doubts": "V2GL",
+      "pitfalls": "tie",
+      "accuracy": "V2GL",
+      "sourcing": "C8VT",
+      "concision": "V2GL"
+    },
+    "overall": "V2GL",
+    "strength": 2,
+    "errors": {
+      "C8VT": [
+        "开篇断言「没有厂商发布\"第五个独立协议\"」，同文表格却把 A2UI 写成「独立声明式 UI 协议」；Google 的 A2UI 就是另行发布的规范，这句不成立。",
+        "多处写 IBM ACP「已于 2025-08-27 归档、并入 A2A」，所引公告 URL 路径是 2025/08/29，公开并入日和仓库归档日被合成了同一天。",
+        "大厂矩阵里 Anthropic 的自家变体写成「无」，但 Claude Skills 与 Computer Use 都是该产品线的自有机制。"
+      ],
+      "V2GL": [
+        "MCP 版本写成「2024-10-07 → 2026-07-28」；第一个公开规范版本是 2024-11-05，不是 2024-10-07。"
+      ]
+    },
+    "unsure": [
+      "V2GL 称 A2A 传输是「JSON-RPC 2.0／gRPC／HTTP+REST 三选一」；公开规范长期以 JSON-RPC over HTTP(S) 为主，gRPC 与 REST 是否同等正式绑定拿不准。",
+      "V2GL 称 Streamable HTTP「只是取消跨请求恢复」；2025-03-26 规范仍有会话与可选续传，这句是否成立拿不准。",
+      "A2A 并入 AAIF 的日期不一致：V2GL「2026-08-17」对 C8VT「2026-08-27」，且 V2GL 自己写发布日未必等于生效日。",
+      "A2A 现行版本不一致：C8VT「v1.0.0（2026-03-12）」对 V2GL「v1.0.1(2026-05-28)」，不能确定截至日哪一个最新。",
+      "Microsoft 对 Zed ACP：C8VT 写 Copilot CLI 于 2026-01-28 public preview（copilot --acp），V2GL 写「无直接支持」，哪边符合官方现状拿不准。",
+      "V2GL 的「17 种事件分 5 类」「刚融完 A 轮」「computer_toolset_20260801」「SEP 转正后 3 个月即可移除」，以及 Anthropic issue「not planned」拒绝的是哪一个 ACP，都未能钉死。",
+      "V2GL 称 AGNTCY 协议全名为 Agent Connect Protocol、仓库 2026-04-11 归档；文中已说明弃用是推断，归档细节未独立核实。C8VT「8 公司指导委员会」的人数也未核对。"
+    ],
+    "reason": "V2GL 按连接两端把四个协议分成四族，写清三个 ACP 里只有 Zed 仍独立存在，并把大厂支持落到产品和治理层级，读者能直接建立选择框架。C8VT 的一手 URL 和证据分级更细，也补了 A2UI 与命令级的坑，但把 AG-UI 和 ACP-Zed 并进同一族，又把 Google 的 MCP 留成未证实，支持版图不完整。对这位用户，V2GL 的可用价值明显更高。",
+    "_codes": {
+      "x": "V2GL",
+      "y": "C8VT"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

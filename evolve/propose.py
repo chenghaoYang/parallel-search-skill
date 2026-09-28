@@ -64,6 +64,13 @@ def build_sandbox(exp, evidence, base):
             shutil.copytree(ROOT / "runs" / e, box / "evolve" / "runs" / e,
                             ignore=shutil.ignore_patterns("transcript.jsonl", "stderr.txt", "judge.v1-*"))
     (box / "evolve" / "candidates").mkdir()
+    for e in evidence:  # earlier proposals: hypothesis + diff only (not the skill copy)
+        src = ROOT / "candidates" / e
+        if src.exists():
+            (box / "evolve" / "candidates" / e).mkdir()
+            for name in ("hypothesis.md", "skill.diff"):
+                if (src / name).exists():
+                    shutil.copy2(src / name, box / "evolve" / "candidates" / e / name)
     return box
 
 
@@ -90,11 +97,18 @@ def main(argv):
                           arm_desc=arm_desc, note=opts.get("note", ""))
     (box / "brief.txt").write_text(prompt, encoding="utf-8")
     t0 = time.time()
+    if model.startswith("swe"):  # claude-devin routes every model name to swe-2-max via devin2api
+        cmd = [str(Path.home() / ".local" / "bin" / "claude-devin"), "-p", prompt, "--model", model,
+               "--output-format", "stream-json", "--verbose", "--dangerously-skip-permissions",
+               "--strict-mcp-config", "--disallowedTools", "Agent", "WebSearch", "WebFetch"]
+        env = dict(os.environ)
+    else:
+        cmd = [GROK, "-p", prompt, "-m", model, "--output-format", "streaming-messages-json",
+               "--permission-mode", "bypassPermissions", "--always-approve", "--no-subagents",
+               "--disable-web-search", "--cwd", str(box)]
+        env = dict(os.environ, **GROK_ENV)
     with open(box / "transcript.jsonl", "w") as fo, open(box / "stderr.txt", "w") as fe:
-        proc = subprocess.Popen([GROK, "-p", prompt, "-m", model, "--output-format", "streaming-messages-json",
-                                 "--permission-mode", "bypassPermissions", "--always-approve", "--no-subagents",
-                                 "--disable-web-search", "--cwd", str(box)],
-                                cwd=box, stdout=fo, stderr=fe, env=dict(os.environ, **GROK_ENV),
+        proc = subprocess.Popen(cmd, cwd=box, stdout=fo, stderr=fe, env=env,
                                 stdin=subprocess.DEVNULL, start_new_session=True)
         try:
             proc.wait(timeout=int(opts.get("timeout", 2400)))

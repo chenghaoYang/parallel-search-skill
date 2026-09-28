@@ -1,0 +1,69 @@
+{
+  "exp": "s003",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "grok-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e003/skill",
+  "skill_sha": "73a9549218",
+  "skill_chars": 15318,
+  "status": "crash",
+  "returncode": 1,
+  "minutes": 21.5,
+  "spawns": 7,
+  "followups": 0,
+  "lead_web": 75,
+  "lead_tools": {
+    "read_file": 7,
+    "list_dir": 2,
+    "run_terminal_command": 40,
+    "write": 11,
+    "spawn_subagent": 7,
+    "get_command_or_subagent_output": 1,
+    "web_search": 20,
+    "web_fetch": 55,
+    "grep": 1,
+    "search_replace": 19
+  },
+  "cost_usd": 0.15,
+  "num_turns": 9,
+  "is_error": true,
+  "terminal_reason": "error_during_execution",
+  "rate_limit_lines": 8,
+  "mech": {
+    "chars": 0,
+    "len_ok": false,
+    "sections": 0.0,
+    "sections_missing": [
+      "overview",
+      "taxonomy",
+      "matrix",
+      "pitfalls",
+      "open",
+      "sources"
+    ],
+    "golden": 0.0,
+    "golden_missed": [
+      "openai-implicit-baseline",
+      "openai-gpt56-pricing",
+      "anthropic-auto-and-manual",
+      "anthropic-cache-pricing",
+      "anthropic-cache-ttl",
+      "gemini-implicit-default",
+      "gemini-min-tokens",
+      "deepseek-disk-cache-automatic",
+      "deepseek-hit-miss-fields",
+      "kimi-automatic-ttl",
+      "qwen-implicit-cache",
+      "openrouter-provider-varies"
+    ],
+    "urls": 0,
+    "traceable": 0.0,
+    "notes": {
+      "files": 6,
+      "claims": 127,
+      "claims_ok": 1.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/s003/prompt-caching"
+}

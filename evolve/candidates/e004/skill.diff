@@ -1,0 +1,72 @@
+diff -ruN a/skills/deep-search/SKILL.md b/skills/deep-search/SKILL.md
+--- a/skills/deep-search/SKILL.md	2026-09-24 02:53:25
++++ b/skills/deep-search/SKILL.md	2026-09-24 10:41:43
+@@ -9,7 +9,7 @@
+ 
+ # deep-search：扩展 → 收束 → 观察 → 下一步
+ 
+-你是主 agent（lead）。你不亲自搜索网页，只做四件事：定框架、派工人、收束成文、决定下一步。
++你是主 agent（lead）。你只做四件事：定框架、派工人、收束成文、决定下一步。打开网页不在这四件里。一批派出之后、收束开始之前，只按「扩展」里的等待去做。
+ 工人（worker）各拿一个窄问题去读一手来源，把压缩后的证据写成笔记文件。原始网页留在工人上下文里。
+ 
+ 只扩展不收束 = 没做完。文档不许越改越长。每轮都要重写，不是追加。
+@@ -52,7 +52,9 @@
+ - 一批里的简报彼此独立，同一条消息里一起发出（并行）。一次 spawn = 一个 turn；给已完成工人 SendMessage 追问也算一个 turn。在 `log.md` 里计数。
+ - 简报用 `references/worker.md` 的模板，必须写明：窄问题、要填的格子、不做什么、来源政策、笔记路径、返回格式。
+ - R2 起的每份简报必须点名它要解决的格子或主张（`grid.md` 里的坐标或笔记里的 `[C#]`）。R1 之后不许再派「再全面查一遍」式的简报。
+-- 等这一批全部返回再收束。工人失败：最多重派一次（新 spawn，计数），仍失败就把它的格子记成 `❓` 并写明原因，不许静默丢掉。
++- 整批发出之后、这一批返回之前，只许：把刚想到的缺口写成 `log.md` 的一行 `待查：<格子或主张>`，然后按 `references/harness.md` 等整批（一次调用，带上这一批全部 id），或结束本回合等完成通知。这之间不搜索、不开页面、不用 shell 取 URL，也不再 spawn。`待查` 留给下一轮简报，不在这个窗口里查。
++- 返回之后主 agent 仍然不开页面。想自己打开某一页，就把它写成下一轮的一份窄简报，派一个工人。收束只读笔记，不中途开页面，也不中途插 spawn。
++- 工人失败：最多重派一次（新 spawn，计数；重派后再按上面的方式等一次），仍失败就把它的格子记成 `❓` 并写明原因，不许静默丢掉。
+ 
+ ## 收束（每轮之后，单独一步）
+ 
+@@ -85,13 +87,13 @@
+ 
+ ## 终审与停止
+ 
+-1. 派 1 个（范围大时 2 个）审稿工人：只给它 `report.md` 和 `notes/`，要它抽查 ≥ 20 条具体主张（端点、字段名、参数、数值），对照笔记里的 URL 和摘录判定 `supported / unsupported / contradicted`，必要时回到原页确认。
++1. 派 1 个（范围大时 2 个）审稿工人：只给它 `report.md` 和 `notes/`，要它抽查 ≥ 20 条具体主张（端点、字段名、参数、数值），对照笔记里的 URL 和摘录判定 `supported / unsupported / contradicted`，必要时由这个审稿工人回到原页确认。主 agent 不替它打开页面。
+ 2. 按审稿结果改稿：删掉或降级没有支撑的句子，改正矛盾的句子。这一步不再做新调研。「没找到来源」不等于「不支持」：没有支撑的正面主张只能删掉或标「未核实」，不许改写成相反的否定句。
+ 3. 最后一步必须是收束，不能停在扩展。成稿末尾保留「未决与置信度」一节，写清还空着的格子。
+ 
+ ## 硬规则
+ 
+-- 主 agent 不直接搜索网页；需要信息就派工人。
++- 主 agent 不调用网页搜索或抓取，也不用 shell 取 URL。缺的信息派工人。工人自己的搜索，以及终审工人回原页核对，不受这条限制。
+ - 一手来源优先（官方文档、API reference、changelog）。搜索引擎的综合答案（如 Perplexity）只能当线索，不能当来源。
+ - 成稿里每个具体事实都能追到一条笔记主张；没来源的写进「未决」，不写进正文。
+ - 不并行写成稿；成稿只由主 agent 写。
+diff -ruN a/skills/deep-search/references/harness.md b/skills/deep-search/references/harness.md
+--- a/skills/deep-search/references/harness.md	2026-09-24 02:52:10
++++ b/skills/deep-search/references/harness.md	2026-09-24 10:40:52
+@@ -11,14 +11,14 @@
+ | 纯 Perplexity | 一次 `pplx-safe search` | `--model`（配额用完会被静默回退，见下） | 并行进程 | bench 已测 |
+ | Codex CLI / 任意带 shell 的外层 | 一个后台 `codex exec` 或 `claude -p` 进程 | 进程参数 | shell 的 `&` + `wait` | 未测 |
+ 
+-所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等。
++所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等，也不要在这一窗口里自己打开网页。窗口里想到的缺口记进 `log.md` 的 `待查：`，留给下一轮简报。
+ 
+ ## Claude Code（agent team）
+ 
+ - 工人类型：有 `research-worker`（本 skill 的 `agents/research-worker.md`，或启动时 `--agents` 定义）就用它；没有就用
+   `general-purpose`，并在 Agent 调用里显式传 `model`（`sonnet` / `opus`），同时把 `references/worker.md` 的规则整段放进简报。
+ - 一轮的所有简报放在**同一条消息**里发出多个 Agent 调用，`name` 用 `r<轮>-<slug>`，方便之后 SendMessage 追问。
+-- 工人默认在后台跑，完成时会通知你。等整批通知到齐再收束；不要轮询，也不要在等的时候自己去搜。
++- 工人默认在后台跑，完成时会通知你。等整批通知到齐再收束：发出整批后直接结束本回合，不要轮询，也不要在等的时候自己去搜或开页面。要查的记进 `log.md` 的 `待查：`。
+ - 等待就是直接结束本回合。不要用 ScheduleWakeup、CronCreate、`sleep` 来「等」：headless（`claude -p`）下，
+   主 agent 排了唤醒就会结束会话，进程退出时所有还在跑的工人被杀掉（bench 里 cc-opus-opus 第 1 次就这样丢了 10 个工人）。
+   跑 headless 时最好直接用 `--disallowedTools ScheduleWakeup CronCreate`。
+@@ -43,10 +43,8 @@
+ - `spawn_subagent` 没有「选 agent 类型」的参数，项目里的 `.grok/agents/research-worker.md` 能被发现（`grok inspect`），
+   但主 agent 选不到它，派出来的是 `general-purpose`。所以：**每次调用都显式传 `model`**，并把 `agents/research-worker.md` 的正文整段放进简报。
+ - 用户配置里 `[subagents.models] general-purpose = ...` 会给没传 `model` 的工人定模型；显式 `model` 参数优先。
+-- 工人默认后台运行；同一条消息发出整批后，用一次 `get_command_or_subagent_output`（传全部 id、`timeout_ms` 给足）等全部完成。
+-- grok-4.7 主 agent 不守「主 agent 不抓网页」：bench 里它派出 R1 的 10 个工人后，等待期间自己 `web_fetch` 了 88 次，R2 又 15 次。
+-  结果更全（v1 召回最高），但分工被打破、主上下文里灌进了原始页面。要严格分工，就在外层提示词里再强调一次，或试
+-  `--disallowed-tools web_fetch`（是否同时去掉工人的 web_fetch 未验证）。
++- 工人默认后台运行。同一条消息发出整批时，可以同时把 `待查：` 写进 `log.md`。下一条消息只能是一次 `get_command_or_subagent_output`（传这一批全部 id，`timeout_ms` 给足），或者结束回合。这次等待返回之前，不要调用 `web_search`、`web_fetch`，不要用 shell 打开 URL，不要再 `spawn_subagent`。父会话输出里若出现抓页记录，那是工人的，不要顺着那些 URL 再抓。
++- 不要靠禁用 `web_fetch` / `web_search` 来管主 agent。工人和终审工人仍然用它们找页、取原句、回原页核对。
+ - Grok Build 不读 macOS 系统代理；网络需要代理时，启动 grok 要显式带上 HTTPS_PROXY / NO_PROXY（bench 的 runner 读 `PS_PROXY`、`PS_NO_PROXY`）。
+ - 自定义 Responses 后端的模型（bench 里是一个本地反代提供的 `swe-2`）若返回的 `usage` 缺 `output_tokens_details`，Grok 会报
+   `serialization error` 直接失败，主模型和工人都一样。先用一句 `grok -p "reply ok" -m <model>` 试通再排进 bench。

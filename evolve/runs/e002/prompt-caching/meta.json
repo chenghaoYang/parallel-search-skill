@@ -1,0 +1,51 @@
+{
+  "exp": "e002",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e002/skill",
+  "skill_sha": "965c8432b1",
+  "skill_chars": 14500,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 23.5,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 19,
+    "Bash": 9,
+    "Write": 6,
+    "Agent": 11,
+    "ListAgents": 1,
+    "Edit": 7
+  },
+  "cost_usd": 5.930382100000001,
+  "num_turns": 8,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 17,
+  "mech": {
+    "chars": 7959,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.833,
+    "golden_missed": [
+      "openai-gpt56-pricing",
+      "deepseek-hit-miss-fields"
+    ],
+    "urls": 25,
+    "traceable": 0.92,
+    "notes": {
+      "files": 10,
+      "claims": 110,
+      "claims_ok": 0.991
+    },
+    "snapshots": {
+      "report.r1.md": 7043,
+      "report.r2.md": 7795
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e002/prompt-caching"
+}

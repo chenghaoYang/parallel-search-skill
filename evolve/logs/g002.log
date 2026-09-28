@@ -1,0 +1,3 @@
+[run] g002/py-packaging: error, 62.5 min, 9249 chars, golden 0.917, spawns 6, $21.29
+[run] g002/agent-protocols: error, 62.5 min, 8952 chars, golden 0.5, spawns 6, $15.9
+[run] g002/prompt-caching: error, 68.5 min, 8772 chars, golden 1.0, spawns 12, $19.37

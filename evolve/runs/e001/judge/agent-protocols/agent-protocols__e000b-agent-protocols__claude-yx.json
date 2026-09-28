@@ -1,0 +1,76 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Anthropic 已于 2025-12 把 Agent Skills 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code 等都已采用",
+    "「\"ACP\" 撞名撞了三次」少算了：OpenAI×Stripe 的 Agentic Commerce Protocol 同样简称 ACP，文档自己在大厂表里列了「Agentic Commerce Protocol(×Stripe)」，却没算进撞名"
+  ],
+  "errors_y": [
+    "把 Google 的 MCP 支持写成未知：「❓ 未查到官方 MCP 支持声明」（图例称「已查证官方渠道、未见表态」，一屏看懂也写「但未查到明确的 MCP 声明」）；实际上 Google 早已官方支持 MCP：Gemini CLI、ADK McpToolset、Gemini API SDK，以及 2025-12 官宣的 Google 服务官方 MCP server",
+    "「没有厂商发布\"第五个独立协议\"」不成立，而且自相矛盾：同一文档又写「A2UI：独立声明式 UI 协议」「A2UI 是 Google 独立协议」；另外 Google 的 AP2（Agent Payments Protocol，2025-09）、OpenAI×Stripe 的 Agentic Commerce Protocol（2025-09）都是厂商自己发布的独立协议"
+  ],
+  "reason": "在用户最关心的协议对象和大厂支持上，HV29 更全也更准：它找出了第三个 ACP（AGNTCY），正确写出四大厂都官方支持 MCP，补上了 A2A 的 gRPC/REST 绑定和鉴权的 RFC 级细节，治理层级也写得更细。8MVW 的一屏总览更好，来源逐条可追溯，缺口标注也诚实，还有 A2UI、Claude Code 经 Zed 适配器接入 ACP 等实用信息；但它把 Google 的 MCP 支持标成「未查到」，又自相矛盾地说没有厂商发布独立新协议。HV29 的问题是来源粒度粗，漏了 A2UI 和这个适配器，还误称 Skills 没有开放，所以只判略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "8MVW",
+      "taxonomy": "HV29",
+      "coverage": "HV29",
+      "doubts": "HV29",
+      "pitfalls": "tie",
+      "accuracy": "HV29",
+      "sourcing": "8MVW",
+      "concision": "tie"
+    },
+    "overall": "HV29",
+    "strength": 1,
+    "errors": {
+      "8MVW": [
+        "把 Google 的 MCP 支持写成未知：「❓ 未查到官方 MCP 支持声明」（图例称「已查证官方渠道、未见表态」，一屏看懂也写「但未查到明确的 MCP 声明」）；实际上 Google 早已官方支持 MCP：Gemini CLI、ADK McpToolset、Gemini API SDK，以及 2025-12 官宣的 Google 服务官方 MCP server",
+        "「没有厂商发布\"第五个独立协议\"」不成立，而且自相矛盾：同一文档又写「A2UI：独立声明式 UI 协议」「A2UI 是 Google 独立协议」；另外 Google 的 AP2（Agent Payments Protocol，2025-09）、OpenAI×Stripe 的 Agentic Commerce Protocol（2025-09）都是厂商自己发布的独立协议"
+      ],
+      "HV29": [
+        "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Anthropic 已于 2025-12 把 Agent Skills 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code 等都已采用",
+        "「\"ACP\" 撞名撞了三次」少算了：OpenAI×Stripe 的 Agentic Commerce Protocol 同样简称 ACP，文档自己在大厂表里列了「Agentic Commerce Protocol(×Stripe)」，却没算进撞名"
+      ]
+    },
+    "unsure": [
+      "HV29 在 ACP 一栏给 Microsoft 标「❌ 无直接支持」：GitHub Copilot CLI 据称 2026 年初已支持 ACP，如果把 GitHub 算作微软，这一格就是错的",
+      "HV29「❌ 明确拒绝(issue closed \"not planned\")」：可能是把被自动关闭的 issue 过度解读成官方拒绝；另外没提 Zed 维护的 Claude Code ACP 适配器",
+      "HV29「只是取消跨请求恢复」：2025 各版的 Streamable HTTP 都支持用 Last-Event-ID 恢复连接，2026-07-28 版是否取消了这项能力无法确认",
+      "HV29 把 MCP 版本起点写成「2024-10-07」：这是 SDK 里的预发布版本号，第一版公开 spec 是 2024-11-05",
+      "HV29 写 ACP-Zed 起源于「Zed Industries(2025-06-23)」：这个日期和 A2A 捐赠给 LF 是同一天，疑似张冠李戴；ACP 公开亮相大约在 2025-08",
+      "A2A 加入 AAIF 的日期和身份两份文档说法不一：8MVW 是「2026-08-27」「成长期项目」，HV29 是「2026-08-17」「hosted project」；HV29 称「地位比 founding 项目低一级」，这个解读也存疑",
+      "HV29 的「强制 TLS1.2+」「Agent Framework(.NET/Python/Go)」「RFC8707/9207」：TLS 版本的具体措辞、Go 支持、MCP spec 是否引用 RFC 9207，都无法确认",
+      "HV29 给 OpenAI 的 AG-UI 标「🔄 In Progress [7]」：这更像 AG-UI 社区的集成状态，不像 OpenAI 的官方表态",
+      "8MVW 写 ACP-IBM 的传输是「REST/JSON-RPC over HTTP、WebSocket」：正式版 ACP 以 REST 为主，JSON-RPC/WebSocket 可能来自早期草案；另外第 5 节说鉴权细节来自 workos.com 博客，但引用 [9] 指向的是 ibm.com",
+      "8MVW「此后\"ACP\"在社区语境里基本特指 Zed 版」：Agentic Commerce Protocol 也常被简称 ACP，这个说法偏绝对",
+      "8MVW「Gemini CLI 原生 `--acp`」：早期的 flag 是 `--experimental-acp`，现在是否已经改名无法确认",
+      "两份文档里 2026 年的版本号和日期超出了可核实范围，包括 MCP 2026-07-28、A2A v1.0.0/v1.0.1、AG-UI 1.0、ACP-Zed v1.9.1、AGNTCY ACP 归档于 2026-04-11 等"
+    ],
+    "reason": "在用户最关心的协议对象和大厂支持上，HV29 更全也更准：它找出了第三个 ACP（AGNTCY），正确写出四大厂都官方支持 MCP，补上了 A2A 的 gRPC/REST 绑定和鉴权的 RFC 级细节，治理层级也写得更细。8MVW 的一屏总览更好，来源逐条可追溯，缺口标注也诚实，还有 A2UI、Claude Code 经 Zed 适配器接入 ACP 等实用信息；但它把 Google 的 MCP 支持标成「未查到」，又自相矛盾地说没有厂商发布独立新协议。HV29 的问题是来源粒度粗，漏了 A2UI 和这个适配器，还误称 Skills 没有开放，所以只判略好。",
+    "_codes": {
+      "x": "HV29",
+      "y": "8MVW"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

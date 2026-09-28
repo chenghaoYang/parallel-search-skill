@@ -1,0 +1,52 @@
+{
+  "exp": "e000h",
+  "task": "js-runtimes",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "bee3e764c4",
+  "skill_chars": 13564,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 27.2,
+  "spawns": 10,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 131,
+    "Read": 18,
+    "Write": 7,
+    "Agent": 10,
+    "ListAgents": 2,
+    "Edit": 34
+  },
+  "cost_usd": 13.284028300000006,
+  "num_turns": 142,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 15,
+  "mech": {
+    "chars": 8998,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.75,
+    "golden_missed": [
+      "deno-run-vs-check-typecheck",
+      "node-test-runner",
+      "deno-fmt-builtin"
+    ],
+    "urls": 48,
+    "traceable": 1.0,
+    "notes": {
+      "files": 9,
+      "claims": 201,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 9000,
+      "report.r2.md": 8998
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e000h/js-runtimes"
+}

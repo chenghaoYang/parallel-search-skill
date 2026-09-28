@@ -1,0 +1,35 @@
+# r2-a2a-enums
+question: A2A 现行版到底是规范站的 1.0.0 还是 GitHub 的 v1.0.1；TaskState 枚举和 securitySchemes 的类型原名各是什么。
+checked: https://a2a-protocol.org/latest/specification/, https://a2a-protocol.org/v1.0.0/specification/, https://a2a-protocol.org/v1.0.1/specification/, https://api.github.com/repos/a2aproject/A2A/releases/latest, https://api.github.com/repos/a2aproject/A2A/releases?per_page=10, https://raw.githubusercontent.com/a2aproject/A2A/main/CHANGELOG.md, https://spec.openapis.org/oas/v3.2.0.html#security-scheme-object
+
+## claims
+- [C1] GitHub a2aproject/A2A 的 latest release 是 v1.0.1 | src: https://api.github.com/repos/a2aproject/A2A/releases/latest | quote: ""tag_name":"v1.0.1","target_commitish":"3303592588e388e62e0f69f701af531d2f4e3991","name":"v1.0.1"" | type: official
+- [C2] v1.0.1 发布于 2026-05-28，非 draft/prerelease | src: https://api.github.com/repos/a2aproject/A2A/releases/latest | quote: ""published_at":"2026-05-28T11:34:36Z"" | type: official
+- [C3] v1.0.1 是纯 bug-fix 补丁（application/a2a+json、transcoding 错误、TaskStatus 值） | src: https://api.github.com/repos/a2aproject/A2A/releases/latest | quote: "## [1.0.1](https://github.com/a2aproject/A2A/compare/v1.0.0...v1.0.1) (2026-05-26)" | type: official
+- [C4] v1.0.1 修复项含 TaskStatus 值修正 #1801（commit e997516） | src: https://raw.githubusercontent.com/a2aproject/A2A/main/CHANGELOG.md | quote: "* TaskStatus values in the specification ([#1801](https://github.com/a2aproject/A2A/issues/1801))" | type: official
+- [C5] GitHub v1.0.0 发布于 2026-03-12，含大量 BREAKING CHANGES | src: https://api.github.com/repos/a2aproject/A2A/releases?per_page=10 | quote: ""tag_name":"v1.0.0"" | type: official
+- [C6] 规范站横幅 "Latest Released Version 1.0.0" 指向 /v1.0.0/specification，在 /latest/、/v1.0.0/、/v1.0.1/ 三页完全相同（未随 v1.0.1 更新） | src: https://a2a-protocol.org/latest/specification/ | quote: "Latest Released Version 1.0.0" | type: official
+- [C7] 规范站存在 /v1.0.1/specification/ 版本化页面（HTTP 200，与 /latest/ 内容不同） | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "Latest Released Version 1.0.0" | type: official
+- [C8] 规范 §3.6：协议版本只用 Major.Minor（如 "1.0"），patch 版本不影响协议兼容性、不进请求/响应/Agent Card | src: https://a2a-protocol.org/latest/specification/ | quote: "The specific version of the A2A protocol in use is identified using the Major.Minor elements (e.g. 1.0 ) of the corresponding A2A specification version. Patch version numbers used by the specification, do not affect protocol compatibility." | type: official
+- [C9] TaskState 定义于 §4.1.3，共 9 个枚举值：TASK_STATE_UNSPECIFIED、TASK_STATE_SUBMITTED、TASK_STATE_WORKING、TASK_STATE_COMPLETED、TASK_STATE_FAILED、TASK_STATE_CANCELED、TASK_STATE_INPUT_REQUIRED、TASK_STATE_REJECTED、TASK_STATE_AUTH_REQUIRED | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "Defines the possible lifecycle states of a Task." | type: official
+- [C10] v1.0.1 内嵌错误示例逐字列出 8 个合法值；TASK_STATE_RUNNING 仅作非法值出现，非枚举成员 | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "Invalid status value 'TASK_STATE_RUNNING'. Must be one of: TASK_STATE_SUBMITTED, TASK_STATE_WORKING, TASK_STATE_COMPLETED, TASK_STATE_FAILED, TASK_STATE_CANCELED, TASK_STATE_REJECTED, TASK_STATE_INPUT_REQUIRED, TASK_STATE_AUTH_REQUIRED" | type: official
+- [C11] 第 9 个枚举值 TASK_STATE_UNSPECIFIED 表示未知/不确定状态 | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "TASK_STATE_UNSPECIFIED The task is in an unknown or indeterminate state." | type: official
+- [C12] 枚举语义：COMPLETED/FAILED/CANCELED/REJECTED 标 "terminal state"，INPUT_REQUIRED/AUTH_REQUIRED 标 "interrupted state" | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "TASK_STATE_AUTH_REQUIRED Indicates that authentication is required to proceed. This is an interrupted state." | type: official
+- [C13] §4.1.3 枚举表在 /v1.0.0/ 与 /v1.0.1/ 逐字相同，#1801 未改动该表 | src: https://a2a-protocol.org/v1.0.0/specification/ | quote: "TASK_STATE_INPUT_REQUIRED Indicates that the agent requires additional user input to proceed. This is an interrupted state." | type: official
+- [C14] §4.5.1 SecurityScheme 是基于 OpenAPI 3.2 Security Scheme Object 的 discriminated union | src: https://a2a-protocol.org/latest/specification/ | quote: "This is a discriminated union type based on the OpenAPI 3.2 Security Scheme Object. See: https://spec.openapis.org/oas/v3.2.0.html#security-scheme-object" | type: official
+- [C15] A2A SecurityScheme 五个成员标识符须恰好出现一个：apiKeySecurityScheme、httpAuthSecurityScheme、oauth2SecurityScheme、openIdConnectSecurityScheme、mtlsSecurityScheme | src: https://a2a-protocol.org/latest/specification/ | quote: "A SecurityScheme MUST contain exactly one of the following: apiKeySecurityScheme, httpAuthSecurityScheme, oauth2SecurityScheme, openIdConnectSecurityScheme, mtlsSecurityScheme" | type: official
+- [C16] 成员→类型：apiKeySecurityScheme→APIKeySecurityScheme、httpAuthSecurityScheme→HTTPAuthSecurityScheme | src: https://a2a-protocol.org/latest/specification/ | quote: "apiKeySecurityScheme APIKeySecurityScheme Optional (OneOf) API key-based authentication. httpAuthSecurityScheme HTTPAuthSecurityScheme Optional (OneOf) HTTP authentication (Basic, Bearer, etc.)." | type: official
+- [C17] 成员→类型：oauth2SecurityScheme→OAuth2SecurityScheme、openIdConnectSecurityScheme→OpenIdConnectSecurityScheme、mtlsSecurityScheme→MutualTlsSecurityScheme | src: https://a2a-protocol.org/latest/specification/ | quote: "oauth2SecurityScheme OAuth2SecurityScheme Optional (OneOf) OAuth 2.0 authentication. openIdConnectSecurityScheme OpenIdConnectSecurityScheme Optional (OneOf) OpenID Connect authentication. mtlsSecurityScheme MutualTlsSecurityScheme Optional (OneOf) Mutual TLS authentication." | type: official
+- [C18] OpenAPI 3.2.0 Security Scheme Object 的 type 合法值："apiKey"、"http"、"mutualTLS"、"oauth2"、"openIdConnect"（注意拼写 mutualTLS ≠ A2A 的 mtlsSecurityScheme） | src: https://spec.openapis.org/oas/v3.2.0.html#security-scheme-object | quote: "REQUIRED. The type of the security scheme. Valid values are "apiKey", "http", "mutualTLS", "oauth2", "openIdConnect"." | type: official
+- [C19] AgentCard.securitySchemes 类型为 map of string to SecurityScheme，非必填 | src: https://a2a-protocol.org/latest/specification/ | quote: "securitySchemes map of string to SecurityScheme No The security scheme details used for authenticating with this agent." | type: official
+
+## conflicts
+- 版本号冲突：规范站所有页面（含 /v1.0.1/ 自身）横幅均为 "Latest Released Version 1.0.0"（https://a2a-protocol.org/v1.0.1/specification/），而 GitHub 标 latest release 为 ""tag_name":"v1.0.1""、""published_at":"2026-05-28T11:34:36Z""（https://api.github.com/repos/a2aproject/A2A/releases/latest）。缓解事实：规范 §3.6 称 "Patch version numbers used by the specification, do not affect protocol compatibility"，线上协议版本只有 "1.0"。
+
+## gaps
+- 横幅停留 1.0.0 是有意只标 major.minor 还是站点未更新，页面无说明。
+- /latest/ 与冻结的 /v1.0.1/ 内容不同（约 2500 行 diff，如 §4.3.1 标题 TaskPushNotificationConfig vs PushNotificationConfig），/latest/ 对应哪个 release 未标明。
+
+## leads
+- /latest/ 疑似跟踪 main 分支而非最新 tag；引"现行规范原文"建议用冻结页 https://a2a-protocol.org/v1.0.1/specification/。
+- OpenAPI 3.2.0 type 枚举拼写 "mutualTLS" 与 A2A 成员名 "mtlsSecurityScheme" 不同，不要混写。

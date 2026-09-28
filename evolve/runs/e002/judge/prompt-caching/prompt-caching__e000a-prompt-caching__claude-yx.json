@@ -1,0 +1,76 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": 0,
+    "concision": -1
+  },
+  "errors_x": [
+    "Gemini 命中字段「usageMetadata.total_cached_tokens」不存在：generateContent 的 usageMetadata 里是 `cachedContentTokenCount`，`total_cached_tokens` 属于 Interactions API 的 `usage`，这里把两套 API 拼在了一起（§4 同样写法）"
+  ],
+  "errors_y": [
+    "Gemini 命中字段写错：「显式`usageMetadata.totalTokenCount`」——totalTokenCount 是请求总 token 数，不反映缓存命中，generateContent 应看 `usageMetadata.cachedContentTokenCount`；「隐式`usage.total_cached_tokens`」其实是 Interactions API 的字段，不是按隐式/显式区分",
+    "分类把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」不准确：Anthropic 自动缓存仍须在请求顶层显式加 `cache_control`，不加就不缓存，按本文自设的「要不要改代码」轴不该与 OpenAI/Gemini/通义千问的零改动隐式缓存归为一类",
+    "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」错误：OpenAI 默认隐式缓存，断点只是可选，与本文 §0「可选显式」「仍要自己判断用不用」自相矛盾"
+  ],
+  "reason": "5R5G 的一屏总结和分类贯穿全文，覆盖面更广（含 Azure/Bedrock/百炼变体），坑点更具体可操作，字段路径也更完整。GF6K 在核心疑点上更准确（Anthropic 自动缓存仍需顶层字段，并非零改动），不确定性标注也更规范，但智谱折扣、Chat Completions 参数等存疑点更多，OpenRouter 加价的猜测反复出现。两份都把 Gemini 命中字段写错，综合下来 5R5G 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "5R5G",
+      "taxonomy": "5R5G",
+      "coverage": "5R5G",
+      "doubts": "GF6K",
+      "pitfalls": "5R5G",
+      "accuracy": "GF6K",
+      "sourcing": "tie",
+      "concision": "5R5G"
+    },
+    "overall": "5R5G",
+    "strength": 1,
+    "errors": {
+      "5R5G": [
+        "Gemini 命中字段写错：「显式`usageMetadata.totalTokenCount`」——totalTokenCount 是请求总 token 数，不反映缓存命中，generateContent 应看 `usageMetadata.cachedContentTokenCount`；「隐式`usage.total_cached_tokens`」其实是 Interactions API 的字段，不是按隐式/显式区分",
+        "分类把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」不准确：Anthropic 自动缓存仍须在请求顶层显式加 `cache_control`，不加就不缓存，按本文自设的「要不要改代码」轴不该与 OpenAI/Gemini/通义千问的零改动隐式缓存归为一类",
+        "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」错误：OpenAI 默认隐式缓存，断点只是可选，与本文 §0「可选显式」「仍要自己判断用不用」自相矛盾"
+      ],
+      "GF6K": [
+        "Gemini 命中字段「usageMetadata.total_cached_tokens」不存在：generateContent 的 usageMetadata 里是 `cachedContentTokenCount`，`total_cached_tokens` 属于 Interactions API 的 `usage`，这里把两套 API 拼在了一起（§4 同样写法）"
+      ]
+    },
+    "unsure": [
+      "两份都写 OpenAI 缓存写入 1.25x（GF6K 还称「对 implicit/explicit 两种模式都适用」），与我所知 OpenAI 写入不加价不符，可能是知识截止后的新定价",
+      "GF6K「Chat Completions 靠 `prompt_cache_options` 参数」存疑：据我所知 Chat Completions 默认自动缓存，相关参数是 `prompt_cache_key`/`prompt_cache_retention`；5R5G 则把 `prompt_cache_options` 归给 Kimi，疑似有一方张冠李戴",
+      "Kimi 触发方式两份直接矛盾：5R5G「纯手动，必须传参才缓存」vs GF6K「默认自动…无手动断点概念」；GF6K 给了 5min/1h 两档写入价，却没说不传参时 TTL 怎么选",
+      "智谱命中价：5R5G「≈0.25x（2元 vs 8元/M）」vs GF6K「约 0.5x」；我印象中 GLM-4.5 以后缓存价约为输入价的 0.2x，更接近 5R5G，但 GLM-5.3 现价无法确认",
+      "智谱存储费：5R5G「另计存储费(元/M/小时)」vs GF6K「存储限时免费」",
+      "OpenAI TTL：5R5G「≥30分钟；2026-05后非ZDR组织默认24h」vs GF6K「30分钟（新模型）」",
+      "Anthropic 存储介质：GF6K 写「纯内存」，5R5G 说官方未公开",
+      "Anthropic 新模型命中价：5R5G「0.05x(Opus5.5)」，GF6K 没提；GF6K 用 2025 年的 token-saving-updates 文章 [4] 支撑「自 2026-09-01」的 0.025x，出处对不上",
+      "Gemini 最小门槛：5R5G「2048(2.5)」、GF6K「implicit 2048–4096」；我印象中 2.5 Flash 是 1024",
+      "5R5G DeepSeek「$0.014 vs $0.14/M」出自 2024 年 news0802 公告的 V2 价，未必是现价（0.1x 的比例仍成立）",
+      "5R5G Kimi「按标准价写入，2次命中回本」逻辑不通：按标准价写入就没有需要回本的溢价，除非指的是 1h 档",
+      "GF6K 反复推测 OpenRouter 可能加价：它倍率表里 OpenAI 那行的 0.25x–0.5x 更像旧文档没更新，OpenRouter 一般按上游原价透传，这个推测可能误导读者"
+    ],
+    "reason": "5R5G 的一屏总结和分类贯穿全文，覆盖面更广（含 Azure/Bedrock/百炼变体），坑点更具体可操作，字段路径也更完整。GF6K 在核心疑点上更准确（Anthropic 自动缓存仍需顶层字段，并非零改动），不确定性标注也更规范，但智谱折扣、Chat Completions 参数等存疑点更多，OpenRouter 加价的猜测反复出现。两份都把 Gemini 命中字段写错，综合下来 5R5G 略胜。",
+    "_codes": {
+      "x": "GF6K",
+      "y": "5R5G"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

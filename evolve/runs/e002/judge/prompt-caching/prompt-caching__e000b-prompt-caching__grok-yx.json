@@ -1,0 +1,64 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [],
+  "errors_y": [
+    "一屏看懂把智谱写成已确认的「DeepSeek、智谱写入不加价」，但矩阵对智谱写入费标的是「∅官方未详述」，未决节又写「智谱 GLM 的写入费、精确失效触发条件:官方文档未详述」，未记载被说成了不加价。"
+  ],
+  "reason": "ZQ45 把各家命中字段、百炼托管与原厂缓存不是同一套规则、以及官方没写清的数字分开写清，用户能直接拿去对账和改监控。9DWB 的九条开篇和 F1/F2/F3 分类更好扫，也补了云托管差异，但开篇把智谱写入费写成不加价，和后文冲突。要改代码、核命中、算钱时，ZQ45 更稳一点。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "9DWB",
+      "taxonomy": "9DWB",
+      "coverage": "ZQ45",
+      "doubts": "ZQ45",
+      "pitfalls": "ZQ45",
+      "accuracy": "ZQ45",
+      "sourcing": "ZQ45",
+      "concision": "9DWB"
+    },
+    "overall": "ZQ45",
+    "strength": 1,
+    "errors": {
+      "9DWB": [
+        "一屏看懂把智谱写成已确认的「DeepSeek、智谱写入不加价」，但矩阵对智谱写入费标的是「∅官方未详述」，未决节又写「智谱 GLM 的写入费、精确失效触发条件:官方文档未详述」，未记载被说成了不加价。"
+      ],
+      "ZQ45": []
+    },
+    "unsure": [
+      "DeepSeek 命中倍率：9DWB 写「约0.02x」，ZQ45 写 0.1x。长期公开口径接近未命中价的 1/10，但是否被 9DWB 所引 2026-09-10 新闻改掉，无法核实。",
+      "Anthropic 自动缓存上线日：9DWB 写 2025-03-13，ZQ45 写 2026-02-19，且 ZQ45 用来源 commits/a940123 支撑，链接形态可疑，无法判断谁对。",
+      "OpenAI 旧模型是否仍为命中 0.5x、写入免费：9DWB 把 GPT-5.6+ 与更早版本分开，ZQ45 把 0.1x 与 1.25x 写成 OpenAI 的整体口径。",
+      "Gemini implicit 折扣：9DWB 写两种模式都是 0.1x；ZQ45 写 Gemini API 官方未给 implicit 百分比，只把 Vertex 的 0.1x 标成二手。",
+      "智谱 TTL：9DWB 写「5min自动刷新」，ZQ45 写官方未公开。",
+      "OpenRouter 是否有「no markup on inference pricing」，以及其表内 OpenAI 缓存 0.25x–0.5x 与直连 0.1x 的差距是加成还是口径不同。",
+      "仅 9DWB 主张 Bedrock 上的 Claude 有一条不需要 cache_control 的 Implicit Prompt Caching，且计费和 TTL 与原生相同。",
+      "ZQ45 的 Fable5.1/Mythos5.1 与 9DWB 的 GPT-6 是否为真实在售模型；Kimi 命中价是统一 0.1x 还是 K2.6 为 0.17x，写入价 $3/M 与 $6/M 对应哪一款。"
+    ],
+    "reason": "ZQ45 把各家命中字段、百炼托管与原厂缓存不是同一套规则、以及官方没写清的数字分开写清，用户能直接拿去对账和改监控。9DWB 的九条开篇和 F1/F2/F3 分类更好扫，也补了云托管差异，但开篇把智谱写入费写成不加价，和后文冲突。要改代码、核命中、算钱时，ZQ45 更稳一点。",
+    "_codes": {
+      "x": "ZQ45",
+      "y": "9DWB"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

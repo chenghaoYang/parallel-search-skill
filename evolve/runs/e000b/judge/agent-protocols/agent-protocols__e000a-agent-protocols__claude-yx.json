@@ -1,0 +1,75 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": 0,
+    "concision": 1
+  },
+  "errors_x": [
+    "大厂矩阵 Google 的 MCP 一格写「❓ 未查到官方 MCP 支持声明」（图例定义为「❓ 已查证官方渠道、未见表态」），摘要也写「但未查到明确的 MCP 声明」：Google 官方早已支持 MCP（Gemini CLI、ADK 原生 MCP 工具、MCP Toolbox for Databases、2025-12 Google Cloud 托管 MCP server 公告），这个判断是错的",
+    "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」：2025-06-23 到 2026-08-27 约 14 个月，是一年多，不是「近一年」（小错）"
+  ],
+  "errors_y": [
+    "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」及表中「OAuth2.1强制+PKCE」：MCP 规范明文 Authorization is OPTIONAL（HTTP 传输 SHOULD 遵循，stdio 应改从环境变量取凭据），并非强制",
+    "自相矛盾：第0节称 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，第5节坑4 却要读者「判断兼容性看运行时 `protocolVersion` 协商结果」"
+  ],
+  "reason": "EMMD 的 10 维对照（含核心抽象、状态、成熟度、版本演进，并写到 MCP 2026-07-28 去掉会话这一重大变化）和贯穿全文的 taxonomy 更能帮用户吃透细节差异，大厂矩阵里 Google 的 MCP 支持也判断正确。S2SR 开头定位更快，SSE 的细节（Streamable HTTP 内部仍可用 SSE）和 MCP 鉴权可选这两点更准确，厂商证据口径也更严，但把 Google 的 MCP 支持标成未见表态，并且缺少状态、版本变化等维度。双方各有约两处确信错误（EMMD 把 MCP 鉴权写成强制，并在版本协商上前后矛盾），综合看 EMMD 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "S2SR",
+      "taxonomy": "EMMD",
+      "coverage": "EMMD",
+      "doubts": "S2SR",
+      "pitfalls": "EMMD",
+      "accuracy": "tie",
+      "sourcing": "tie",
+      "concision": "S2SR"
+    },
+    "overall": "EMMD",
+    "strength": 1,
+    "errors": {
+      "EMMD": [
+        "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」及表中「OAuth2.1强制+PKCE」：MCP 规范明文 Authorization is OPTIONAL（HTTP 传输 SHOULD 遵循，stdio 应改从环境变量取凭据），并非强制",
+        "自相矛盾：第0节称 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，第5节坑4 却要读者「判断兼容性看运行时 `protocolVersion` 协商结果」"
+      ],
+      "S2SR": [
+        "大厂矩阵 Google 的 MCP 一格写「❓ 未查到官方 MCP 支持声明」（图例定义为「❓ 已查证官方渠道、未见表态」），摘要也写「但未查到明确的 MCP 声明」：Google 官方早已支持 MCP（Gemini CLI、ADK 原生 MCP 工具、MCP Toolbox for Databases、2025-12 Google Cloud 托管 MCP server 公告），这个判断是错的",
+        "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」：2025-06-23 到 2026-08-27 约 14 个月，是一年多，不是「近一年」（小错）"
+      ]
+    },
+    "unsure": [
+      "EMMD「2024-10-07→2026-07-28」：公开的首版规范是 2024-11-05，2024-10-07 只出现在早期 SDK 的兼容版本列表里，能否算正式版本存疑",
+      "EMMD「SEP-2596」「官方要求至少12个月弃用窗口」，以及 2026-07-28 版删除 `Mcp-Session-Id`、取消握手/协商的具体内容，超出我能确认的范围",
+      "ACP-Zed 版本两份互相矛盾：EMMD「包版本v0.13.6(预1.0)」vs S2SR「v1.9.1（2026-09-18）」",
+      "S2SR 写 ACP-IBM 传输为「REST/JSON-RPC over HTTP、WebSocket」：定稿的 ACP 是 REST(OpenAPI)+SSE 流式，JSON-RPC/WebSocket 疑似来自早期草案或二手描述",
+      "IBM ACP 并入/归档日期：EMMD「2025-08-25」vs S2SR「2025-08-27」",
+      "EMMD 给 Anthropic 的 AG-UI 标「✅集成列表列Claude Managed Agents/SDK」：依据只是 AG-UI 一侧的列表，能否算 Anthropic 官方支持存疑；与它对 Zed 页列出项标 ⚠ 的口径也不一致",
+      "EMMD 写 ACP-Zed 状态「客户端存会话线程」：ACP 中会话由 agent 创建和维护（session/new、session/load），存疑",
+      "S2SR「Gemini CLI 原生 `--acp`」：发布时参数是 `--experimental-acp`，之后是否已改名不确定",
+      "S2SR「计划移交独立基金会（不是 AAIF）」：「不是 AAIF」是否为官方表述不确定",
+      "EMMD AG-UI「17种事件」的具体数目（早期文档约 16 种，后续有增加）",
+      "S2SR 来源 [19]「https://learn.chatgpt.com」这个域名是否存在不确定；另外它的 [9] 指向 ibm.com，正文却说出自 workos.com 博客，前后对不上"
+    ],
+    "reason": "EMMD 的 10 维对照（含核心抽象、状态、成熟度、版本演进，并写到 MCP 2026-07-28 去掉会话这一重大变化）和贯穿全文的 taxonomy 更能帮用户吃透细节差异，大厂矩阵里 Google 的 MCP 支持也判断正确。S2SR 开头定位更快，SSE 的细节（Streamable HTTP 内部仍可用 SSE）和 MCP 鉴权可选这两点更准确，厂商证据口径也更严，但把 Google 的 MCP 支持标成未见表态，并且缺少状态、版本变化等维度。双方各有约两处确信错误（EMMD 把 MCP 鉴权写成强制，并在版本协商上前后矛盾），综合看 EMMD 略胜。",
+    "_codes": {
+      "x": "S2SR",
+      "y": "EMMD"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

@@ -1,0 +1,73 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 0,
+    "doubts": 0,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开头断言「只有 uv 把\"装 Python 解释器\"内置了」，同一句又承认 PDM 有 pdm python install，而 PDM 早已能自行下载 CPython。",
+    "开头写「构建后端各家不同，但都是 PEP 517 后端，可以互通」，conda-build 走 meta.yaml 和 conda-build，不是 PEP 517 后端。",
+    "写 pixi「官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」，但 pixi 清单长期支持 pypi-options 的 index-url / extra-index-urls，keyring 与 .netrc 本身就是认证手段。"
+  ],
+  "errors_y": [
+    "把 uv 说成「唯一有官方 GH Action 的一体化工具」，但同文把 PDM 划进一体化家族，并在 D10 写明 PDM 有官方 action pdm-project/setup-pdm。",
+    "写「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」，其中依赖组并不在这张主依赖表，而在 [tool.poetry.group.*.dependencies]。"
+  ],
+  "reason": "9PNN 开头就给出选型结论，并用 D1–D11 把锁文件、workspace、解释器、构建后端和私有源/CI 对齐到可检索的字段与版本，凭证回退、旧锁必须重解、缓存 key 这几条也能直接照着检查。T3U7 把 Poetry 2 的 [project] 落地和迁移命令写得更准，也多了解析器这条轴，但开头「只有 uv」「都是 PEP 517」会把关键事实讲错。对要做选型的用户，9PNN 略高一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "9PNN",
+      "taxonomy": "9PNN",
+      "coverage": "tie",
+      "doubts": "tie",
+      "pitfalls": "9PNN",
+      "accuracy": "9PNN",
+      "sourcing": "9PNN",
+      "concision": "T3U7"
+    },
+    "overall": "9PNN",
+    "strength": 1,
+    "errors": {
+      "9PNN": [
+        "把 uv 说成「唯一有官方 GH Action 的一体化工具」，但同文把 PDM 划进一体化家族，并在 D10 写明 PDM 有官方 action pdm-project/setup-pdm。",
+        "写「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」，其中依赖组并不在这张主依赖表，而在 [tool.poetry.group.*.dependencies]。"
+      ],
+      "T3U7": [
+        "开头断言「只有 uv 把\"装 Python 解释器\"内置了」，同一句又承认 PDM 有 pdm python install，而 PDM 早已能自行下载 CPython。",
+        "开头写「构建后端各家不同，但都是 PEP 517 后端，可以互通」，conda-build 走 meta.yaml 和 conda-build，不是 PEP 517 后端。",
+        "写 pixi「官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」，但 pixi 清单长期支持 pypi-options 的 index-url / extra-index-urls，keyring 与 .netrc 本身就是认证手段。"
+      ]
+    },
+    "unsure": [
+      "Poetry 是否支持 pylock 互相矛盾：9PNN 写「Poetry 未支持（issue #10356 无里程碑）」，T3U7 写「Poetry(2.3.0+)只支持导出，需 poetry-plugin-export≥1.10」，无法确定 2026-09 哪边属实。",
+      "uv 的 pylock 版本起点：9PNN 为 0.6.15+ preliminary 导出/安装，T3U7 为 0.12.0（2026-07-28）起导出/导入；可能是不同阶段，不能据此判定谁把起点写错。",
+      "pip 26.1 是否仍不支持 extras/dependency-groups（9PNN 自标证据偏弱），以及 T3U7「pip 支持最完整」是否因此说满。",
+      "conda 26.5 是否已能实验性原生导出 conda-lock.yaml 并兼容 pixi.lock（9PNN 引 PR #15927/#16086）；T3U7 仍写 conda 无官方锁、只靠第三方 conda-lock。",
+      "pixi 多包发布是否自 v0.75.0（2026-07-29）起稳定、最新稳定版是否为 v0.81.0（2026-09-15）。",
+      "uv 在内部 index 缺凭证时是否仍会静默回退公共 PyPI（9PNN 的 issue #9429），以及 2026 是否已有修复。",
+      "T3U7 所称 uv auth CLI 是否已发布，以及 uv 迁移文档是否仍只有 pip→uv（issue #5200），对照 9PNN 的 poetry.lock wontfix（#1804），两边都可能只对了一半。"
+    ],
+    "reason": "9PNN 开头就给出选型结论，并用 D1–D11 把锁文件、workspace、解释器、构建后端和私有源/CI 对齐到可检索的字段与版本，凭证回退、旧锁必须重解、缓存 key 这几条也能直接照着检查。T3U7 把 Poetry 2 的 [project] 落地和迁移命令写得更准，也多了解析器这条轴，但开头「只有 uv」「都是 PEP 517」会把关键事实讲错。对要做选型的用户，9PNN 略高一筹。",
+    "_codes": {
+      "x": "T3U7",
+      "y": "9PNN"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

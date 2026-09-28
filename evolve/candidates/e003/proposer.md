@@ -1,0 +1,9 @@
+model: grok-4.7
+minutes: 12.0
+leak_terms: []
+
+终审加成稿自洽（一屏和坑逐条对矩阵、重算条数和数字）；改概括句时留下该格的 `[n]`，来源节 URL 保持笔记里的完整 `https://`，`roundstat` 报 `cite:` 就先补再交。
+
+改了 `evolve/candidates/e003/skill/SKILL.md`、`references/converge.md`、`scripts/roundstat.py`（`.md` 字符 +529，约 +3.6%），假设写在 `evolve/candidates/e003/hypothesis.md`。
+
+预期 sourcing 不再像 e001 那样在 py-packaging 和 agent-protocols 上各 8/8 输给基线，traceable 守在 e002 的约 0.97；doubts 和 accuracy 沿 prompt-caching 那次「查了但没改出处」的方向上升。成稿若已经顶满 9000 字，留住 URL 时会删掉整句正文。

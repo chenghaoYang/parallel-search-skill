@@ -1,0 +1,58 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": -1,
+    "pitfalls": 0,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "MCP 鉴权在协议层可选，stdio 不必走 OAuth；文中却写「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」，对照表又写「OAuth2.1强制+PKCE」。"
+  ],
+  "errors_y": [
+    "Google 已有官方 MCP 支持（Cloud 公告与 ADK），文中却写「❓ 未查到官方 MCP 支持声明」，未决又写「Google 官方渠道未查到明确的 MCP 支持声明」。"
+  ],
+  "reason": "A 对两个点名疑点的结论更可直接采用：两个 ACP 不是一回事；废弃的是独立 HTTP+SSE 传输，SSE 仍是 Streamable HTTP 里的可选流。鉴权写成整体可选，也比 B 的「强制 OAuth」更接近规范，且链接能逐条打开。B 的三族十维分类和字段级对照更细，并写对了 Google 官方支持 MCP，但这没有盖过鉴权硬伤和缩写来源。",
+  "raw": {
+    "dims": {
+      "orientation": "A",
+      "taxonomy": "B",
+      "coverage": "B",
+      "doubts": "A",
+      "pitfalls": "tie",
+      "accuracy": "tie",
+      "sourcing": "A",
+      "concision": "tie"
+    },
+    "overall": "A",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "Google 已有官方 MCP 支持（Cloud 公告与 ADK），文中却写「❓ 未查到官方 MCP 支持声明」，未决又写「Google 官方渠道未查到明确的 MCP 支持声明」。"
+      ],
+      "B": [
+        "MCP 鉴权在协议层可选，stdio 不必走 OAuth；文中却写「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」，对照表又写「OAuth2.1强制+PKCE」。"
+      ]
+    },
+    "unsure": [
+      "B 称 2026-07-28 起 MCP 原文为「remove protocol-level sessions and the Mcp-Session-Id header」，并称无握手、靠 `_meta.protocolVersion`、「没有协商」。",
+      "B 称 HTTP+SSE 在 2025-03-26 只是软弃用，到 2026-07-28 才按 SEP-2596 正式 Deprecated，且「至少12个月弃用窗口」。",
+      "ACP-Zed 版本冲突：A 写「v1.9.1（2026-09-18）」，B 写包版本「v0.13.6」且预 1.0、仍会 breaking。",
+      "A 把 ACP-IBM 传输写成「REST/JSON-RPC over HTTP、WebSocket」，其中 JSON-RPC 是否属实拿不准。",
+      "A 将 Google AG-UI 标为「✅ ADK 支持」并称有官方确认，引用却是 docs.ag-ui.com。",
+      "B 开头说 AG-UI「是承载它的传输协议」，后文又把 A2UI 与 AG-UI 分成两层，哪句更贴官方措辞拿不准。",
+      "B 把 A2A 传输写成「JSON-RPC2.0(主流)/gRPC/HTTP+REST」，gRPC 与 REST 是否为规范级传输拿不准。"
+    ],
+    "reason": "A 对两个点名疑点的结论更可直接采用：两个 ACP 不是一回事；废弃的是独立 HTTP+SSE 传输，SSE 仍是 Streamable HTTP 里的可选流。鉴权写成整体可选，也比 B 的「强制 OAuth」更接近规范，且链接能逐条打开。B 的三族十维分类和字段级对照更细，并写对了 Google 官方支持 MCP，但这没有盖过鉴权硬伤和缩写来源。"
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

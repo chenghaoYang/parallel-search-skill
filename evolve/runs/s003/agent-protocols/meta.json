@@ -1,0 +1,54 @@
+{
+  "exp": "s003",
+  "task": "agent-protocols",
+  "rep": 1,
+  "arm": "grok-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e003/skill",
+  "skill_sha": "73a9549218",
+  "skill_chars": 15318,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 21.2,
+  "spawns": 6,
+  "followups": 0,
+  "lead_web": 93,
+  "lead_tools": {
+    "read_file": 14,
+    "list_dir": 1,
+    "todo_write": 2,
+    "write": 11,
+    "spawn_subagent": 6,
+    "web_fetch": 77,
+    "get_command_or_subagent_output": 1,
+    "web_search": 16,
+    "run_terminal_command": 12,
+    "search_replace": 1,
+    "grep": 1
+  },
+  "cost_usd": 0.25,
+  "num_turns": 9,
+  "is_error": true,
+  "terminal_reason": "error_during_execution",
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 13655,
+    "len_ok": false,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.7,
+    "golden_missed": [
+      "microsoft-a2a-v1-ga",
+      "anthropic-mcp-oauth",
+      "openai-mcp-responses-support"
+    ],
+    "urls": 45,
+    "traceable": 1.0,
+    "notes": {
+      "files": 6,
+      "claims": 168,
+      "claims_ok": 1.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/s003/agent-protocols"
+}

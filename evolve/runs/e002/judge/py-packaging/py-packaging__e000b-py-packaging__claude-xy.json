@@ -1,0 +1,78 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「uv 能读(0.12.0+)/导出+hash(0.12.11+)，仍标 preview」：uv 0.6.15（2025-04）就已初步支持 pylock.toml，导出用 `uv export --format pylock.toml`，安装用 `uv pip install -r`/`uv pip sync`。把起始版本写成 0.12.x 是错的",
+    "D2 把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」：feature/environment 是同一工作区的多环境机制，不是多包 monorepo，答非所问",
+    "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」：Poetry 2.1 起已有实验性的 `poetry python install`（基于 python-build-standalone）",
+    "引用错位：「「the package installer for Python」，PyPA维护[22]」里的 [22] 是 Poetry 的 managing-environments 页；Poetry D7「`run`要求项目内[30]」里的 [30] 是 PDM CHANGELOG"
+  ],
+  "errors_y": [
+    "「唯一有官方 GH Action 的一体化工具」：同属一体化的 PDM 有官方的 `pdm-project/setup-pdm`，文中 D10 自己也列了，前后矛盾",
+    "「显式多源、依赖组、相对路径本地依赖仍要写`[tool.poetry.dependencies]`」以及第3节「依赖组…这些标准表达不了的能力」：Poetry 的依赖组本来就写在 `[tool.poetry.group.<name>]` 而不是这张表；而且 PEP 735 `[dependency-groups]` 已经是标准，Poetry 2.2 起支持",
+    "「Poetry 明确不会（BYOP）」：Poetry 2.1 起已有实验性的 `poetry python install`，可以下载解释器"
+  ],
+  "reason": "C883 在锁文件、workspace、Python 版本、构建后端以及迁移/CI/私有源上对照更细，落到配置键、action 选项和命令这一级，来源精确到具体页面，选型速记也覆盖了全部工具。J6TB 开头更易读，uv 支持 pylock.toml 的起始版本答对了，index 策略、重新锁定等坑也更有洞见，但有「未查」或空白格，多数来源只指向文档根目录。双方确信错误数量相当（C883 错在 uv 的 pylock 版本号和 pixi workspace 机制；J6TB 错在「唯一官方 GH Action」和 Poetry 依赖组），综合下来 C883 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "J6TB",
+      "taxonomy": "tie",
+      "coverage": "C883",
+      "doubts": "J6TB",
+      "pitfalls": "J6TB",
+      "accuracy": "tie",
+      "sourcing": "C883",
+      "concision": "C883"
+    },
+    "overall": "C883",
+    "strength": 1,
+    "errors": {
+      "C883": [
+        "「uv 能读(0.12.0+)/导出+hash(0.12.11+)，仍标 preview」：uv 0.6.15（2025-04）就已初步支持 pylock.toml，导出用 `uv export --format pylock.toml`，安装用 `uv pip install -r`/`uv pip sync`。把起始版本写成 0.12.x 是错的",
+        "D2 把 pixi 的 workspace/monorepo 写成「原生`[environments]`+`[feature]`组合」：feature/environment 是同一工作区的多环境机制，不是多包 monorepo，答非所问",
+        "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」：Poetry 2.1 起已有实验性的 `poetry python install`（基于 python-build-standalone）",
+        "引用错位：「「the package installer for Python」，PyPA维护[22]」里的 [22] 是 Poetry 的 managing-environments 页；Poetry D7「`run`要求项目内[30]」里的 [30] 是 PDM CHANGELOG"
+      ],
+      "J6TB": [
+        "「唯一有官方 GH Action 的一体化工具」：同属一体化的 PDM 有官方的 `pdm-project/setup-pdm`，文中 D10 自己也列了，前后矛盾",
+        "「显式多源、依赖组、相对路径本地依赖仍要写`[tool.poetry.dependencies]`」以及第3节「依赖组…这些标准表达不了的能力」：Poetry 的依赖组本来就写在 `[tool.poetry.group.<name>]` 而不是这张表；而且 PEP 735 `[dependency-groups]` 已经是标准，Poetry 2.2 起支持",
+        "「Poetry 明确不会（BYOP）」：Poetry 2.1 起已有实验性的 `poetry python install`，可以下载解释器"
+      ]
+    },
+    "unsure": [
+      "J6TB「内部 index 缺凭证时会静默回退到公共 PyPI」（前后重复 4 次）：uv 文档写明 first-index 策略遇到 401/403 就停止搜索，只有 404 才继续，这条可能已过时，或只适用于未授权时返回 404 的私有源",
+      "J6TB Poetry 构建后端「固定`poetry-core`」：Poetry 2.1 起 `poetry build` 据称已不绑定特定构建后端",
+      "J6TB「此前完全依赖第三方 conda-lock」：conda-lock 属于 conda 组织，`conda list --explicit` 也一直存在",
+      "C883「Poetry 官方 2019 年就把 monorepo 请求关闭为「not planned」」：GitHub 的 not planned 关闭理由 2022 年才出现，关闭时间存疑",
+      "C883「pixi 底层是否为 Resolvo：官方均未公开」和「Poetry 未公开算法名」：rattler 用 resolvo、Poetry 的求解器基于 PubGrub，这两点都有公开资料",
+      "C883「`environment.yml`不锁build string」：`conda env export` 默认会输出 build string",
+      "C883「PDM 自 v2.5.0 起降级为实验性可选」：PDM 2.0 起默认就已改用 venv",
+      "两份说法冲突，均无法核实：pixi-build 是否仍为 preview（C883）还是已在 v0.75.0 转为稳定（J6TB）；conda 26.5 对锁文件是「读」（C883）还是「导出」（J6TB）"
+    ],
+    "reason": "C883 在锁文件、workspace、Python 版本、构建后端以及迁移/CI/私有源上对照更细，落到配置键、action 选项和命令这一级，来源精确到具体页面，选型速记也覆盖了全部工具。J6TB 开头更易读，uv 支持 pylock.toml 的起始版本答对了，index 策略、重新锁定等坑也更有洞见，但有「未查」或空白格，多数来源只指向文档根目录。双方确信错误数量相当（C883 错在 uv 的 pylock 版本号和 pixi workspace 机制；J6TB 错在「唯一官方 GH Action」和 Poetry 依赖组），综合下来 C883 略好。",
+    "_codes": {
+      "x": "C883",
+      "y": "J6TB"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

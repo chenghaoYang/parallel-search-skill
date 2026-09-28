@@ -1,0 +1,46 @@
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 64238)
+Traceback (most recent call last):
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/http/server.py", line 437, in handle
+    self.handle_one_request()
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/http/server.py", line 425, in handle_one_request
+    method()
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 72, in do_POST
+    self.proxy()
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 113, in proxy
+    self.chunk(patch_line(line + b"\n"))
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 75, in chunk
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(data), data))
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+ConnectionResetError: [Errno 54] Connection reset by peer
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 65432)
+Traceback (most recent call last):
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/http/server.py", line 437, in handle
+    self.handle_one_request()
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/http/server.py", line 425, in handle_one_request
+    method()
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 72, in do_POST
+    self.proxy()
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 113, in proxy
+    self.chunk(patch_line(line + b"\n"))
+  File "~/developer/parallel-search-skill/bench/devin_shim.py", line 75, in chunk
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(data), data))
+  File "~/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------

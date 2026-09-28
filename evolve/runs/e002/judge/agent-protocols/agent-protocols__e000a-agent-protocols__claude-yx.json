@@ -1,0 +1,75 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「AG-UI 无大厂官方采用声明」以及大厂矩阵 Microsoft 行 AG-UI 列标「—」——Microsoft Agent Framework 在 Microsoft Learn 上有官方 AG-UI 集成文档和对应包，属于官方采用",
+    "「Anthropic 无独立框架,MCP即其出品」——Anthropic 有 Claude Agent SDK（2025-09 由 Claude Code SDK 更名），和文中列出的 OpenAI Agents SDK 是同一类东西"
+  ],
+  "errors_y": [
+    "鉴权定性错误：「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」「OAuth2.1强制+PKCE」——MCP 规范明写 Authorization is OPTIONAL，只有 HTTP 传输实现鉴权时才按 OAuth 2.1/PKCE 走，stdio 不应走这套流程，不能说协议强制 OAuth2.1",
+    "自相矛盾：坑4说「判断兼容性看运行时 `protocolVersion` 协商结果」，第0节第3条却说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，两处至少有一处错",
+    "「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」——漏掉了 OpenAI+Stripe 在 2025-09 发布、至今仍活跃的 Agentic Commerce Protocol（也简称 ACP），在用户点名的撞名疑点上给出了误导性结论"
+  ],
+  "reason": "KYGR 对用户点名的疑点回答得更好：指出 ACP 实际有三个（含 Agentic Commerce Protocol），并说明 SSE 仍作为 Streamable HTTP 里的流式方式保留；它开头就给出四类问题的全局图，还区分了 ACP-Zed 的原生实现和 Zed 写的适配器。8NWV 更深入、来源更扎实（鉴权 RFC、版本史、核心抽象、A2UI 关系、AG-UI 厂商列），但有 MCP 强制 OAuth、protocolVersion 协商自相矛盾、「ACP 基本指 Zed」三处错误。KYGR 在 AG-UI 大厂采用和 Anthropic 框架上也有两处错，所以只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "KYGR",
+      "taxonomy": "KYGR",
+      "coverage": "8NWV",
+      "doubts": "KYGR",
+      "pitfalls": "KYGR",
+      "accuracy": "KYGR",
+      "sourcing": "8NWV",
+      "concision": "tie"
+    },
+    "overall": "KYGR",
+    "strength": 1,
+    "errors": {
+      "8NWV": [
+        "鉴权定性错误：「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」「OAuth2.1强制+PKCE」——MCP 规范明写 Authorization is OPTIONAL，只有 HTTP 传输实现鉴权时才按 OAuth 2.1/PKCE 走，stdio 不应走这套流程，不能说协议强制 OAuth2.1",
+        "自相矛盾：坑4说「判断兼容性看运行时 `protocolVersion` 协商结果」，第0节第3条却说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，两处至少有一处错",
+        "「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」——漏掉了 OpenAI+Stripe 在 2025-09 发布、至今仍活跃的 Agentic Commerce Protocol（也简称 ACP），在用户点名的撞名疑点上给出了误导性结论"
+      ],
+      "KYGR": [
+        "「AG-UI 无大厂官方采用声明」以及大厂矩阵 Microsoft 行 AG-UI 列标「—」——Microsoft Agent Framework 在 Microsoft Learn 上有官方 AG-UI 集成文档和对应包，属于官方采用",
+        "「Anthropic 无独立框架,MCP即其出品」——Anthropic 有 Claude Agent SDK（2025-09 由 Claude Code SDK 更名），和文中列出的 OpenAI Agents SDK 是同一类东西"
+      ]
+    },
+    "unsure": [
+      "8NWV「2024-10-07→2026-07-28」：公开规范首版是 2024-11-05，2024-10-07 只出现在早期 SDK 的支持版本列表里",
+      "AG-UI 事件数：8NWV「17种事件」和 KYGR「30种类型化JSON事件」对不上，可能分别对应早期版本和 1.0",
+      "KYGR「Server管理Task，7态枚举」：印象中 A2A TaskState 有 8 个非 unspecified 状态（含 rejected、auth-required）",
+      "KYGR Google 行「— (自有A2UI协议,非AG-UI)」：A2UI 是可以经由 AG-UI 传输的 UI 规范，Google ADK 也有 AG-UI 集成，这样写可能误导读者以为两者是替代关系",
+      "IBM ACP 并入 A2A 的日期：8NWV 写「2025-08-25」，KYGR 写「2025-08-27」",
+      "KYGR「`gemini --acp`」：早期参数是 `--experimental-acp`，后来有没有改名不确定",
+      "KYGR Microsoft 行 ACP-Zed 标「○」：GitHub Copilot CLI 可能已经原生支持 ACP",
+      "8NWV 对 MCP 2026-07-28 的细节（SEP-2596、删除 Mcp-Session-Id、至少12个月弃用窗口、RFC9207）超出可核实范围",
+      "8NWV「集成列表列Claude Managed Agents/SDK」和 KYGR「2026-05 的 $27M 融资明确与 AG-UI 采用挂钩」都无法核实"
+    ],
+    "reason": "KYGR 对用户点名的疑点回答得更好：指出 ACP 实际有三个（含 Agentic Commerce Protocol），并说明 SSE 仍作为 Streamable HTTP 里的流式方式保留；它开头就给出四类问题的全局图，还区分了 ACP-Zed 的原生实现和 Zed 写的适配器。8NWV 更深入、来源更扎实（鉴权 RFC、版本史、核心抽象、A2UI 关系、AG-UI 厂商列），但有 MCP 强制 OAuth、protocolVersion 协商自相矛盾、「ACP 基本指 Zed」三处错误。KYGR 在 AG-UI 大厂采用和 Anthropic 框架上也有两处错，所以只是略胜。",
+    "_codes": {
+      "x": "KYGR",
+      "y": "8NWV"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

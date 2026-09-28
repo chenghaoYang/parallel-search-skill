@@ -1,0 +1,78 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Anthropic Computer Use（computer_toolset_20260801）和 Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」——Anthropic 已于 2025-12 把 Agent Skills（SKILL.md）作为开放标准发布（agentskills.io），OpenAI Codex、VS Code/GitHub Copilot 等已经采用",
+    "「撞名撞了三次」「只有 Zed 的 Agent Client Protocol 活着」——OpenAI×Stripe 的 Agentic Commerce Protocol 也简称 ACP，而且仍在活跃（本文自己在 OpenAI 行列出了它），所以至少撞名四次"
+  ],
+  "errors_y": [
+    "「❓ 未查到官方 MCP 支持声明」（图例把 ❓ 定义为「已查证官方渠道、未见表态」，一屏看懂里也写「但未查到明确的 MCP 声明」）——Google 早已官方支持 MCP：Gemini CLI、ADK 的 MCPToolset、2025-12 Google Cloud 发布的官方托管 MCP 服务器公告等",
+    "「自家变体」列里 Anthropic 写「无」——Anthropic 2025-12 已把 Agent Skills（SKILL.md）发布为开放标准；本文把 AGENTS.md 算作 OpenAI 的变体，按同一口径 Agent Skills 也应列入",
+    "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」——2025-06-23 到 2026-08-27 约 14 个月，是一年多，不是「近一年」",
+    "「仅二手来源（workos.com 博客）[9]」——来源 [9] 实际是 ibm.com/think 页面，说明和引注对不上"
+  ],
+  "reason": "DU25 对用户的 ACP 疑问答得更完整，额外指出了第三个 ACP（AGNTCY Agent Connect Protocol）；它的 taxonomy 把已停用的 ACP 放进同一条分类轴，厂商矩阵更细，Google 支持 MCP 的判断也正确。KXF5 开头更好读，来源是完整的一手 URL，Claude Code 适配器、Copilot CLI ACP、A2UI 等细节也更到位，但它在一屏结论和矩阵里都把 Google 的 MCP 支持标成 ❓，还漏掉了 AGNTCY ACP、Agentic Commerce Protocol 和 Agent Skills。DU25 自己也有 Skills 表述错误，Microsoft 和 Anthropic 两格 ACP 判断存疑，所以只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "KXF5",
+      "taxonomy": "DU25",
+      "coverage": "DU25",
+      "doubts": "DU25",
+      "pitfalls": "tie",
+      "accuracy": "DU25",
+      "sourcing": "KXF5",
+      "concision": "tie"
+    },
+    "overall": "DU25",
+    "strength": 1,
+    "errors": {
+      "DU25": [
+        "「Anthropic Computer Use（computer_toolset_20260801）和 Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」——Anthropic 已于 2025-12 把 Agent Skills（SKILL.md）作为开放标准发布（agentskills.io），OpenAI Codex、VS Code/GitHub Copilot 等已经采用",
+        "「撞名撞了三次」「只有 Zed 的 Agent Client Protocol 活着」——OpenAI×Stripe 的 Agentic Commerce Protocol 也简称 ACP，而且仍在活跃（本文自己在 OpenAI 行列出了它），所以至少撞名四次"
+      ],
+      "KXF5": [
+        "「❓ 未查到官方 MCP 支持声明」（图例把 ❓ 定义为「已查证官方渠道、未见表态」，一屏看懂里也写「但未查到明确的 MCP 声明」）——Google 早已官方支持 MCP：Gemini CLI、ADK 的 MCPToolset、2025-12 Google Cloud 发布的官方托管 MCP 服务器公告等",
+        "「自家变体」列里 Anthropic 写「无」——Anthropic 2025-12 已把 Agent Skills（SKILL.md）发布为开放标准；本文把 AGENTS.md 算作 OpenAI 的变体，按同一口径 Agent Skills 也应列入",
+        "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」——2025-06-23 到 2026-08-27 约 14 个月，是一年多，不是「近一年」",
+        "「仅二手来源（workos.com 博客）[9]」——来源 [9] 实际是 ibm.com/think 页面，说明和引注对不上"
+      ]
+    },
+    "unsure": [
+      "DU25 的 Microsoft 行 ACP 写「❌ 无直接支持」——KXF5 引用 GitHub changelog，称 Copilot CLI 于 2026-01-28 公测 ACP（copilot --acp）；若属实，DU25 这一格就错了",
+      "DU25 的 Anthropic 行 ACP 写「❌ 明确拒绝」——claude-code 仓库的 issue 以 not planned 关闭，常常是 bot 或重复处理，未必代表官方拒绝；而且 Claude Code 已能经 Zed 适配器走 ACP，这个说法容易误导",
+      "A2A 加入 AAIF 的日期和身份：DU25 写「2026-08-17」「hosted project」，KXF5 写「2026-08-27」「成长期项目」，至少有一方不准",
+      "DU25 的 MCP 版本起点「2024-10-07」——公开 spec 首版是 2024-11-05，2024-10-07 只在早期 SDK 的兼容版本列表里出现过",
+      "DU25 的 AG-UI 版本「规范 2026-07-18」——AG-UI 2025-05 就已公开发布，这里的含义不明",
+      "DU25 的 ACP-Zed 起源「Zed Industries(2025-06-23)」——ACP 公开发布约在 2025-08；这个日期恰好和 A2A 捐赠 LF 同一天，比较可疑",
+      "DU25 说 Streamable HTTP「只是取消跨请求恢复」——2025-03-26 版本起 Streamable HTTP 支持 Last-Event-ID 恢复，2026-07-28 版本是否取消无法确认",
+      "DU25 的「Agent Framework(.NET/Python/Go)」（Go 支持）、「Agent Host Protocol(AHP)」、「computer_toolset_20260801」，以及 OpenAI「已加入 MCP steering committee」都无法核实",
+      "KXF5 的 ACP-IBM 传输写「REST/JSON-RPC over HTTP、WebSocket」——IBM ACP 后期规范以 REST 为主，WebSocket 存疑",
+      "KXF5 的「Gemini CLI 原生 `--acp`」——最初的 flag 是 --experimental-acp，后来是否改名不确定"
+    ],
+    "reason": "DU25 对用户的 ACP 疑问答得更完整，额外指出了第三个 ACP（AGNTCY Agent Connect Protocol）；它的 taxonomy 把已停用的 ACP 放进同一条分类轴，厂商矩阵更细，Google 支持 MCP 的判断也正确。KXF5 开头更好读，来源是完整的一手 URL，Claude Code 适配器、Copilot CLI ACP、A2UI 等细节也更到位，但它在一屏结论和矩阵里都把 Google 的 MCP 支持标成 ❓，还漏掉了 AGNTCY ACP、Agentic Commerce Protocol 和 Agent Skills。DU25 自己也有 Skills 表述错误，Microsoft 和 Anthropic 两格 ACP 判断存疑，所以只是略胜。",
+    "_codes": {
+      "x": "DU25",
+      "y": "KXF5"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

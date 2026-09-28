@@ -1,0 +1,77 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": -1
+  },
+  "errors_x": [
+    "「AG-UI 无大厂官方采用声明」，矩阵里 Microsoft 的 AG-UI 也标成「—」：Microsoft Agent Framework 在 Microsoft Learn 有官方的 AG-UI 集成（.NET/Python 包），AWS Bedrock AgentCore 也官方支持 AG-UI",
+    "「Anthropic 无独立框架,MCP即其出品」：Anthropic 有 Claude Agent SDK（2025-09 由 Claude Code SDK 更名），和 OpenAI Agents SDK 同属一类"
+  ],
+  "errors_y": [
+    "大厂矩阵把 Google 的 MCP 标为「❓ 未查到官方 MCP 支持声明」，图例还写着「已查证官方渠道、未见表态」：Google 官方明确支持 MCP（Gemini CLI、ADK、Gemini API SDK、Google Cloud 托管 MCP 服务器都有官方文档或公告）",
+    "「没有厂商发布\"第五个独立协议\"」：OpenAI 与 Stripe 在 2025-09 发布了 Agentic Commerce Protocol，Google 在 2025-09 发布了 AP2（Agent Payments Protocol）；而且同一份文档又把 A2UI 称为「独立声明式 UI 协议」「Google 独立协议」，前后矛盾",
+    "（轻微）「在此前独立挂牌 Linux Foundation 近一年后」：按文中自己给的日期（2025-06-23 → 2026-08-27）算，是 14 个月，已经超过一年，不是「近一年」"
+  ],
+  "reason": "FRRA 的对照矩阵维度更细（拓扑/格式/状态/关系、A2A 三种绑定），还多挖出 OpenAI+Stripe 的第三个 ACP（Agentic Commerce Protocol），坑点更可操作。AJ43 更紧凑、引用更齐，但把 Google 的 MCP 支持标成 ❓，又断言没有厂商发布独立协议，用户最关心的大厂支持和自家变体部分因此打了折扣。FRRA 自己也漏了微软 Agent Framework 对 AG-UI 的官方支持，所以只是略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "FRRA",
+      "coverage": "FRRA",
+      "doubts": "FRRA",
+      "pitfalls": "FRRA",
+      "accuracy": "FRRA",
+      "sourcing": "AJ43",
+      "concision": "AJ43"
+    },
+    "overall": "FRRA",
+    "strength": 1,
+    "errors": {
+      "AJ43": [
+        "大厂矩阵把 Google 的 MCP 标为「❓ 未查到官方 MCP 支持声明」，图例还写着「已查证官方渠道、未见表态」：Google 官方明确支持 MCP（Gemini CLI、ADK、Gemini API SDK、Google Cloud 托管 MCP 服务器都有官方文档或公告）",
+        "「没有厂商发布\"第五个独立协议\"」：OpenAI 与 Stripe 在 2025-09 发布了 Agentic Commerce Protocol，Google 在 2025-09 发布了 AP2（Agent Payments Protocol）；而且同一份文档又把 A2UI 称为「独立声明式 UI 协议」「Google 独立协议」，前后矛盾",
+        "（轻微）「在此前独立挂牌 Linux Foundation 近一年后」：按文中自己给的日期（2025-06-23 → 2026-08-27）算，是 14 个月，已经超过一年，不是「近一年」"
+      ],
+      "FRRA": [
+        "「AG-UI 无大厂官方采用声明」，矩阵里 Microsoft 的 AG-UI 也标成「—」：Microsoft Agent Framework 在 Microsoft Learn 有官方的 AG-UI 集成（.NET/Python 包），AWS Bedrock AgentCore 也官方支持 AG-UI",
+        "「Anthropic 无独立框架,MCP即其出品」：Anthropic 有 Claude Agent SDK（2025-09 由 Claude Code SDK 更名），和 OpenAI Agents SDK 同属一类"
+      ]
+    },
+    "unsure": [
+      "FRRA「Server管理Task，7态枚举」：A2A 的 TaskState 我记得是 8 个有效状态（另加 UNSPECIFIED/unknown），数目存疑",
+      "FRRA 把 Microsoft 的 ACP-Zed 标为「○ VS Code仅讨论中issue,无承诺」：GitHub Copilot CLI（微软旗下）可能已经官方支持 ACP（AJ43 引了 2026-01-28 的 GitHub changelog）；FRRA 已在「未决」里自己标了不确定",
+      "FRRA 把 Google 的 AG-UI 标为「— (自有A2UI协议,非AG-UI)」：Google 开发者博客可能有 ADK+AG-UI 的官方文章",
+      "FRRA「MCP 2026-07-28 版从有状态改无状态」：超出我能核实的范围",
+      "FRRA「30种类型化JSON事件」「2026-05 的 $27M 融资明确与 AG-UI 采用挂钩」（后者仅有二手来源）无法核实",
+      "FRRA 矩阵写「Codex CLI社区适配器」，但一屏看懂 #6 说的是 Zed 写的适配器，内部不一致（codex-acp 应由 Zed 维护）",
+      "AJ43 写 ACP-IBM 传输为「REST/JSON-RPC over HTTP、WebSocket」：IBM ACP 以 REST 为主，JSON-RPC/WebSocket 存疑",
+      "AJ43「NLWeb 不是新协议」：NLWeb 项目自述为 a collection of open protocols，这个说法有争议",
+      "AJ43「此后\"ACP\"在社区语境里基本特指 Zed 版」：忽略了 Agentic Commerce Protocol 也常简称 ACP",
+      "AJ43 写 ACP-Zed「协议版本 1；v1.9.1（2026-09-18）」，引用的却是 protocol/v2 页面；AJ43 说 ACP-IBM 鉴权「仅二手来源（workos.com 博客）[9]」，但 [9] 是 ibm.com，来源标注不一致",
+      "两份都写 Gemini CLI 的 `--acp`（早期是 `--experimental-acp`）；A2A v1.0.0/v1.0.1 的日期、A2A 于 2026-08-27 加入 AAIF、AG-UI 1.0.0（2026-09-17）、MCP 2026-07-28 版都超出我能核实的范围"
+    ],
+    "reason": "FRRA 的对照矩阵维度更细（拓扑/格式/状态/关系、A2A 三种绑定），还多挖出 OpenAI+Stripe 的第三个 ACP（Agentic Commerce Protocol），坑点更可操作。AJ43 更紧凑、引用更齐，但把 Google 的 MCP 支持标成 ❓，又断言没有厂商发布独立协议，用户最关心的大厂支持和自家变体部分因此打了折扣。FRRA 自己也漏了微软 Agent Framework 对 AG-UI 的官方支持，所以只是略好。",
+    "_codes": {
+      "x": "FRRA",
+      "y": "AJ43"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

@@ -1,0 +1,35 @@
+{
+  "exp": "e000a",
+  "vs": [],
+  "tasks": [
+    "agent-protocols",
+    "prompt-caching",
+    "py-packaging"
+  ],
+  "score": null,
+  "task_scores": {
+    "agent-protocols": null,
+    "prompt-caching": null,
+    "py-packaging": null
+  },
+  "wins": "0/0",
+  "losses": 0,
+  "verdicts": 0,
+  "dims_net": {},
+  "golden": 0.933,
+  "golden_vs": null,
+  "chars_max": 9000,
+  "len_ok": "3/3",
+  "traceable": 0.568,
+  "spawns": 10.333,
+  "lead_web": 0,
+  "cost_usd": 22.18,
+  "cost_vs_per_run": null,
+  "minutes": 27.833,
+  "skill_chars": 13564,
+  "skill_sha": "bee3e764c4",
+  "statuses": {
+    "ok": 3
+  },
+  "runs": 3
+}

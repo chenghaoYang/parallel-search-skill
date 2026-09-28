@@ -1,0 +1,69 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 0,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开篇把解释器安装说成 uv 独占：「只有 uv 把\"装 Python 解释器\"内置了」。同句写明 PDM 也有 pdm python install，该命令同样会下载解释器。"
+  ],
+  "errors_y": [
+    "把 Anaconda 官方仓库条款说成 conda 本身要收费：「conda 免费层对大型商业组织不再免费：官方条款写明 200+ 员工/合同工的组织需付费 Business license」。这份 ToS 约束的是 Anaconda defaults 仓库，不是 conda 工具或 conda-forge。",
+    "选型句和同文矩阵矛盾：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」。矩阵已写 PDM 有 pdm python install，并且有实验性 workspace。"
+  ],
+  "reason": "GSFA 用「有没有非 Python 依赖」把六个工具分成两族，锁文件、workspace、构建后端、迁移、CI 和私有源都写到字段和命令，用户点名的三类坑也能直接照着做。DN5X 一屏里就有选型法则，引用也更细，但「conda 免费层不再免费」把 Anaconda 仓库条款安到了 conda 头上，又把 uv 说成唯一同时替代 pip、pyenv、venv 且带 workspace 的工具，和它自己的 PDM 行矛盾。因此 GSFA 对这位用户更有用，但只是略好：两个点名疑点两边都答了，DN5X 的结论先行和来源标注仍然更强。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "DN5X",
+      "taxonomy": "GSFA",
+      "coverage": "GSFA",
+      "doubts": "tie",
+      "pitfalls": "GSFA",
+      "accuracy": "GSFA",
+      "sourcing": "DN5X",
+      "concision": "GSFA"
+    },
+    "overall": "GSFA",
+    "strength": 1,
+    "errors": {
+      "DN5X": [
+        "把 Anaconda 官方仓库条款说成 conda 本身要收费：「conda 免费层对大型商业组织不再免费：官方条款写明 200+ 员工/合同工的组织需付费 Business license」。这份 ToS 约束的是 Anaconda defaults 仓库，不是 conda 工具或 conda-forge。",
+        "选型句和同文矩阵矛盾：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」。矩阵已写 PDM 有 pdm python install，并且有实验性 workspace。"
+      ],
+      "GSFA": [
+        "开篇把解释器安装说成 uv 独占：「只有 uv 把\"装 Python 解释器\"内置了」。同句写明 PDM 也有 pdm python install，该命令同样会下载解释器。"
+      ]
+    },
+    "unsure": [
+      "PDM 与 pylock 的关系：DN5X 写「仅导出(v2.26+, opt-in)」，GSFA §0 写「替代锁格式」、§3 又写「可设为默认锁格式」。",
+      "uv 的 pylock 起始版本对不上：DN5X「0.12.11+/0.12.17+」导出+校验，GSFA「0.12.0/2026-07-28」导出/导入且不原生生成。",
+      "Poetry 是否还必须外置 pyenv：GSFA「需外部 pyenv」，DN5X「2.1.0实验性 poetry python install」。我倾向 DN5X，但不够确信。",
+      "pixi 默认构建后端：DN5X「pyproject模式默认 hatchling」，GSFA「pixi-build-python；无声明时退回 setuptools」。",
+      "GSFA「environment.yml 走独立的 CEP 24 标准」没有引用，CEP 编号无法核对。",
+      "私有 PyPI：GSFA「pixi 目前官方明确不支持私有 PyPI 仓库认证」与括注里的 keyring/.netrc，以及 DN5X 的「Token/Basic+keyring」对不齐。",
+      "DN5X「Astral 已被 OpenAI 收购（2026-03-19）」只标了二手信源，事件本身无法核实。"
+    ],
+    "reason": "GSFA 用「有没有非 Python 依赖」把六个工具分成两族，锁文件、workspace、构建后端、迁移、CI 和私有源都写到字段和命令，用户点名的三类坑也能直接照着做。DN5X 一屏里就有选型法则，引用也更细，但「conda 免费层不再免费」把 Anaconda 仓库条款安到了 conda 头上，又把 uv 说成唯一同时替代 pip、pyenv、venv 且带 workspace 的工具，和它自己的 PDM 行矛盾。因此 GSFA 对这位用户更有用，但只是略好：两个点名疑点两边都答了，DN5X 的结论先行和来源标注仍然更强。",
+    "_codes": {
+      "x": "GSFA",
+      "y": "DN5X"
+    },
+    "_attr": [
+      2,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

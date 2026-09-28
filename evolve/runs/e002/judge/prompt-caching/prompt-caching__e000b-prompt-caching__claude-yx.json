@@ -1,0 +1,79 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "「Gemini 用 `usageMetadata.total_cached_tokens`」：generateContent 的 usageMetadata 字段是 cachedContentTokenCount（SDK 中为 cached_content_token_count），total_cached_tokens 属于 Interactions API 的 usage，两者拼出来的这个字段并不存在",
+    "「OpenRouter 官方给了分供应商倍率表，但没有「不加价」的保证」：OpenRouter FAQ 明确声明按上游价格透传、推理价格不加价；其缓存文档中 OpenAI 0.25x–0.5x 是 GPT-4o/4.1 时代的旧口径，不是加价",
+    "「即使 OpenAI 的自动缓存，首次写入也要多付 1.25x」没有限定模型代际：GPT-5/5.1/5.2 等既有模型的缓存写入不额外收费，1.25x 写入费只适用于新模型"
+  ],
+  "errors_y": [
+    "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5/5.1/5.2 的缓存命中价就是 0.1x（如 GPT-5 输入 $1.25、缓存 $0.125），GPT-4.1 为 0.25x，只有 GPT-4o 一代是 0.5x，把旧款统一写成 0.5x 是错的",
+    "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步,只是不用逐块标记」：2025-03 的 token-saving 更新只是让系统自动读取最长的已缓存前缀，仍须在内容块上打断点；请求顶层放一个 cache_control 自动放置断点是后来（2026 年）才上线的功能，日期和功能混在了一起",
+    "「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」与本文矩阵中 Kimi「5m档=标准价」自相矛盾，Kimi 5 分钟档并没有 1.25x 起的溢价"
+  ],
+  "reason": "CNF3 的一屏看懂覆盖了计费、TTL、命中字段、失效、网关和云托管等所有维度，三家族 taxonomy 贯穿矩阵，篇幅收得紧，更贴合用户「快速建立认知、要 taxonomy、不许越写越长」的要求。LW3S 的逐行引用、各家命中字段、失效改动清单以及对 Anthropic 疑点的回答更好，但行文冗长，夹带不少过程性说明，还在开头和后文反复强调一个站不住的 OpenRouter「可能加价」结论。两份确信的错误大致相抵（CNF3：旧款 OpenAI 0.5x、Anthropic 日期混淆；LW3S：拼出来的 Gemini 字段、OpenRouter 不加价声明），因此 CNF3 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "CNF3",
+      "taxonomy": "CNF3",
+      "coverage": "LW3S",
+      "doubts": "LW3S",
+      "pitfalls": "tie",
+      "accuracy": "tie",
+      "sourcing": "LW3S",
+      "concision": "CNF3"
+    },
+    "overall": "CNF3",
+    "strength": 1,
+    "errors": {
+      "CNF3": [
+        "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5/5.1/5.2 的缓存命中价就是 0.1x（如 GPT-5 输入 $1.25、缓存 $0.125），GPT-4.1 为 0.25x，只有 GPT-4o 一代是 0.5x，把旧款统一写成 0.5x 是错的",
+        "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步,只是不用逐块标记」：2025-03 的 token-saving 更新只是让系统自动读取最长的已缓存前缀，仍须在内容块上打断点；请求顶层放一个 cache_control 自动放置断点是后来（2026 年）才上线的功能，日期和功能混在了一起",
+        "「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」与本文矩阵中 Kimi「5m档=标准价」自相矛盾，Kimi 5 分钟档并没有 1.25x 起的溢价"
+      ],
+      "LW3S": [
+        "「Gemini 用 `usageMetadata.total_cached_tokens`」：generateContent 的 usageMetadata 字段是 cachedContentTokenCount（SDK 中为 cached_content_token_count），total_cached_tokens 属于 Interactions API 的 usage，两者拼出来的这个字段并不存在",
+        "「OpenRouter 官方给了分供应商倍率表，但没有「不加价」的保证」：OpenRouter FAQ 明确声明按上游价格透传、推理价格不加价；其缓存文档中 OpenAI 0.25x–0.5x 是 GPT-4o/4.1 时代的旧口径，不是加价",
+        "「即使 OpenAI 的自动缓存，首次写入也要多付 1.25x」没有限定模型代际：GPT-5/5.1/5.2 等既有模型的缓存写入不额外收费，1.25x 写入费只适用于新模型"
+      ]
+    },
+    "unsure": [
+      "DeepSeek 命中价两份冲突：CNF3「命中价约为原价的2%左右」「约0.02x」，LW3S「0.1x」，无法核实哪份是最新价格",
+      "CNF3「Bedrock 上的 Claude 多了一条不需要 cache_control 的 Implicit Prompt Caching 通道」无法核实",
+      "智谱 TTL 两份冲突：CNF3「5min自动刷新」，LW3S「官方未给∅（非漏查，二次核实仍无）」",
+      "CNF3 的 Gemini 命中字段「usage.total_cached_tokens」只对 Interactions API 成立，generateContent 用的是 cachedContentTokenCount，文中未说明",
+      "OpenAI 新增断点的参数名两份不一致：CNF3「prompt_cache_breakpoint」，LW3S「prompt_cache_options」",
+      "LW3S「官方 caching 指南页只讲了 Responses/Agents，没提 Chat Completions」可疑",
+      "LW3S 写通义千问「1024 token」时没有区分模式；我印象中隐式缓存的最小长度是 256 token",
+      "LW3S 说 OpenAI 最小长度「早期因设置而异」可疑，OpenAI 一直是 1024 token",
+      "LW3S 的 Anthropic「纯内存」、Kimi「$3/M(5min)或$6/M(1h)」与 CNF3「5m档=标准价」口径不一致，都无法核实",
+      "两份都写 Gemini explicit 存储费 $0.5/M/h，没有区分模型（Pro 系的存储费历来更高）",
+      "Anthropic 0.025x 命中价（LW3S「Fable5.1/Mythos5.1」、CNF3「0.025x-0.05x」）超出可核实范围"
+    ],
+    "reason": "CNF3 的一屏看懂覆盖了计费、TTL、命中字段、失效、网关和云托管等所有维度，三家族 taxonomy 贯穿矩阵，篇幅收得紧，更贴合用户「快速建立认知、要 taxonomy、不许越写越长」的要求。LW3S 的逐行引用、各家命中字段、失效改动清单以及对 Anthropic 疑点的回答更好，但行文冗长，夹带不少过程性说明，还在开头和后文反复强调一个站不住的 OpenRouter「可能加价」结论。两份确信的错误大致相抵（CNF3：旧款 OpenAI 0.5x、Anthropic 日期混淆；LW3S：拼出来的 Gemini 字段、OpenRouter 不加价声明），因此 CNF3 略胜。",
+    "_codes": {
+      "x": "LW3S",
+      "y": "CNF3"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

@@ -1,0 +1,18 @@
+[judge] e000b vs e000a: 4 verdicts to collect
+---
+exp:          e000b
+vs:           e000a
+score:        -0.500
+task_scores:  agent-protocols:-0.500
+wins:         0/1  (verdicts 4)
+dims_net:     orientation:+2 taxonomy:-2 coverage:-2 doubts:+1 pitfalls:-2 accuracy:+1 sourcing:+2 concision:+0
+golden:       0.7  (vs 0.8)
+chars_max:    8997
+len_ok:       1/1
+traceable:    1.0
+spawns:       13.0
+lead_web:     0
+cost_usd:     8.43  (vs per run 9.108)
+minutes:      31.7
+skill_chars:  13564
+statuses:     {'ok': 1}

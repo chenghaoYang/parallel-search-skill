@@ -1,0 +1,337 @@
+{
+ "task_id": "llm-inference",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "vllm-prefix-caching-default-on",
+   "claim": "vLLM 现在前缀缓存默认开启：配置项 enable_prefix_caching 默认值是 True，新版本不再需要手动加 --enable-prefix-caching。",
+   "groups": [
+    [
+     "enable_prefix_caching",
+     "--enable-prefix-caching"
+    ],
+    [
+     "默认开启",
+     "默认启用",
+     "默认打开",
+     "默认为 True",
+     "默认是 True",
+     "enabled by default",
+     "default True",
+     "defaults to True",
+     "on by default"
+    ]
+   ],
+   "hosts": [
+    "github.com",
+    "docs.vllm.ai"
+   ],
+   "source": "https://github.com/vllm-project/vllm/blob/main/vllm/config/cache.py",
+   "quote": "enable_prefix_caching: bool = True"
+  },
+  {
+   "id": "vllm-apc-full-blocks-only",
+   "claim": "vLLM 的前缀缓存只缓存完整的 KV block：两个请求共享前缀中不满一个 block 的尾部要重新计算。",
+   "groups": [
+    [
+     "full block",
+     "full blocks",
+     "完整的块",
+     "完整块",
+     "整块",
+     "block 粒度",
+     "block 为粒度",
+     "块为粒度",
+     "块粒度"
+    ]
+   ],
+   "hosts": [
+    "docs.vllm.ai"
+   ],
+   "source": "https://docs.vllm.ai/en/latest/design/prefix_caching/",
+   "quote": "We only cache full blocks."
+  },
+  {
+   "id": "vllm-gguf-experimental-plugin",
+   "claim": "vLLM 能跑 GGUF，但支持已经迁到独立插件 vllm-gguf-plugin，官方明确标注高度实验性、优化不足，可能和其他特性不兼容。",
+   "groups": [
+    [
+     "vllm-gguf-plugin"
+    ],
+    [
+     "experimental",
+     "实验性",
+     "实验性质"
+    ]
+   ],
+   "hosts": [
+    "docs.vllm.ai"
+   ],
+   "source": "https://docs.vllm.ai/en/latest/features/quantization/gguf/",
+   "quote": "GGUF support in vLLM is highly experimental and under-optimized at the moment"
+  },
+  {
+   "id": "vllm-structured-outputs-guided-removed",
+   "claim": "vLLM 的结构化输出走 structured_outputs 参数（json/regex/choice/grammar/structural_tag），后端是 xgrammar 或 guidance；旧的 guided_* 请求字段已在 v0.12.0 移除。",
+   "groups": [
+    [
+     "structured_outputs"
+    ],
+    [
+     "guided_json",
+     "guided_regex",
+     "guided_"
+    ],
+    [
+     "0.12",
+     "v0.12"
+    ]
+   ],
+   "hosts": [
+    "docs.vllm.ai"
+   ],
+   "source": "https://docs.vllm.ai/en/latest/features/structured_outputs/",
+   "quote": "vLLM supports the generation of structured outputs using xgrammar or guidance as backends."
+  },
+  {
+   "id": "vllm-hardware-scope",
+   "claim": "vLLM 官方支持多类硬件：NVIDIA 要求 compute capability 7.5 或更高，AMD 需要 ROCm 6.3 以上，另有 Intel XPU 和 CPU 路径；Apple Silicon 靠独立的 vLLM-Metal 插件。",
+   "groups": [
+    [
+     "7.5",
+     "compute capability",
+     "sm75",
+     "sm_75",
+     "算力 7.5"
+    ],
+    [
+     "ROCm"
+    ]
+   ],
+   "hosts": [
+    "docs.vllm.ai"
+   ],
+   "source": "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+   "quote": "GPU: compute capability 7.5 or higher (e.g., T4, RTX20xx, A100, L4, H100, B200, etc.)"
+  },
+  {
+   "id": "vllm-disagg-prefill-nixl",
+   "claim": "vLLM 的 disaggregated prefill 把 prefill 和 decode 放进两个不同实例，中间用 NixlConnector 之类的 KV connector 异步传输 KV cache，官方仍标注为实验特性。",
+   "groups": [
+    [
+     "NixlConnector",
+     "NIXL"
+    ],
+    [
+     "kv-transfer-config",
+     "--kv-transfer-config",
+     "kv_connector",
+     "kv_role"
+    ]
+   ],
+   "hosts": [
+    "docs.vllm.ai"
+   ],
+   "source": "https://docs.vllm.ai/en/latest/features/disagg_prefill/",
+   "quote": "Disaggregated prefilling put prefill and decode phase of LLM inference inside different vLLM instances."
+  },
+  {
+   "id": "sglang-radixattention-tree",
+   "claim": "SGLang 的 RadixAttention 用 radix tree（前缀树）在请求之间自动复用 KV cache：前缀相同的 prompt 共享已计算的 KV，而不是按 block 哈希匹配。",
+   "groups": [
+    [
+     "RadixAttention"
+    ],
+    [
+     "radix tree",
+     "radix 树",
+     "基数树",
+     "前缀树",
+     "trie"
+    ]
+   ],
+   "hosts": [
+    "lmsys.org",
+    "docs.sglang.io",
+    "docs.sglang.ai"
+   ],
+   "source": "https://lmsys.org/blog/2024-01-17-sglang/",
+   "quote": "RadixAttention, a novel technique for automatic KV cache reuse during runtime."
+  },
+  {
+   "id": "sglang-pd-mooncake-nixl",
+   "claim": "SGLang 的 PD 分离让 prefill 和 decode 跑在不同进程里，KV cache 传输引擎目前官方支持 Mooncake 和 NIXL 两种。",
+   "groups": [
+    [
+     "Mooncake"
+    ],
+    [
+     "NIXL"
+    ]
+   ],
+   "hosts": [
+    "docs.sglang.io",
+    "docs.sglang.ai"
+   ],
+   "source": "https://docs.sglang.io/advanced_features/pd_disaggregation.html",
+   "quote": "Currently, we support Mooncake and NIXL as the transfer engine."
+  },
+  {
+   "id": "sglang-quant-offline-recommended",
+   "claim": "SGLang 同时支持离线预量化（加载已量化权重）和在线动态量化（--quantization），但官方推荐离线量化，且已离线量化的模型不要再加 --quantization。",
+   "groups": [
+    [
+     "--quantization"
+    ],
+    [
+     "offline",
+     "离线"
+    ]
+   ],
+   "hosts": [
+    "docs.sglang.io",
+    "docs.sglang.ai"
+   ],
+   "source": "https://docs.sglang.io/docs/advanced_features/quantization.md",
+   "quote": "For better performance, usability and convenience, offline quantization is recommended over online quantization."
+  },
+  {
+   "id": "sglang-spec-algorithms",
+   "claim": "SGLang 的投机解码用 --speculative-algorithm 选择，可取值包括 EAGLE、EAGLE3、NEXTN（EAGLE 别名）、STANDALONE、NGRAM、UNO、DFLASH。",
+   "groups": [
+    [
+     "--speculative-algorithm",
+     "speculative-algorithm"
+    ],
+    [
+     "EAGLE3"
+    ],
+    [
+     "NGRAM",
+     "ngram",
+     "N-gram",
+     "n-gram"
+    ]
+   ],
+   "hosts": [
+    "docs.sglang.io",
+    "docs.sglang.ai"
+   ],
+   "source": "https://docs.sglang.io/docs/advanced_features/speculative_decoding.md",
+   "quote": "`UNO`, `DFLASH`, `EAGLE`, `EAGLE3`, `STANDALONE`, `NGRAM`, `NEXTN` (alias of `EAGLE`)"
+  },
+  {
+   "id": "trtllm-pytorch-sole-backend",
+   "claim": "TensorRT-LLM 从 1.0 起 PyTorch 架构转正为默认，1.2 直接移除了 TensorRT 后端——PyTorch 成为唯一执行后端，trtllm-build、convert_checkpoint.py、backend=\"tensorrt\" 这条编译 engine 的老路全删了。",
+   "groups": [
+    [
+     "PyTorch",
+     "pytorch"
+    ],
+    [
+     "trtllm-build"
+    ]
+   ],
+   "hosts": [
+    "nvidia.github.io",
+    "github.com"
+   ],
+   "source": "https://nvidia.github.io/TensorRT-LLM/release-notes.html",
+   "quote": "PyTorch is now the sole execution backend."
+  },
+  {
+   "id": "trtllm-nvidia-only",
+   "claim": "TensorRT-LLM 只面向 NVIDIA GPU 做推理优化，没有 vLLM 那样的 ROCm/XPU/CPU 后端。",
+   "groups": [
+    [
+     "NVIDIA",
+     "英伟达"
+    ],
+    [
+     "仅",
+     "只",
+     "only",
+     "sole",
+     "exclusiv"
+    ]
+   ],
+   "hosts": [
+    "github.com",
+    "nvidia.github.io"
+   ],
+   "source": "https://github.com/NVIDIA/TensorRT-LLM",
+   "quote": "inference efficiently on NVIDIA GPUs"
+  },
+  {
+   "id": "llamacpp-metal-default-backends",
+   "claim": "llama.cpp 不是只能跑 CPU：macOS 上 Metal 默认启用用 Apple GPU 加速，CUDA/ROCm(HIP)/Vulkan/SYCL 等 GPU 后端靠编译时打开对应 GGML_* 开关。",
+   "groups": [
+    [
+     "Metal",
+     "metal"
+    ],
+    [
+     "GGML_CUDA",
+     "-DGGML_CUDA",
+     "GGML_HIP",
+     "GGML_VULKAN",
+     "GGML_METAL",
+     "GGML_SYCL"
+    ]
+   ],
+   "hosts": [
+    "github.com"
+   ],
+   "source": "https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md",
+   "quote": "On MacOS, Metal is enabled by default. Using Metal makes the computation run on the GPU."
+  },
+  {
+   "id": "llamacpp-server-cont-batching-default",
+   "claim": "llama.cpp 的 llama-server 默认就开了 continuous batching（动态批处理），用 --parallel N 控制并发槽位数——不是只能单请求串行跑。",
+   "groups": [
+    [
+     "--cont-batching",
+     "cont-batching",
+     "continuous batching",
+     "连续批处理",
+     "动态批处理"
+    ],
+    [
+     "--parallel",
+     "server slots",
+     "slots",
+     "槽位"
+    ]
+   ],
+   "hosts": [
+    "github.com"
+   ],
+   "source": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+   "quote": "whether to enable continuous batching (a.k.a dynamic batching) (default: enabled)"
+  },
+  {
+   "id": "llamacpp-gguf-required",
+   "claim": "llama.cpp 要求模型必须是 GGUF 格式，其他格式的模型要用仓库里的 convert_*.py 脚本转成 GGUF 才能跑。",
+   "groups": [
+    [
+     "GGUF"
+    ],
+    [
+     "convert_",
+     "convert_hf",
+     "convert",
+     "转换脚本",
+     "转换成 GGUF",
+     "转为 GGUF"
+    ]
+   ],
+   "hosts": [
+    "github.com"
+   ],
+   "source": "https://github.com/ggml-org/llama.cpp/blob/master/docs/models.md",
+   "quote": "llama.cpp requires the model to be stored in the GGUF file format."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（字段名、命令、版本号、组织名）或中英双写，避免用长英文原句作针（中文成稿命中不了）。"
+}

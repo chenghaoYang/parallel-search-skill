@@ -1,0 +1,80 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」及矩阵中 Poetry「不下载解释器」：Poetry 2.1.0 已加入实验性的 poetry python install（基于 python-build-standalone）",
+    "「pixi 底层是否为 Resolvo：官方均未公开」：resolvo 是 prefix.dev 自己开源、在官方博客中公开介绍的 rattler/pixi 求解器",
+    "引用编号错配：pip 定位格引「PyPA维护[22]」，但 [22] 是 Poetry managing-environments；Poetry D7 格引「`run`要求项目内[30]」，但 [30] 是 PDM CHANGELOG"
+  ],
+  "errors_y": [
+    "「Poetry/PDM 只能\"导出\"到它，各自主格式不变」：PDM 可通过 lock.format=pylock 把 pylock.toml 用作主锁文件（opt-in），不只是导出",
+    "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」「Poetry 没有官方 CI 缓存方案」：Poetry 安装文档有 CI recommendations 一节，且 actions/setup-python 原生支持 cache: poetry，这里把 Poetry 的 CI 缓存说成缺位是误导",
+    "「conda 免费层对大型商业组织不再免费」：200+ 员工付费条款针对的是 Anaconda 的仓库/发行版（defaults channel），不是 BSD 许可的 conda 工具本身，conda-forge/Miniforge 不受影响",
+    "pip 行「不读，只用`[build-system]`」：pip 25.1 起还通过 --group 读取 pyproject.toml 的 [dependency-groups]（PEP 735）"
+  ],
+  "reason": "MR6J 对用户点名的两个疑点回答更准、也更可操作：标明了 pip 相关功能是 experimental，写到 uv 能读也能导出，PDM 可 opt-in 把 pylock 作主格式，并建议 pylock 只当交换格式。它在 CI 缓存、私有源、迁移上细到配置键（如 setup-python 的 cache: poetry 缓存的是 venv、conda 需 use-only-tar-bz2）。89V7 开头更好读，来源 URL 完整，缺口标得更诚实，Poetry python install 也写对了；但它把 PDM 写成只能导出、把 Poetry 说成缺 CI 缓存方案，conda 许可的表述也有误导。MR6J 最大的硬伤是称 Poetry 不能管理 Python 版本，所以只判略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "89V7",
+      "taxonomy": "MR6J",
+      "coverage": "MR6J",
+      "doubts": "MR6J",
+      "pitfalls": "MR6J",
+      "accuracy": "MR6J",
+      "sourcing": "89V7",
+      "concision": "tie"
+    },
+    "overall": "MR6J",
+    "strength": 1,
+    "errors": {
+      "89V7": [
+        "「Poetry/PDM 只能\"导出\"到它，各自主格式不变」：PDM 可通过 lock.format=pylock 把 pylock.toml 用作主锁文件（opt-in），不只是导出",
+        "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」「Poetry 没有官方 CI 缓存方案」：Poetry 安装文档有 CI recommendations 一节，且 actions/setup-python 原生支持 cache: poetry，这里把 Poetry 的 CI 缓存说成缺位是误导",
+        "「conda 免费层对大型商业组织不再免费」：200+ 员工付费条款针对的是 Anaconda 的仓库/发行版（defaults channel），不是 BSD 许可的 conda 工具本身，conda-forge/Miniforge 不受影响",
+        "pip 行「不读，只用`[build-system]`」：pip 25.1 起还通过 --group 读取 pyproject.toml 的 [dependency-groups]（PEP 735）"
+      ],
+      "MR6J": [
+        "「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」及矩阵中 Poetry「不下载解释器」：Poetry 2.1.0 已加入实验性的 poetry python install（基于 python-build-standalone）",
+        "「pixi 底层是否为 Resolvo：官方均未公开」：resolvo 是 prefix.dev 自己开源、在官方博客中公开介绍的 rattler/pixi 求解器",
+        "引用编号错配：pip 定位格引「PyPA维护[22]」，但 [22] 是 Poetry managing-environments；Poetry D7 格引「`run`要求项目内[30]」，但 [30] 是 PDM CHANGELOG"
+      ]
+    },
+    "unsure": [
+      "两份都把 uv 的 pylock.toml 支持定在 0.12.x 且标为 preview（89V7「0.12.11+/0.12.17+」，MR6J「读0.12.0+」），但据我所知 uv 0.6.15（2025-04）已支持 uv export -o pylock.toml 和 uv pip install -r pylock.toml；89V7「uv 仍在 preview 阶段（导出+校验）」还漏掉了安装能力，因此「pip 支持最完整」这个比较结论也存疑",
+      "Poetry 的 PEP 751 支持两份说法冲突：89V7「仅导出(2.3.0+ via plugin)」，MR6J「Poetry 未实现，只是无排期的开放 issue #10356」，无法核实",
+      "89V7「26.2 进一步增强（`--uploaded-prior-to`、`--only-final`）」：--uploaded-prior-to 可能早于 26.2，也不专属于 pylock",
+      "89V7 pixi「`[tool.pixi.project]`包一层」：新版 pixi 已改名为 [tool.pixi.workspace]，旧名可能只是废弃别名；「原生`[workspace.dependencies]`」这个表名也存疑",
+      "MR6J 把 pixi 的 workspace 写成「原生`[environments]`+`[feature]`组合」：这是多环境机制，不是多包 monorepo 机制",
+      "MR6J「26.5+支持读`conda-lock.yaml`/`pixi.lock`」「26.5.0插件化`BaseSolver`」「`solver.min-release-age`」「全局缓存需另开，按月过期」均无法核实",
+      "MR6J「PDM 自 v2.5.0 起降级为实验性可选」：PDM 2.0 起似乎已默认使用 venv，版本号存疑",
+      "89V7「conda 原生不感知 PyPI 包」：environment.yml 支持 pip: 小节，conda list 也会显示 pypi 包，是否算错取决于这句话怎么理解",
+      "89V7「`poetry.lock` v2.0」（Poetry 2.x 可能写的是 lock-version 2.1）、「提速 50-80%」「pixi 号称比 conda 快 10x」「`uv_build`(可换6种)」：数值不确定",
+      "89V7「uv（唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具）」：按它自己的矩阵，PDM 也有 python install、venv 和（实验性）workspace"
+    ],
+    "reason": "MR6J 对用户点名的两个疑点回答更准、也更可操作：标明了 pip 相关功能是 experimental，写到 uv 能读也能导出，PDM 可 opt-in 把 pylock 作主格式，并建议 pylock 只当交换格式。它在 CI 缓存、私有源、迁移上细到配置键（如 setup-python 的 cache: poetry 缓存的是 venv、conda 需 use-only-tar-bz2）。89V7 开头更好读，来源 URL 完整，缺口标得更诚实，Poetry python install 也写对了；但它把 PDM 写成只能导出、把 Poetry 说成缺 CI 缓存方案，conda 许可的表述也有误导。MR6J 最大的硬伤是称 Poetry 不能管理 Python 版本，所以只判略好。",
+    "_codes": {
+      "x": "MR6J",
+      "y": "89V7"
+    },
+    "_attr": [
+      12,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

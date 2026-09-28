@@ -1,0 +1,69 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [],
+  "errors_y": [
+    "显式上下文缓存不是由 generateContent 创建的。原文写「显式：generateContent创建`cachedContents`再引用」，实际要先调用 cachedContents 接口创建资源，再在 generateContent 里引用。",
+    "显式缓存的命中字段写错。原文写「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是请求总 token 数，命中应看 cachedContentTokenCount。",
+    "文首写「截至 2026-09，均为官方文档一手信息」，但来源 [20] 是 OpenRouter 博客教程，[24] 是开发者论坛帖，并不都是官方文档。"
+  ],
+  "reason": "644N 用「零参数会不会缓存」回答了点名疑点：Anthropic 仍要加 cache_control，自动缓存只是少挑断点，并据此把计费、TTL 和失效排查收成可执行对照。KG2Q 的请求参数、Azure/Bedrock/百炼和引用更细，但开头把该传言判成已过时，还把 Gemini 显式缓存的创建接口和命中字段写错。对要落地的用户，644N 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "644N",
+      "taxonomy": "644N",
+      "coverage": "KG2Q",
+      "doubts": "644N",
+      "pitfalls": "644N",
+      "accuracy": "644N",
+      "sourcing": "KG2Q",
+      "concision": "644N"
+    },
+    "overall": "644N",
+    "strength": 1,
+    "errors": {
+      "644N": [],
+      "KG2Q": [
+        "显式上下文缓存不是由 generateContent 创建的。原文写「显式：generateContent创建`cachedContents`再引用」，实际要先调用 cachedContents 接口创建资源，再在 generateContent 里引用。",
+        "显式缓存的命中字段写错。原文写「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是请求总 token 数，命中应看 cachedContentTokenCount。",
+        "文首写「截至 2026-09，均为官方文档一手信息」，但来源 [20] 是 OpenRouter 博客教程，[24] 是开发者论坛帖，并不都是官方文档。"
+      ]
+    },
+    "unsure": [
+      "Kimi 现况相反：644N 表中写全自动，并推断 2024 的 cache_id 已被取代；KG2Q 写必须传 prompt_cache_options 或 cache_control。两边引用同一篇指南 URL。",
+      "智谱折扣：644N 称官方指南写「50%」、定价表约 0.25x–0.29x；KG2Q 把五折称作坊间说法，并写另有存储费。指南是否真写 50%、存储费是否存在，无法核对。",
+      "Gemini 隐式 TTL：644N 写「implicit 24h自动清」；KG2Q 称官方明确无法定义、不保证，依据是论坛回复而非文档正文。",
+      "DeepSeek 折扣：644N 写「命中比未命中低95~98%」但未给现价；KG2Q 写「$0.014 vs $0.14/M」并引用 news0802，该公告未必仍是 2026-09 的现价。",
+      "OpenAI 用量字段：644N 写 usage.input_tokens_details.cached_tokens，KG2Q 写 usage.prompt_tokens_details.cached_tokens 与 cache_write_tokens。Chat 与 Responses 两套名字都可能成立。",
+      "KG2Q 的 Gemini 隐式字段「usage.total_cached_tokens」是否出现在 2026 文档里不确定；较熟的名字是 usageMetadata.cachedContentTokenCount。",
+      "「约 20 个 content block」：644N 安在通义千问，KG2Q 安在 Bedrock Claude，可能只有一家，也可能两家都有。",
+      "Anthropic 最小长度：644N 为 512/1024/4096，KG2Q 多了 2048。2026 模型线的现行分档无法确定。",
+      "644N 写 OpenAI 的 prompt_cache_retention「跟是否复用无关」，和 30 分钟复用窗口、24h 保留之间的关系存疑。"
+    ],
+    "reason": "644N 用「零参数会不会缓存」回答了点名疑点：Anthropic 仍要加 cache_control，自动缓存只是少挑断点，并据此把计费、TTL 和失效排查收成可执行对照。KG2Q 的请求参数、Azure/Bedrock/百炼和引用更细，但开头把该传言判成已过时，还把 Gemini 显式缓存的创建接口和命中字段写错。对要落地的用户，644N 略好。",
+    "_codes": {
+      "x": "644N",
+      "y": "KG2Q"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

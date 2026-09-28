@@ -1,0 +1,72 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": -1,
+    "pitfalls": 1,
+    "accuracy": -1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "把通义千问显式缓存和 Gemini 写成同一类「要手动创建的独立缓存资源（explicit：Gemini 叫 cachedContent、Qwen 叫 explicit cache）」；千问显式模式是请求内的 cache_control 前缀标记，不是可单独引用的缓存资源。",
+    "开头把 DeepSeek 的存活时间归进「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」，同文引用的官方说法却是「数小时到数天」。"
+  ],
+  "errors_y": [
+    "Gemini 的命中字段写成「usage.total_cached_tokens」；Gemini API 报告的是 usageMetadata.cachedContentTokenCount，没有 total_cached_tokens 这个字段。"
+  ],
+  "reason": "87BP 用 F1/F2/F3 把全自动、请求内断点和独立缓存资源分开，并贯穿矩阵；开头就把「Anthropic 仍要 cache_control」、写入费和 TTL 讲成一张可对照的图。PWGQ 的命中字段和失效处理更细，也更敢标官方口径冲突，但把千问显式缓存说成 Gemini 那种独立资源，分类会带偏实现。对要先建立正确地图的用户，87BP 略高一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "87BP",
+      "taxonomy": "87BP",
+      "coverage": "PWGQ",
+      "doubts": "87BP",
+      "pitfalls": "PWGQ",
+      "accuracy": "87BP",
+      "sourcing": "PWGQ",
+      "concision": "87BP"
+    },
+    "overall": "87BP",
+    "strength": 1,
+    "errors": {
+      "87BP": [
+        "Gemini 的命中字段写成「usage.total_cached_tokens」；Gemini API 报告的是 usageMetadata.cachedContentTokenCount，没有 total_cached_tokens 这个字段。"
+      ],
+      "PWGQ": [
+        "把通义千问显式缓存和 Gemini 写成同一类「要手动创建的独立缓存资源（explicit：Gemini 叫 cachedContent、Qwen 叫 explicit cache）」；千问显式模式是请求内的 cache_control 前缀标记，不是可单独引用的缓存资源。",
+        "开头把 DeepSeek 的存活时间归进「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」，同文引用的官方说法却是「数小时到数天」。"
+      ]
+    },
+    "unsure": [
+      "87BP 写 Bedrock 上的 Claude 另有不需要 cache_control 的 Implicit Prompt Caching，且计费和 TTL 与原生相同；记忆中的 Bedrock 需要 cache checkpoint，但是否为 2026 新增无法确认。",
+      "Kimi 写入价：87BP 概述称「1.25x起」、矩阵写「5m档=标准价; 1h档=2x」，PWGQ 写「两档TTL写入价相同」，无法判断哪一说与现行价目一致。",
+      "智谱：87BP 写命中「约0.5x」、TTL「5min自动刷新」；PWGQ 称指南「50%」与定价表 0.25x～0.29x 冲突，且 TTL 官方未写。",
+      "OpenAI 命中倍率：87BP 区分 GPT-5.6+ 为 0.1x、更早为 0.5x，PWGQ 统写 0.1x；两代是否并存无法确认。",
+      "OpenAI 用量路径两文不同（prompt_tokens_details 与 input_tokens_details），可能分别对应 Chat Completions 与 Responses API。",
+      "PWGQ 写 prompt_cache_retention「跟是否复用无关」；该参数通常决定前缀还能被复用多久，但是否被他们拆成 30 分钟复用窗口和 24h 保留策略两个旋钮，无法坐实。",
+      "OpenRouter：87BP 写粘性路由 10 分钟无活动失效、且仅当上游缓存更便宜时自动启用；PWGQ 写调用方传 session_id，并称官方缓存「最低30分钟」。",
+      "Gemini 显式存储费：87BP 为 $0.50/M tok/时且 2026 年底后翻倍，PWGQ 为 $0.50~1.00/M tok/h。",
+      "Anthropic 自动缓存上线日，87BP 为 2025-03-13，PWGQ 为 2026-02-19。",
+      "PWGQ 称经 OpenRouter 走通义千问必须自带 cache_control；与同文「implicit 默认自动且不可关」是否矛盾，取决于网关是否透传隐式命中。"
+    ],
+    "reason": "87BP 用 F1/F2/F3 把全自动、请求内断点和独立缓存资源分开，并贯穿矩阵；开头就把「Anthropic 仍要 cache_control」、写入费和 TTL 讲成一张可对照的图。PWGQ 的命中字段和失效处理更细，也更敢标官方口径冲突，但把千问显式缓存说成 Gemini 那种独立资源，分类会带偏实现。对要先建立正确地图的用户，87BP 略高一筹。",
+    "_codes": {
+      "x": "PWGQ",
+      "y": "87BP"
+    },
+    "_attr": [
+      2,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

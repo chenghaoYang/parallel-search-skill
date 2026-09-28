@@ -1,0 +1,64 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 0,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开篇写「DeepSeek、智谱写入不加价」，矩阵却写智谱写入费「∅官方未详述」，第5节又写「智谱 GLM 的写入费……官方文档未详述」。",
+    "开篇写 Kimi「明确收写入费(1.25x起)」，矩阵写「5m档=标准价;1h档=2x」，两个写入倍率不能同时成立。",
+    "开篇写「其余厂商是分钟/小时级精确时长」，与矩阵通义「implicit∅未给精确值」、第5节「只说定期清理，未给数字」矛盾；Gemini implicit 在矩阵里也只写「系统自动」，没有精确时长。"
+  ],
+  "errors_y": [
+    "对照表把 Gemini 显式缓存的命中确认字段写成「usageMetadata.totalTokenCount」；该字段是总 token 数，不能用来确认缓存命中。"
+  ],
+  "reason": "胜负差在决策框架。B 用三家族（默认零改动、请求内 cache_control、独立缓存对象）直接回答「现在还要不要改代码」，开篇一屏给齐倍率、TTL 和命中字段，矩阵按同一组维度收束。A 在失效条件、绝对价格和来源分寸上更扎实，但「双轨」把 Anthropic 与 OpenAI 并在一起，开篇「传言已过时」又容易让人以为可以不再传 cache_control。对这份要快速建立正确对比框架的任务，B 略高一筹。",
+  "raw": {
+    "dims": {
+      "orientation": "B",
+      "taxonomy": "B",
+      "coverage": "tie",
+      "doubts": "B",
+      "pitfalls": "A",
+      "accuracy": "A",
+      "sourcing": "A",
+      "concision": "B"
+    },
+    "overall": "B",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "对照表把 Gemini 显式缓存的命中确认字段写成「usageMetadata.totalTokenCount」；该字段是总 token 数，不能用来确认缓存命中。"
+      ],
+      "B": [
+        "开篇写「DeepSeek、智谱写入不加价」，矩阵却写智谱写入费「∅官方未详述」，第5节又写「智谱 GLM 的写入费……官方文档未详述」。",
+        "开篇写 Kimi「明确收写入费(1.25x起)」，矩阵写「5m档=标准价;1h档=2x」，两个写入倍率不能同时成立。",
+        "开篇写「其余厂商是分钟/小时级精确时长」，与矩阵通义「implicit∅未给精确值」、第5节「只说定期清理，未给数字」矛盾；Gemini implicit 在矩阵里也只写「系统自动」，没有精确时长。"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式相反：B 定为全自动（F1，mode 仅 implicit），A 定为纯手动（须传 prompt_cache_options 或 cache_control），两份引用同一指南。",
+      "Anthropic 自动缓存日期：B 写 2025-03-13，A 写 2026-02-19；两边都写仍要顶层 cache_control。",
+      "DeepSeek 命中倍率：B「约为原价的2%」（news260910），A「0.1x（$0.014 vs $0.14/M）」（news0802）。",
+      "智谱：B「约0.5x」「5min自动刷新」「500+tok」，A「≈0.25x（2元 vs 8元/M）」、TTL 官方未写、「512 tok」。",
+      "OpenAI 代际：B 区分 GPT-5.6+（命中 0.1x、写入 1.25x、TTL 固定 30 分钟）与旧款（命中 0.5x、写入免费）；A 把 OpenAI 概括为 0.1x、写入 1.25x、非 ZDR 默认 24h。",
+      "「最近约 20 个 block」：B 归 DashScope，A 归 Bedrock Claude。",
+      "Kimi 最小长度：B 写 256 tok，A 写未注明。",
+      "Gemini 隐式命中字段两边都写 usage.total_cached_tokens，不确定是否就是 cachedContentTokenCount。",
+      "A 文首称「均为官方文档一手信息」，但 Gemini 隐式 TTL「无法定义、不保证」的依据是开发者论坛帖 [24]。"
+    ],
+    "reason": "胜负差在决策框架。B 用三家族（默认零改动、请求内 cache_control、独立缓存对象）直接回答「现在还要不要改代码」，开篇一屏给齐倍率、TTL 和命中字段，矩阵按同一组维度收束。A 在失效条件、绝对价格和来源分寸上更扎实，但「双轨」把 Anthropic 与 OpenAI 并在一起，开篇「传言已过时」又容易让人以为可以不再传 cache_control。对这份要快速建立正确对比框架的任务，B 略高一筹。"
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

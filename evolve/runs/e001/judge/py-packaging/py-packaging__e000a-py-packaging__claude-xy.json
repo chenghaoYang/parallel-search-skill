@@ -1,0 +1,78 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 0,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「只有 uv 把\"装 Python 解释器\"内置了」与同一条里的「PDM 有 `pdm python install`」自相矛盾：PDM 早就能下载独立的 Python 解释器，Poetry 2.1 起也有实验性的 `poetry python install`",
+    "「Poetry 要靠外部 pyenv」（矩阵里也写「`poetry env use`，需外部 pyenv」）已经过时：Poetry 2.1.0 起提供实验性的 `poetry python install`",
+    "「pixi 目前官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」说错了，而且前后矛盾：pixi 可以用 `[pypi-options]` 的 index-url/extra-index-urls 配置私有 PyPI 源，并通过 keyring/.netrc 认证",
+    "「原生 workspace 三家有，两家没有」数错了：按它自己的矩阵，pip、Poetry、conda 三家都没有原生 workspace"
+  ],
+  "errors_y": [
+    "「conda 免费层对大型商业组织不再免费」把 conda 和 Anaconda 混为一谈：200 人以上须付费的条款针对的是 Anaconda 发行版和 defaults 源（repo.anaconda.com）；BSD 许可的 conda 本身配合 conda-forge（如 Miniforge）仍然免费"
+  ],
+  "reason": "WQ54 开头就给出选型经验法则（纯 PyPI 项目选 uv，conda 生态的新项目选 pixi），分类贯穿全文，关键说法逐格标了来源，也诚实列出缺口，Python 版本管理部分也更准确。UUMN 在迁移、CI、私有源上写得更细，对 uv/PDM 的 PEP 751 描述也更贴近实际，但全文没有给出明确推荐，而且「只有 uv 内置装解释器」「pixi 不支持私有 PyPI」这类错误会直接误导选型。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "WQ54",
+      "taxonomy": "WQ54",
+      "coverage": "tie",
+      "doubts": "UUMN",
+      "pitfalls": "UUMN",
+      "accuracy": "WQ54",
+      "sourcing": "WQ54",
+      "concision": "UUMN"
+    },
+    "overall": "WQ54",
+    "strength": 1,
+    "errors": {
+      "UUMN": [
+        "「只有 uv 把\"装 Python 解释器\"内置了」与同一条里的「PDM 有 `pdm python install`」自相矛盾：PDM 早就能下载独立的 Python 解释器，Poetry 2.1 起也有实验性的 `poetry python install`",
+        "「Poetry 要靠外部 pyenv」（矩阵里也写「`poetry env use`，需外部 pyenv」）已经过时：Poetry 2.1.0 起提供实验性的 `poetry python install`",
+        "「pixi 目前官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」说错了，而且前后矛盾：pixi 可以用 `[pypi-options]` 的 index-url/extra-index-urls 配置私有 PyPI 源，并通过 keyring/.netrc 认证",
+        "「原生 workspace 三家有，两家没有」数错了：按它自己的矩阵，pip、Poetry、conda 三家都没有原生 workspace"
+      ],
+      "WQ54": [
+        "「conda 免费层对大型商业组织不再免费」把 conda 和 Anaconda 混为一谈：200 人以上须付费的条款针对的是 Anaconda 发行版和 defaults 源（repo.anaconda.com）；BSD 许可的 conda 本身配合 conda-forge（如 Miniforge）仍然免费"
+      ]
+    },
+    "unsure": [
+      "两份都把 uv 对 pylock.toml 的支持挂在 0.12.x 上（UUMN「uv(0.12.0+，2026-07-28)支持导出/导入」，WQ54「0.12.11+/0.12.17+」）；据我所知 uv 0.6.15（2025-04）就已支持 `uv export --format pylock.toml`、`uv pip compile -o pylock.toml` 和 `uv pip install -r pylock.toml`，0.12.x 可能只是后续增强",
+      "WQ54「uv 仍在 preview 阶段」：不确定 uv 的 pylock 支持是否需要 --preview 才能用",
+      "PDM 与 pylock.toml：UUMN 说「PDM 可以把它设为替代锁格式」，WQ54 说「仅导出(v2.26+,opt-in)」，两者冲突；我倾向 UUMN 是对的，但不确定",
+      "UUMN「uv_build（0.12+ 新项目默认）」：我印象中 uv 0.8.0 起 `uv init --package/--lib` 就默认用 uv_build 了",
+      "UUMN 说 setup-pdm「默认带缓存」：我印象中 setup-pdm 的 cache 输入默认是 false",
+      "UUMN「`[workspace]`(2024 年从`[project]`改名)」的年份存疑；两份都写到的 pixi `[workspace.dependencies]` 表是否真的存在也存疑",
+      "WQ54「`poetry.lock` v2.0」：Poetry 2.x 生成的 lock-version 可能是 2.1",
+      "WQ54「pixi 用 `[tool.pixi.project]` 包一层」：pixi 已把它改名为 `[tool.pixi.workspace]`，「实验性」这个标注也存疑",
+      "WQ54「uv（唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具）」和它自己矩阵里写的 PDM（`pdm python install` + 实验性 workspace）矛盾",
+      "UUMN「Poetry 只有 1.x→2.x 的 `poetry config --migrate`」：这个命令迁移的是 Poetry 配置项，不是 pyproject 里的元数据",
+      "两份都说 pip 26.1 起支持 `pip install -r pylock.toml`，WQ54 还说 26.2 新增了 `--uploaded-prior-to`/`--only-final`，都无法核实",
+      "WQ54「uv 背后的 Astral 已被 OpenAI 收购（2026-03-19）」无法核实（文中已标明是二手信源）"
+    ],
+    "reason": "WQ54 开头就给出选型经验法则（纯 PyPI 项目选 uv，conda 生态的新项目选 pixi），分类贯穿全文，关键说法逐格标了来源，也诚实列出缺口，Python 版本管理部分也更准确。UUMN 在迁移、CI、私有源上写得更细，对 uv/PDM 的 PEP 751 描述也更贴近实际，但全文没有给出明确推荐，而且「只有 uv 内置装解释器」「pixi 不支持私有 PyPI」这类错误会直接误导选型。",
+    "_codes": {
+      "x": "UUMN",
+      "y": "WQ54"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

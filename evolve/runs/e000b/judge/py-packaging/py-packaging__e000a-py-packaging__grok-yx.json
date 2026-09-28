@@ -1,0 +1,74 @@
+{
+  "score": 2,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "称 uv 是唯一有官方 GitHub Action 的一体化工具，同文却列出了 PDM 的官方 action：「唯一有官方 GH Action 的一体化工具」",
+    "把依赖组算进主依赖表；Poetry 的依赖组写在 tool.poetry.group.*.dependencies，不是这张表：「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」"
+  ],
+  "errors_y": [
+    "把 Poetry 2.0 说成已经改用标准表、旧表只留分组类配置，路径依赖和按源依赖仍要写在 Poetry 自己的依赖表里：「[tool.poetry] 只保留依赖分组等专属配置」",
+    "把 Anaconda 仓库条款里的商业许可说成 conda 这个工具的免费层失效，conda 本体和 conda-forge 不在该 ToS 的收费范围内：「conda 免费层对大型商业组织不再免费」",
+    "PDM 同样能装解释器、管 venv，并且本文自己也写了 PDM 的 workspace，却仍称 uv 是唯一全能替代：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」"
+  ],
+  "reason": "S95R 先给选型结论，再用 D1–D11 把锁文件、workspace、Python 版本、构建后端、迁移、CI 和私有源对照到字段、命令和默认策略；Poetry 2 的结论是 [project] 与 [tool.poetry] 两表并存，并写明路径依赖和多源留在 Poetry 自己的表。J9LW 的链接更落到具体手册页、NEWS.rst 和 issue，也单列了未核实项，但一屏结论把 Poetry 2 说成已经改完、把 uv 说成唯一替代，私有源只写到认证机制，没有索引策略和依赖混淆。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "S95R",
+      "taxonomy": "S95R",
+      "coverage": "S95R",
+      "doubts": "S95R",
+      "pitfalls": "S95R",
+      "accuracy": "S95R",
+      "sourcing": "J9LW",
+      "concision": "tie"
+    },
+    "overall": "S95R",
+    "strength": 2,
+    "errors": {
+      "J9LW": [
+        "把 Poetry 2.0 说成已经改用标准表、旧表只留分组类配置，路径依赖和按源依赖仍要写在 Poetry 自己的依赖表里：「[tool.poetry] 只保留依赖分组等专属配置」",
+        "把 Anaconda 仓库条款里的商业许可说成 conda 这个工具的免费层失效，conda 本体和 conda-forge 不在该 ToS 的收费范围内：「conda 免费层对大型商业组织不再免费」",
+        "PDM 同样能装解释器、管 venv，并且本文自己也写了 PDM 的 workspace，却仍称 uv 是唯一全能替代：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」"
+      ],
+      "S95R": [
+        "称 uv 是唯一有官方 GitHub Action 的一体化工具，同文却列出了 PDM 的官方 action：「唯一有官方 GH Action 的一体化工具」",
+        "把依赖组算进主依赖表；Poetry 的依赖组写在 tool.poetry.group.*.dependencies，不是这张表：「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」"
+      ]
+    },
+    "unsure": [
+      "Poetry 是否会自装解释器：J9LW 写「2.1.0实验性 poetry python install」，S95R 写「Poetry 明确不会（BYOP）」，无法判定 2026-09 哪边符合官方现状",
+      "uv 的 pylock 版本节点冲突：S95R「0.6.15+ preliminary」且含安装，J9LW「0.12.11+/0.12.17+」且只写导出+校验",
+      "PDM 的 PEP 751 版本冲突：S95R「v2.25.0 opt-in」，J9LW「v2.26+」且「仅导出」",
+      "Poetry 的 PEP 751：S95R「不支持，issue #10356无里程碑」，J9LW「仅导出(2.3.0+ via plugin)」",
+      "S95R「26.5 版起实验性支持原生导出 conda-lock.yaml/兼容 pixi.lock」无法核实",
+      "J9LW「Astral 已被 OpenAI 收购（2026-03-19，二手信源）」无法核实",
+      "J9LW 称 pixi 的 PEP 751 仍在 issue #3474 与 #3889 推进；S95R 只说官方文档未提及，issue 是否已分配无法核实",
+      "S95R 称 uv 对内部 index 缺凭证会静默回退公共 PyPI 且「不报错不警告」，是否完全没有警告无法确认"
+    ],
+    "reason": "S95R 先给选型结论，再用 D1–D11 把锁文件、workspace、Python 版本、构建后端、迁移、CI 和私有源对照到字段、命令和默认策略；Poetry 2 的结论是 [project] 与 [tool.poetry] 两表并存，并写明路径依赖和多源留在 Poetry 自己的表。J9LW 的链接更落到具体手册页、NEWS.rst 和 issue，也单列了未核实项，但一屏结论把 Poetry 2 说成已经改完、把 uv 说成唯一替代，私有源只写到认证机制，没有索引策略和依赖混淆。",
+    "_codes": {
+      "x": "S95R",
+      "y": "J9LW"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

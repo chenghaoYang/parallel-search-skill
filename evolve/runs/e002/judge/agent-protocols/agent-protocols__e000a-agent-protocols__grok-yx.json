@@ -1,0 +1,75 @@
+{
+  "score": 2,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "2025-03-26 起 Streamable HTTP 的 Mcp-Session-Id 会话是可选的，initialize 握手不等于要求服务端保持会话。「旧版(≤2025-11-25)要求 stateful initialize 握手」",
+    "Anthropic 有与 OpenAI Agents SDK、Google ADK 同类的 Claude Agent SDK，不是没有独立框架。「Anthropic 无独立框架,MCP即其出品。」"
+  ],
+  "errors_y": [
+    "MCP 日期版本的起点写成了不存在的 2024-10-07，首个正式 spec 版本是 2024-11-05。「日期版：2024-10-07→2026-07-28」",
+    "把当前语境里的 ACP 收成 Zed，但 OpenAI/Stripe 的 Agentic Commerce Protocol 同样以 ACP 在用。「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个。」",
+    "HTTP+SSE 在 2025-03-26 规范里已经标为 deprecated，不是拖到 2026-07-28 才正式标记。「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」"
+  ],
+  "reason": "PR69 用「交互栈的哪一段」把 MCP、A2A、ACP-Zed、AG-UI 分成四类并贯穿矩阵，对两个点名疑点给了可核对结论：ACP 至少三套互不兼容，HTTP+SSE 传输已弃用而 SSE 仍是 Streamable HTTP 的可选流式。AUGY 在抽象名、版本链和鉴权 RFC 上更密，但把 ACP-Zed 与 AG-UI 并成一类，并把现存 ACP 收成 Zed、把 HTTP+SSE 的正式 Deprecated 记到 2026-07-28。这位用户要的是能直接消掉疑点并据此选型的全局图，PR69 更少带偏。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "PR69",
+      "taxonomy": "PR69",
+      "coverage": "AUGY",
+      "doubts": "PR69",
+      "pitfalls": "PR69",
+      "accuracy": "PR69",
+      "sourcing": "PR69",
+      "concision": "AUGY"
+    },
+    "overall": "PR69",
+    "strength": 2,
+    "errors": {
+      "AUGY": [
+        "MCP 日期版本的起点写成了不存在的 2024-10-07，首个正式 spec 版本是 2024-11-05。「日期版：2024-10-07→2026-07-28」",
+        "把当前语境里的 ACP 收成 Zed，但 OpenAI/Stripe 的 Agentic Commerce Protocol 同样以 ACP 在用。「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个。」",
+        "HTTP+SSE 在 2025-03-26 规范里已经标为 deprecated，不是拖到 2026-07-28 才正式标记。「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」"
+      ],
+      "PR69": [
+        "2025-03-26 起 Streamable HTTP 的 Mcp-Session-Id 会话是可选的，initialize 握手不等于要求服务端保持会话。「旧版(≤2025-11-25)要求 stateful initialize 握手」",
+        "Anthropic 有与 OpenAI Agents SDK、Google ADK 同类的 Claude Agent SDK，不是没有独立框架。「Anthropic 无独立框架,MCP即其出品。」"
+      ]
+    },
+    "unsure": [
+      "AUGY「MCP强制OAuth2.1+PKCE」与 PR69「鉴权都不强制；MCP 推荐 OAuth」：我所确信的稳定规范里，HTTP 鉴权一旦启用必须走 OAuth 2.1+PKCE，但鉴权本身可选，stdio 不走 OAuth；AUGY 引用的是 draft 授权页，不确定 2026-07-28 是否改成强制。",
+      "AUGY 开头写每个请求靠 protocolVersion「没有协商」，坑 4 又写要看「protocolVersion 协商结果」，两处冲突，无法判断哪句符合 2026-07-28。",
+      "AG-UI 事件数 AUGY「17种事件」与 PR69「30种类型化JSON事件」不一致，不确认 1.0.0（2026-09-17）的计数口径。",
+      "ACP-IBM 并入 A2A 的日期 AUGY 写 2025-08-25、PR69 写 2025-08-27，双方引用的基金会博文日期是 2025-08-29，确切决议日未核。",
+      "PR69「AG-UI 无大厂官方采用声明」与 AUGY 给 Anthropic/Google/Microsoft 的 ✅ 冲突；AUGY 的依据是 AG-UI 集成列表和截断的 Microsoft Learn 链接，算不算厂商官方采用无法确认。",
+      "PR69 称 CopilotKit「2026-05 的 $27M 融资明确与 AG-UI 采用挂钩」，金额和因果未核。",
+      "两份都写 MCP 2026-07-28 删除协议级会话和 Mcp-Session-Id；该变更晚于我能凭记忆核对的规范，不据此判错。",
+      "AUGY 称弃用 HTTP+SSE「至少12个月弃用窗口」，12 个月是否为规范要求未核。",
+      "PR69 一屏写 A2A 鉴权「5 种可选方案」，矩阵只列 APIKey/OAuth2/OIDC/mTLS 四种。"
+    ],
+    "reason": "PR69 用「交互栈的哪一段」把 MCP、A2A、ACP-Zed、AG-UI 分成四类并贯穿矩阵，对两个点名疑点给了可核对结论：ACP 至少三套互不兼容，HTTP+SSE 传输已弃用而 SSE 仍是 Streamable HTTP 的可选流式。AUGY 在抽象名、版本链和鉴权 RFC 上更密，但把 ACP-Zed 与 AG-UI 并成一类，并把现存 ACP 收成 Zed、把 HTTP+SSE 的正式 Deprecated 记到 2026-07-28。这位用户要的是能直接消掉疑点并据此选型的全局图，PR69 更少带偏。",
+    "_codes": {
+      "x": "PR69",
+      "y": "AUGY"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

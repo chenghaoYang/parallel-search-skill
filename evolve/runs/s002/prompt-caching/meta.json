@@ -1,0 +1,53 @@
+{
+  "exp": "s002",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "grok-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "98e621ff42",
+  "skill_chars": 14789,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 65.0,
+  "spawns": 12,
+  "followups": 0,
+  "lead_web": 80,
+  "lead_tools": {
+    "read_file": 16,
+    "list_dir": 1,
+    "run_terminal_command": 64,
+    "write": 17,
+    "spawn_subagent": 12,
+    "web_search": 29,
+    "get_command_or_subagent_output": 2,
+    "web_fetch": 51,
+    "search_replace": 49,
+    "grep": 1
+  },
+  "cost_usd": 1.26,
+  "num_turns": 49,
+  "is_error": true,
+  "terminal_reason": "error_during_execution",
+  "rate_limit_lines": 5,
+  "mech": {
+    "chars": 8983,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.917,
+    "golden_missed": [
+      "deepseek-disk-cache-automatic"
+    ],
+    "urls": 22,
+    "traceable": 1.0,
+    "notes": {
+      "files": 6,
+      "claims": 140,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 8983
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/s002/prompt-caching"
+}

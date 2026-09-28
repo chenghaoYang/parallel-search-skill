@@ -1,0 +1,77 @@
+{
+  "score": -2,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「只有 uv 把\"装 Python 解释器\"内置了」：同一条紧接着就写「PDM 有 `pdm python install`」。PDM 从 2.13 起也内置下载解释器，conda/pixi 同样会下载解释器，所以「只有 uv」不成立，而且前后矛盾",
+    "「pixi 目前官方明确不支持私有 PyPI 仓库认证」「（只有 keyring/.netrc，没有私有 index 机制）」：pixi 可以在 `[pypi-options]` 里用 `index-url`/`extra-index-urls` 配私有 PyPI 源，并通过 keyring/.netrc 认证。这条说法是错的，本身也自相矛盾",
+    "「uv 用自己的 uv_build（0.12+ 新项目默认）」：uv 从 0.8.0（2025-07）起 `uv init` 就默认用 uv_build，不是 0.12",
+    "「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」：uv 从 0.6.15（2025-04）起就初步支持 `uv export --format pylock.toml`、`uv pip compile -o pylock.toml`、`uv pip install -r pylock.toml`，不是 0.12.0 才开始",
+    "「pip（读取但官方未细列完整度）」：pip 是前端，不读取 `[project]` 表；PEP 621 元数据由构建后端处理"
+  ],
+  "errors_y": [
+    "「唯一有官方 GH Action 的一体化工具」：同属一体化族的 PDM 有官方的 `pdm-project/setup-pdm`（MUTQ 自己的 D10 列也这么写），uv 不是唯一一个"
+  ],
+  "reason": "MUTQ 开头直接回答新项目怎么选（纯 Python 选 uv，需要非 Python 依赖选 pixi/conda），D1–D11 维度贯穿所有矩阵，私有源 index 策略、CI 缓存 key、uv 不读 poetry.lock 这些坑都能直接照做，疑点里 uv 支持 pylock 的起始版本也写对了（0.6.15）。962C 更短、迁移路径写得更全，但一屏总结里有好几处会误导选型的硬伤：说「只有 uv」能装解释器、说 pixi「不支持私有 PyPI 认证」、把 uv 的 pylock 支持和 uv_build 默认的起始版本都写成 0.12。准确性上的差距决定了胜负。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "MUTQ",
+      "taxonomy": "MUTQ",
+      "coverage": "MUTQ",
+      "doubts": "MUTQ",
+      "pitfalls": "MUTQ",
+      "accuracy": "MUTQ",
+      "sourcing": "MUTQ",
+      "concision": "962C"
+    },
+    "overall": "MUTQ",
+    "strength": 2,
+    "errors": {
+      "962C": [
+        "「只有 uv 把\"装 Python 解释器\"内置了」：同一条紧接着就写「PDM 有 `pdm python install`」。PDM 从 2.13 起也内置下载解释器，conda/pixi 同样会下载解释器，所以「只有 uv」不成立，而且前后矛盾",
+        "「pixi 目前官方明确不支持私有 PyPI 仓库认证」「（只有 keyring/.netrc，没有私有 index 机制）」：pixi 可以在 `[pypi-options]` 里用 `index-url`/`extra-index-urls` 配私有 PyPI 源，并通过 keyring/.netrc 认证。这条说法是错的，本身也自相矛盾",
+        "「uv 用自己的 uv_build（0.12+ 新项目默认）」：uv 从 0.8.0（2025-07）起 `uv init` 就默认用 uv_build，不是 0.12",
+        "「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」：uv 从 0.6.15（2025-04）起就初步支持 `uv export --format pylock.toml`、`uv pip compile -o pylock.toml`、`uv pip install -r pylock.toml`，不是 0.12.0 才开始",
+        "「pip（读取但官方未细列完整度）」：pip 是前端，不读取 `[project]` 表；PEP 621 元数据由构建后端处理"
+      ],
+      "MUTQ": [
+        "「唯一有官方 GH Action 的一体化工具」：同属一体化族的 PDM 有官方的 `pdm-project/setup-pdm`（MUTQ 自己的 D10 列也这么写），uv 不是唯一一个"
+      ]
+    },
+    "unsure": [
+      "962C「Poetry(2.3.0+)只支持导出」与 MUTQ「Poetry 未支持（issue #10356 无里程碑）」互相矛盾，无法核实哪方正确",
+      "两份都说 Poetry 不能自己装 Python（962C「Poetry 要靠外部 pyenv」、MUTQ「Poetry 明确不会（BYOP）」），但 Poetry 2.1 起似乎有实验性的 `poetry python install`",
+      "MUTQ「内部 index 缺凭证时会静默回退到公共 PyPI」：uv 文档称 first-index 策略遇到 401/403 默认停止搜索，这条可能只适用于无权限时返回 404 的私有源，有以偏概全之嫌",
+      "MUTQ「26.5 版起实验性支持原生导出 `conda-lock.yaml`/兼容 `pixi.lock`」「v0.75.0（2026-07-29）进入稳定版」「pixi publish」无法核实",
+      "两份都说 pip 26.1 起支持 `pip install -r pylock.toml`，无法核实",
+      "962C 把 PDM 列为「默认带缓存」的 action，但 setup-pdm 的 `cache` 输入默认值可能是 false",
+      "962C「`[workspace]`(2024 年从`[project]`改名)」：改名时间可能在 2025 年",
+      "MUTQ D7「固定`poetry-core`」：Poetry 2.1 起 `poetry build` 可能已不绑定特定构建后端",
+      "962C「environment.yml 走独立的 CEP 24 标准」：CEP 编号不确定"
+    ],
+    "reason": "MUTQ 开头直接回答新项目怎么选（纯 Python 选 uv，需要非 Python 依赖选 pixi/conda），D1–D11 维度贯穿所有矩阵，私有源 index 策略、CI 缓存 key、uv 不读 poetry.lock 这些坑都能直接照做，疑点里 uv 支持 pylock 的起始版本也写对了（0.6.15）。962C 更短、迁移路径写得更全，但一屏总结里有好几处会误导选型的硬伤：说「只有 uv」能装解释器、说 pixi「不支持私有 PyPI 认证」、把 uv 的 pylock 支持和 uv_build 默认的起始版本都写成 0.12。准确性上的差距决定了胜负。",
+    "_codes": {
+      "x": "962C",
+      "y": "MUTQ"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

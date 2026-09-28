@@ -1,0 +1,73 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "TTL 概述把 DeepSeek 以外的厂商都说成有精确时长，原文「其余厂商是分钟/小时级精确时长,默认5-30分钟」；Gemini 隐式缓存没有可定义的精确 TTL，同文矩阵对通义隐式也标了未给精确值。"
+  ],
+  "errors_y": [
+    "OpenRouter 行把 OpenAI 的可选断点写成必填，原文「OpenAI仍需`prompt_cache_breakpoint`」，与同文「可选显式」以及 OpenAI 默认自动缓存不符。",
+    "Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是总 token 数，不能用来确认缓存命中。",
+    "显式缓存的创建方式写成「generateContent创建`cachedContents`再引用」，CachedContent 由独立的 cachedContents 接口创建，再交给 generateContent 引用。"
+  ],
+  "reason": "QSJH 直接回答了用户点名的疑点：OpenAI 与 DeepSeek 仍是零改动，Anthropic 即便自动放置断点也仍要至少一个 cache_control；F1/F2/F3 和分代计费能贯穿对比。5BBN 的失效参数、百炼/Azure 差异和来源缺口更细，但开头把这条传言说成已过时，并在 OpenAI 断点是否必填、Gemini 命中字段和显式缓存创建方式上有明确错误。对这位用户 QSJH 只略高一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "QSJH",
+      "taxonomy": "QSJH",
+      "coverage": "5BBN",
+      "doubts": "QSJH",
+      "pitfalls": "5BBN",
+      "accuracy": "QSJH",
+      "sourcing": "5BBN",
+      "concision": "QSJH"
+    },
+    "overall": "QSJH",
+    "strength": 1,
+    "errors": {
+      "5BBN": [
+        "OpenRouter 行把 OpenAI 的可选断点写成必填，原文「OpenAI仍需`prompt_cache_breakpoint`」，与同文「可选显式」以及 OpenAI 默认自动缓存不符。",
+        "Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是总 token 数，不能用来确认缓存命中。",
+        "显式缓存的创建方式写成「generateContent创建`cachedContents`再引用」，CachedContent 由独立的 cachedContents 接口创建，再交给 generateContent 引用。"
+      ],
+      "QSJH": [
+        "TTL 概述把 DeepSeek 以外的厂商都说成有精确时长，原文「其余厂商是分钟/小时级精确时长,默认5-30分钟」；Gemini 隐式缓存没有可定义的精确 TTL，同文矩阵对通义隐式也标了未给精确值。"
+      ]
+    },
+    "unsure": [
+      "DeepSeek 命中倍率：QSJH 写「约0.02x」「约为原价的2%左右」，5BBN 写「0.1x（$0.014 vs $0.14/M）」；长期公开价是命中约为未命中的十分之一，QSJH 另引了 2026-09-10 公告，是否已改价无法裁定。",
+      "Kimi 触发方式相反：QSJH 视为默认零改动（「mode仅含implicit」），5BBN 写「纯手动」「须传`prompt_cache_options`」。",
+      "智谱折扣与 TTL：QSJH 为「约0.5x」「5min自动刷新」，5BBN 为「≈0.25x（2元 vs 8元/M）」且 TTL「官方未写」，并称另有按小时存储费。",
+      "OpenAI 旧模型是否仍为 0.5x 且写入免费：QSJH 把 GPT-5.5 及更早与 GPT-5.6+ 分开，5BBN 把 OpenAI 整体写成 0.1x 与 1.25x 写入；旧档与更早官方文档一致，但是否在 2026-09 仍适用无法确认。",
+      "Anthropic 自动缓存上线日期：QSJH 写 2025-03-13，5BBN 写 2026-02-19。",
+      "Gemini 显式存储费涨价时点：QSJH 写「$0.50/M tok/时(2026底前)」「2026年底后翻倍」，5BBN 写「$0.5~1.0/M token/小时存储费(2027起涨)」。",
+      "「约 20 个 block」归属不同：QSJH 安在 DashScope「只查最近20个 block」，5BBN 安在 Bedrock Claude「自动回溯约20个content block」。",
+      "两文都用 Gemini 字段 usage.total_cached_tokens；更早的官方字段是 usageMetadata.cachedContentTokenCount，2026 是否新增该名字无法确认。",
+      "Bedrock 上 Claude 能否完全不传 cache_control：QSJH 称为普遍例外，5BBN 称 Opus 4.6 及更早只能显式断点。"
+    ],
+    "reason": "QSJH 直接回答了用户点名的疑点：OpenAI 与 DeepSeek 仍是零改动，Anthropic 即便自动放置断点也仍要至少一个 cache_control；F1/F2/F3 和分代计费能贯穿对比。5BBN 的失效参数、百炼/Azure 差异和来源缺口更细，但开头把这条传言说成已过时，并在 OpenAI 断点是否必填、Gemini 命中字段和显式缓存创建方式上有明确错误。对这位用户 QSJH 只略高一筹。",
+    "_codes": {
+      "x": "QSJH",
+      "y": "5BBN"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

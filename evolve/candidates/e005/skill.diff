@@ -1,0 +1,114 @@
+diff -ruN a/skills/deep-search/SKILL.md b/skills/deep-search/SKILL.md
+--- a/skills/deep-search/SKILL.md	2026-09-24 02:53:25
++++ b/skills/deep-search/SKILL.md	2026-09-24 11:16:28
+@@ -85,10 +85,18 @@
+ 
+ ## 终审与停止
+ 
+-1. 派 1 个（范围大时 2 个）审稿工人：只给它 `report.md` 和 `notes/`，要它抽查 ≥ 20 条具体主张（端点、字段名、参数、数值），对照笔记里的 URL 和摘录判定 `supported / unsupported / contradicted`，必要时回到原页确认。
+-2. 按审稿结果改稿：删掉或降级没有支撑的句子，改正矛盾的句子。这一步不再做新调研。「没找到来源」不等于「不支持」：没有支撑的正面主张只能删掉或标「未核实」，不许改写成相反的否定句。
+-3. 最后一步必须是收束，不能停在扩展。成稿末尾保留「未决与置信度」一节，写清还空着的格子。
++终审不再派「对笔记抽查」的审稿工人——笔记本身可能就是错的源头。终审核验**回原页**，三步：
+ 
++1. 列核验清单（不 spawn）。从当前 `report.md` 挑「错了就误导读者」的主张：
++   - 「一屏看懂」每条、用户点名疑点的每条结论——全部进清单；
++   - 坑里每条的具体事实（数字、版本、字段名、行为规则）；
++   - 矩阵格：被一屏/疑点/坑引用的、`⚔` 裁决后写进正文的那一边、单源支撑的高影响值。
++   - 排除：本轮已走过反证简报的主张（`log.md` 有记录）。
++   一条主张涉及多个来源就拆成多条判定项（一个 URL 一条）。按 URL 域名/实体聚簇，一簇一个核验工人；每工人 ≤ 10 条，核验工人总数 ≤ `workers` 上限。装不下按 一屏 > 疑点 > `⚔` 裁决 > 坑 > 其他矩阵格 截断，截掉的在 §5 声明「未逐条核验」。
++2. 派核验工人（同一批，模板见 `references/worker.md`）：简报逐条给 成稿原句 + 笔记摘录 + URL；工人回原页核对，逐条判 `confirmed / wrong / not-on-page / 走样`（判定口径见 worker.md）。判定表汇总写进 `audit.md`。
++3. 按判定改稿（不再 spawn）：`wrong` 且附了页面原句 → 按原句改正，`[n]` 保留；`wrong` 无原句、`not-on-page`（页面打开了但没写）→ 删或移进 §5 标「未核实」；`not-on-page`（页面打不开）→ 不删，标「未核实」；`走样` → 改回摘录的说法。「没找到来源」不等于「不支持」：不许把无支撑主张改写成相反否定句。没进清单的具体事实不另派工人，按硬规则自查：每条追到笔记 `[C#]`，追不到的删/降级。
++4. 最后一步必须是收束，不能停在扩展。成稿末尾保留「未决与置信度」一节，写清还空着的格子；改完跑一次 `roundstat.py`，终稿仍受 `budget` 约束。
++
+ ## 硬规则
+ 
+ - 主 agent 不直接搜索网页；需要信息就派工人。
+@@ -101,7 +109,7 @@
+ ## 参考文件
+ 
+ - `references/worker.md`：工人简报模板、笔记格式、工人规则（`agents/research-worker.md` 是同一份规则的 agent 定义）。
+-- `references/converge.md`：成稿骨架、taxonomy 写法、长度控制、审稿标准。
++- `references/converge.md`：成稿骨架、taxonomy 写法、长度控制、终审核验后的改稿规则。
+ - `references/harness.md`：Claude Code、Kimi Code、Grok Build、纯 Perplexity、Codex 等外层的差异与调整（各自怎么选工人模型、怎么等一批）。
+ - `CHANGELOG.md`：每版按 bench 观察改了什么。
+ - `scripts/notes_lint.py`、`scripts/roundstat.py`：收束前后的机械检查。
+diff -ruN a/skills/deep-search/agents/research-worker.md b/skills/deep-search/agents/research-worker.md
+--- a/skills/deep-search/agents/research-worker.md	2026-09-24 02:53:39
++++ b/skills/deep-search/agents/research-worker.md	2026-09-24 11:16:07
+@@ -20,6 +20,8 @@
+    changelog / release notes 里最早的相关条目，不能只看最新几条。仍拿不准就写进 gaps，列出查过的页。
+    简报要你反证一条主张时，只找反例：找到一手反例就写成 claim，并在 conflicts 里写明它推翻了哪条；找不到就写明查过哪些页。
+ 6. 超出简报范围但重要的，只在 leads 里记一行。
++   如果简报是核验简报（判定项列表，每条给 成稿原句 + 摘录 + URL）：只回原页逐条核对，返回判定表
++   （confirmed / wrong 附原句 / not-on-page / 走样），不写笔记文件。
+ 7. 页面上看得到更新日期或版本号，就写进对应主张。
+ 8. 预算大约 20–25 次工具调用。大文件（OpenAPI、整站文档）下载后只 grep 需要的段落。笔记超过 8000 字符就删掉次要主张。
+ 
+diff -ruN a/skills/deep-search/references/converge.md b/skills/deep-search/references/converge.md
+--- a/skills/deep-search/references/converge.md	2026-09-24 02:52:10
++++ b/skills/deep-search/references/converge.md	2026-09-24 11:16:28
+@@ -1,4 +1,4 @@
+-# 收束：成稿骨架、taxonomy、长度控制、审稿
++# 收束：成稿骨架、taxonomy、长度控制、核验
+ 
+ 收束只用 `notes/`，不搜索、不 spawn。每次收束都**从头重写** `report.md`，不是在上一版末尾追加。
+ 
+@@ -54,12 +54,18 @@
+ - 只有二手来源支撑的事实加「（二手）」，或放进第 5 节。
+ - 笔记里互相冲突的，正文写能确认的那一边，另一边和原因写进第 5 节。
+ 
+-## 审稿标准（终审工人用）
++## 核验（终审工人用）
+ 
+-给审稿工人：`report.md`、`notes/` 路径、本节。要它：
++核验清单怎么挑、核验简报怎么写，见 SKILL.md「终审与停止」和 `references/worker.md`。
++核心差别：核验工人**回原页**核对，不是拿成稿对笔记——笔记本身可能就是错的源头。
+ 
+-1. 均匀抽取 ≥ 20 条具体主张（端点、字段、header、枚举、base URL、数值、行为规则），覆盖每一节。
+-2. 每条判定：`supported`（笔记里有 official 主张 + 原句支撑）、`weak`（只有 secondary 或原句只部分支撑）、`unsupported`（笔记里找不到）、`contradicted`（与笔记或原页相反）。有疑问可以回原页核对。
+-3. 写 `<dir>/audit.md`：每条一行 `判定 | 主张原文 | 依据 [C#] 或 URL | 建议改法`，最后给计数。
++主 agent 收到判定表后：
+ 
+-主 agent 收到审稿后：`contradicted` 必须改正或删除；`unsupported` 删除或移到第 5 节；`weak` 标「（二手）」或移到第 5 节。改完再跑一次 `roundstat.py`，终稿同样受 `budget` 约束。
++- `wrong` 且附了页面原句 → 按原句改正，`[n]` 保留。
++- `wrong` 没附原句、`not-on-page`（页面打开了但没写）→ 删除或移到第 5 节标「未核实」。
++- `not-on-page`（页面打不开）→ 不删，标「未核实」；可能是网络或站点问题，不等于主张错。
++- `走样`（成稿≠摘录）→ 改回摘录的说法。
++- `confirmed` → 不动。
++
++没进核验清单的主张不另派工人，靠「每条具体事实追到笔记 `[C#]`」自查；被截断没核上的在 §5 写明。
++把判定汇总写进 `<dir>/audit.md`，改完再跑一次 `roundstat.py`，终稿同样受 `budget` 约束。
+diff -ruN a/skills/deep-search/references/worker.md b/skills/deep-search/references/worker.md
+--- a/skills/deep-search/references/worker.md	2026-09-24 02:53:43
++++ b/skills/deep-search/references/worker.md	2026-09-24 11:15:35
+@@ -13,6 +13,22 @@
+ 返回：≤ 10 行（见下文「返回消息」）
+ ```
+ 
++## 核验简报模板（终审用；只核对，不调研）
++
++```
++编号：verify-<slug>
++任务：逐条核对下面主张与来源页面是否一致。不做新调研、不扩展、不写笔记文件。
++判定项（一个 URL 一条）：
++  V1 | 主张：<成稿原句> | 笔记摘录：<quote> | <URL>
++  V2 | …
++每条判一个：
++  confirmed    —— 页面原句支撑主张（字段名/数字/版本要逐字对得上）
++  wrong        —— 页面说法不同；必须附页面正确原句，附不上就不许判 wrong
++  not-on-page  —— 写明「页面没写这条」还是「页面打不开」（打不开要写明你实际试过哪些入口）
++  走样         —— 笔记摘录本身对、成稿改写后走了样（不看页面也能判）
++返回：判定表 + 每条一句依据，≤ 15 行。
++```
++
+ ## 笔记格式（写进笔记文件，不要贴回主上下文）
+ 
+ ```
+@@ -54,6 +70,7 @@
+    changelog / release notes 里最早的相关条目，不能只看最新几条。仍拿不准就写进 gaps，列出查过的页。
+    简报要你反证一条主张时，只找反例：找到一手反例就写成 claim，并在 conflicts 里写明它推翻了哪条；找不到就写明查过哪些页。
+ 5. 超出简报范围但重要的东西只记进 leads，一行一个，不展开调研。
++   如果拿到的是核验简报（判定项列表）：上面「笔记格式」不适用，只回原页核对、返回判定表，不写笔记文件。
+ 6. 返回消息（≤ 10 行）：
+    ```
+    notes: <笔记路径>

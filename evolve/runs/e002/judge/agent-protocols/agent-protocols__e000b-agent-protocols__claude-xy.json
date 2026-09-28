@@ -1,0 +1,75 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「Anthropic 无独立框架,MCP即其出品」错误：Anthropic 有官方 agent 框架 Claude Agent SDK（原 Claude Code SDK），与同行列出的 OpenAI Agents SDK、Google ADK 同类。",
+    "「AG-UI 无大厂官方采用声明」错误：Microsoft Agent Framework 官方提供 AG-UI 集成（AWS Bedrock AgentCore 也支持 AG-UI），大厂矩阵中 Microsoft×AG-UI 标「—」同样不对。"
+  ],
+  "errors_y": [
+    "「❓ 未查到官方 MCP 支持声明」（图例定义为「已查证官方渠道、未见表态」）错误：Google 官方明确支持 MCP（Gemini CLI、ADK MCPToolset、Gemini API SDK、Google Cloud 官方托管 MCP 服务器），并不是官方渠道没有表态。",
+    "「没有厂商发布\"第五个独立协议\"」错误：同一份文档自己写了「A2UI：独立声明式 UI 协议」，而且 OpenAI+Stripe 已发布 Agentic Commerce Protocol，Google 也发布了 AP2。"
+  ],
+  "reason": "4MWT 的协议对照更深（9 维矩阵，包含拓扑/格式/状态，也写到 A2A 的 JSON-RPC/gRPC/REST 三种绑定），还额外区分了第三个 ACP（OpenAI+Stripe 的 Agentic Commerce Protocol）并给出用官方域名辨认的方法，坑点也更能直接照做。WZF9 的来源标注更系统，Microsoft 一栏的支持情况判断得更准，但它把 Google 的 MCP 支持标成 ❓，又自相矛盾地说没有厂商发布第五个独立协议，A2A 传输也漏了 gRPC/REST。两份的大厂矩阵各有错漏，整体 4MWT 略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "4MWT",
+      "coverage": "4MWT",
+      "doubts": "4MWT",
+      "pitfalls": "4MWT",
+      "accuracy": "tie",
+      "sourcing": "WZF9",
+      "concision": "4MWT"
+    },
+    "overall": "4MWT",
+    "strength": 1,
+    "errors": {
+      "4MWT": [
+        "「Anthropic 无独立框架,MCP即其出品」错误：Anthropic 有官方 agent 框架 Claude Agent SDK（原 Claude Code SDK），与同行列出的 OpenAI Agents SDK、Google ADK 同类。",
+        "「AG-UI 无大厂官方采用声明」错误：Microsoft Agent Framework 官方提供 AG-UI 集成（AWS Bedrock AgentCore 也支持 AG-UI），大厂矩阵中 Microsoft×AG-UI 标「—」同样不对。"
+      ],
+      "WZF9": [
+        "「❓ 未查到官方 MCP 支持声明」（图例定义为「已查证官方渠道、未见表态」）错误：Google 官方明确支持 MCP（Gemini CLI、ADK MCPToolset、Gemini API SDK、Google Cloud 官方托管 MCP 服务器），并不是官方渠道没有表态。",
+        "「没有厂商发布\"第五个独立协议\"」错误：同一份文档自己写了「A2UI：独立声明式 UI 协议」，而且 OpenAI+Stripe 已发布 Agentic Commerce Protocol，Google 也发布了 AP2。"
+      ]
+    },
+    "unsure": [
+      "4MWT「MCP 2026-07-28 版从有状态改无状态」无法核实；方向与 MCP 无状态化提案一致，但我没见过一手确认",
+      "4MWT 说 A2A「7态枚举」，但据我所知 TaskState 有 submitted/working/input-required/auth-required/completed/canceled/failed/rejected 共 8 种",
+      "4MWT「唯一确认厂商原生实现是 Google Gemini CLI」以及 Microsoft×ACP-Zed 标「○」：如果 WZF9 说的 GitHub Copilot CLI `--acp`（2026-01-28 public preview）属实，这两处就不成立",
+      "4MWT 的 Microsoft×A2A「Copilot Studio(2026-05 GA)」引用的是 2025 年的 Azure 博客 [31]，日期和来源对不上",
+      "4MWT「2026-05 的 $27M 融资」只有二手来源",
+      "4MWT 说 ACP-Zed 是「Zed+JetBrains双BDFL」，WZF9 说「计划移交独立基金会」，两者口径不同，我判断不了",
+      "WZF9 写 ACP-IBM 传输为「REST/JSON-RPC over HTTP、WebSocket」：ACP-IBM 后期以 REST 为主，JSON-RPC/WS 的说法存疑",
+      "WZF9 的 Google×AG-UI「✅ ADK 支持 [15]」标成官方一手确认，引用的却是 AG-UI 自己的文档",
+      "WZF9「NLWeb 不是新协议」：微软自己把 NLWeb 描述为一组开放协议",
+      "WZF9 说 IBM 版 ACP 停止后「ACP」基本特指 Zed 版，但同样叫 ACP 的 Agentic Commerce Protocol 流传也很广",
+      "WZF9 写 ACP-Zed「v1.9.1（2026-09-18）」「协议版本 1」，来源 [12] 的路径却是 protocol/v2，版本口径不清"
+    ],
+    "reason": "4MWT 的协议对照更深（9 维矩阵，包含拓扑/格式/状态，也写到 A2A 的 JSON-RPC/gRPC/REST 三种绑定），还额外区分了第三个 ACP（OpenAI+Stripe 的 Agentic Commerce Protocol）并给出用官方域名辨认的方法，坑点也更能直接照做。WZF9 的来源标注更系统，Microsoft 一栏的支持情况判断得更准，但它把 Google 的 MCP 支持标成 ❓，又自相矛盾地说没有厂商发布第五个独立协议，A2A 传输也漏了 gRPC/REST。两份的大厂矩阵各有错漏，整体 4MWT 略胜。",
+    "_codes": {
+      "x": "4MWT",
+      "y": "WZF9"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

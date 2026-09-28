@@ -1,0 +1,70 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "Google Cloud 与 ADK 已有官方 MCP 支持，矩阵仍写成没查到，原文「未查到官方 MCP 支持声明」。"
+  ],
+  "errors_y": [
+    "MCP 鉴权被写成协议级强制，但规范里鉴权可选、stdio 走环境变量，原文「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」。"
+  ],
+  "reason": "TTA8 更贴这位用户的两个疑点和鉴权：独立 HTTP+SSE transport 已替换，SSE 仍是 Streamable HTTP 里的可选流式；MCP 鉴权整体可选、stdio 走环境变量；来源是完整 URL，坑落到 copilot --acp 和 Claude 适配器。34SD 的 D1–D10 矩阵、原语名字和版本链更细，也写对了 Google 的官方 MCP。TTA8 把 Google MCP 标成未查到，所以只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "TTA8",
+      "taxonomy": "34SD",
+      "coverage": "34SD",
+      "doubts": "TTA8",
+      "pitfalls": "TTA8",
+      "accuracy": "tie",
+      "sourcing": "TTA8",
+      "concision": "34SD"
+    },
+    "overall": "TTA8",
+    "strength": 1,
+    "errors": {
+      "34SD": [
+        "MCP 鉴权被写成协议级强制，但规范里鉴权可选、stdio 走环境变量，原文「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」。"
+      ],
+      "TTA8": [
+        "Google Cloud 与 ADK 已有官方 MCP 支持，矩阵仍写成没查到，原文「未查到官方 MCP 支持声明」。"
+      ]
+    },
+    "unsure": [
+      "34SD 称 2026-07-28 起 MCP「彻底无状态」「无握手」，protocolVersion「没有协商」，坑 4 又写要看「协商结果」，两处矛盾；不确定该版是否取消了 initialize 协商。",
+      "34SD 的 MCP 日期版本起点「2024-10-07」；公开日期版常见起点是 2024-11-05。",
+      "34SD 的「SEP-2596」和「至少12个月弃用窗口」是否就是现行 feature lifecycle 原文。",
+      "ACP-Zed 包版本冲突：34SD「v0.13.6(预1.0)」与 TTA8「v1.9.1（2026-09-18）」。",
+      "ACP-IBM 归档日：34SD「2025-08-25」，TTA8「2025-08-27」，公告博客日期是 2025-08-29。",
+      "34SD 将 A2A 传输写成「JSON-RPC2.0(主流)/gRPC/HTTP+REST」，gRPC 与独立 REST 绑定是否为现行标准传输拿不准。",
+      "TTA8 将 ACP-IBM 传输写成「REST/JSON-RPC over HTTP、WebSocket」；IBM ACP 主体是 REST，JSON-RPC 是否曾经成为正式绑定拿不准。",
+      "TTA8 对 A2UI 的「v0.9.1 生产/v1.0 RC」以及「AG-UI 只是它可选传输之一」。",
+      "TTA8 对 ACP-IBM 鉴权「capability token+OAuth2」仅标二手，是否属实未知。",
+      "34SD 称 AG-UI 有「17种事件」，精确条数未核对。"
+    ],
+    "reason": "TTA8 更贴这位用户的两个疑点和鉴权：独立 HTTP+SSE transport 已替换，SSE 仍是 Streamable HTTP 里的可选流式；MCP 鉴权整体可选、stdio 走环境变量；来源是完整 URL，坑落到 copilot --acp 和 Claude 适配器。34SD 的 D1–D10 矩阵、原语名字和版本链更细，也写对了 Google 的官方 MCP。TTA8 把 Google MCP 标成未查到，所以只是略胜。",
+    "_codes": {
+      "x": "TTA8",
+      "y": "34SD"
+    },
+    "_attr": [
+      2,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

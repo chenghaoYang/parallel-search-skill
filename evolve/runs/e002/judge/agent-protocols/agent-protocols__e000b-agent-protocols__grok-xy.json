@@ -1,0 +1,72 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 0,
+    "pitfalls": 1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开篇写「四者官方都自称互补、可叠加」，同文矩阵却写 MCP「官方文档未提A2A/ACP/AG-UI」，MCP 规范并无这一自称。",
+    "自家框架一节写「Anthropic 无独立框架,MCP即其出品」，Anthropic 已公开发布与 Agents SDK、ADK 同类的 Claude Agent SDK。"
+  ],
+  "errors_y": [
+    "图例把 ❓ 定义为「已查证官方渠道、未见表态」，Google 行却写「❓ 未查到官方 MCP 支持声明」；Google ADK 与 Gemini CLI 的官方文档已提供 MCP。",
+    "开篇断言「没有厂商发布\"第五个独立协议\"」，OpenAI 与 Stripe 已发布同样缩写为 ACP 的 Agentic Commerce Protocol。"
+  ],
+  "reason": "P2Z9 用交互栈分段把传输、鉴权和状态串成可对照的矩阵，并把 IBM、Zed、OpenAI 电商三个 ACP 分开。S3YF 的一屏总览和文末出处更完整，但「没有厂商发布第五个独立协议」以及 Google MCP「已查证官方渠道、未见表态」会让用户在命名消歧和大厂支持上拿错结论。因此 P2Z9 的实用价值更高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "S3YF",
+      "taxonomy": "P2Z9",
+      "coverage": "P2Z9",
+      "doubts": "tie",
+      "pitfalls": "P2Z9",
+      "accuracy": "tie",
+      "sourcing": "S3YF",
+      "concision": "P2Z9"
+    },
+    "overall": "P2Z9",
+    "strength": 1,
+    "errors": {
+      "P2Z9": [
+        "开篇写「四者官方都自称互补、可叠加」，同文矩阵却写 MCP「官方文档未提A2A/ACP/AG-UI」，MCP 规范并无这一自称。",
+        "自家框架一节写「Anthropic 无独立框架,MCP即其出品」，Anthropic 已公开发布与 Agents SDK、ADK 同类的 Claude Agent SDK。"
+      ],
+      "S3YF": [
+        "图例把 ❓ 定义为「已查证官方渠道、未见表态」，Google 行却写「❓ 未查到官方 MCP 支持声明」；Google ADK 与 Gemini CLI 的官方文档已提供 MCP。",
+        "开篇断言「没有厂商发布\"第五个独立协议\"」，OpenAI 与 Stripe 已发布同样缩写为 ACP 的 Agentic Commerce Protocol。"
+      ]
+    },
+    "unsure": [
+      "P2Z9「MCP 2026-07-28 版从有状态改无状态」「旧版(≤2025-11-25)要求 stateful initialize 握手」：后期规范在放宽 session，但是否已取消握手不能完全确定。",
+      "P2Z9 称 ACP-Zed「唯一确认厂商原生实现是 Google Gemini CLI」，微软格为「○ VS Code仅讨论中」；S3YF 称 Copilot CLI 于 2026-01-28 public preview。无法独立确认该 changelog。",
+      "S3YF「Microsoft 四项全线官方确认」以及「✅ Agent Framework 原生」是否等于微软对 AG-UI 的一手产品承诺。",
+      "S3YF 将 Google AG-UI 标为「✅ ADK 支持」，而 ✅ 定义为「官方一手确认」，引用却是 docs.ag-ui.com。",
+      "ACP-IBM 传输与鉴权两边不一致：S3YF「REST/JSON-RPC over HTTP、WebSocket」「capability token+OAuth2」，P2Z9「HTTP+REST」「MIME multipart」「bearer/basic/JWT，可选mTLS」。",
+      "P2Z9 鉴权格写 AG-UI「CORS+token+审计日志」，CORS 不是鉴权，也可能只是转述某篇实现说明。",
+      "P2Z9「Gemini Enterprise支持MCP服务器」无出处；Google 支持 MCP 本身可确信，产品名不确定。",
+      "小版本与精确数字未交叉核实：A2A「v1.0.0（2026-03-12）」对「v1.0.1(2026-05-28)」、ACP-IBM「终版v1.0.3(2025-08-21)」、S3YF「8 公司指导委员会」、P2Z9「30种类型化JSON事件」「7态枚举」「$27M」。"
+    ],
+    "reason": "P2Z9 用交互栈分段把传输、鉴权和状态串成可对照的矩阵，并把 IBM、Zed、OpenAI 电商三个 ACP 分开。S3YF 的一屏总览和文末出处更完整，但「没有厂商发布第五个独立协议」以及 Google MCP「已查证官方渠道、未见表态」会让用户在命名消歧和大厂支持上拿错结论。因此 P2Z9 的实用价值更高。",
+    "_codes": {
+      "x": "P2Z9",
+      "y": "S3YF"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

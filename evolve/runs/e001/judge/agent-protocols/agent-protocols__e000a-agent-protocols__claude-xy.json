@@ -1,0 +1,74 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Anthropic 已于 2025-12 把 Agent Skills 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code、Cursor 等都已采用",
+    "「\"ACP\" 撞名撞了三次」少算了：OpenAI×Stripe 的 Agentic Commerce Protocol（2025-09）缩写也是 ACP，文中大厂表里列了它，却没算进撞名"
+  ],
+  "errors_y": [
+    "前后矛盾：§0 说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，§5 坑4 又说「判断兼容性看运行时 `protocolVersion` 协商结果」",
+    "「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」有误导：OpenAI×Stripe 的 Agentic Commerce Protocol 缩写同样是 ACP，而且很活跃；全文只认两个 ACP，AGNTCY 的 Agent Connect Protocol 也没提"
+  ],
+  "reason": "ULVZ 的对照更深（D1–D10 维度贯穿各表，核心抽象、状态、版本语义、治理细节写到字段和数值级），坑更可操作，来源粒度和置信度标注也更细。BYPX 开头更利落，点出了第三个 ACP（AGNTCY），大厂自家变体也列得更全，但对比维度浅，还把 Agent Skills 说成没开放。两份都漏算了同样叫 ACP 的 Agentic Commerce Protocol，整体 ULVZ 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "BYPX",
+      "taxonomy": "ULVZ",
+      "coverage": "ULVZ",
+      "doubts": "BYPX",
+      "pitfalls": "ULVZ",
+      "accuracy": "tie",
+      "sourcing": "ULVZ",
+      "concision": "BYPX"
+    },
+    "overall": "ULVZ",
+    "strength": 1,
+    "errors": {
+      "BYPX": [
+        "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Anthropic 已于 2025-12 把 Agent Skills 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code、Cursor 等都已采用",
+        "「\"ACP\" 撞名撞了三次」少算了：OpenAI×Stripe 的 Agentic Commerce Protocol（2025-09）缩写也是 ACP，文中大厂表里列了它，却没算进撞名"
+      ],
+      "ULVZ": [
+        "前后矛盾：§0 说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，§5 坑4 又说「判断兼容性看运行时 `protocolVersion` 协商结果」",
+        "「今天再看到\"ACP\"，指的基本是还活着的 Zed 这个」有误导：OpenAI×Stripe 的 Agentic Commerce Protocol 缩写同样是 ACP，而且很活跃；全文只认两个 ACP，AGNTCY 的 Agent Connect Protocol 也没提"
+      ]
+    },
+    "unsure": [
+      "A2A 加入 AAIF 的日期两份冲突：BYPX「2026-08-17」，ULVZ「2026-08-27」",
+      "HTTP+SSE 的移除窗口两份冲突：BYPX「相关 SEP 转正后 3 个月即可移除」，ULVZ「官方要求至少12个月弃用窗口」",
+      "2026-07-28 版 MCP 的变更无法核实：ULVZ「remove protocol-level sessions and the `Mcp-Session-Id` header」，BYPX「只是取消跨请求恢复」",
+      "BYPX 把 ACP-Zed 起点写成「Zed Industries(2025-06-23)」，但公开发布是 2025-08 末，可能是建库日期",
+      "BYPX「强制 TLS1.2+」(A2A)、「Agent Framework(.NET/Python/Go)」里的 Go、「Agent Host Protocol(AHP)」、「computer_toolset_20260801」、CopilotKit「刚融完 A 轮」",
+      "ULVZ「MCP强制OAuth2.1+PKCE」：规范里 Authorization 对 MCP 实现是 OPTIONAL，只有实现鉴权时才强制 OAuth 2.1/PKCE",
+      "ULVZ「ChatGPT(2025-03起)」：2025-03 只有 Agents SDK 支持 MCP，ChatGPT 到 2025 年中（connectors）和 2025-09（developer mode）才支持；分不清括号修饰的是 ChatGPT 还是整组",
+      "ULVZ 写 AG-UI「后端存threadId/runId，前端只管展示」：AG-UI 的 RunAgentInput 由客户端带上 messages/state，还支持共享状态和前端工具，「只管展示」可能不准",
+      "ULVZ 依据 AG-UI 集成列表把 Anthropic 标 ✅：这是 AG-UI 一侧的集成，不等于 Anthropic 官方支持；它说列表里「没有OpenAI」，BYPX 却说是「In Progress」",
+      "ULVZ「Zed+JetBrains联合治理」、A2A「v0.2.0(2025-06)」「v1.0.0(2026-03,破坏性)」、IBM ACP「2025-05捐LF AI&Data」"
+    ],
+    "reason": "ULVZ 的对照更深（D1–D10 维度贯穿各表，核心抽象、状态、版本语义、治理细节写到字段和数值级），坑更可操作，来源粒度和置信度标注也更细。BYPX 开头更利落，点出了第三个 ACP（AGNTCY），大厂自家变体也列得更全，但对比维度浅，还把 Agent Skills 说成没开放。两份都漏算了同样叫 ACP 的 Agentic Commerce Protocol，整体 ULVZ 略好。",
+    "_codes": {
+      "x": "BYPX",
+      "y": "ULVZ"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

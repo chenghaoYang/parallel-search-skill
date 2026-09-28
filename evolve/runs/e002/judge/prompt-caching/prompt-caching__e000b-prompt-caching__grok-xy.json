@@ -1,0 +1,73 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 0,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "表头声明「命中价/写入价为相对未缓存输入价的倍数」，但 Kimi 写入价写成「$3/M(5min)或$6/M(1h)」，Gemini 写入价写成「explicit $0.5/M/h(2027起$1)」，这两格不是相对倍数，不能与同列的 1.25x 并列比较。"
+  ],
+  "errors_y": [
+    "一屏总览写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」，同文矩阵却写 Kimi「5m档=标准价;1h档=2x」，5 分钟档不是 1.25x 起。",
+    "一屏总览写「DeepSeek、智谱写入不加价」，但矩阵里智谱写入费是「∅官方未详述」，第5节又写「智谱 GLM 的写入费、精确失效触发条件:官方文档未详述」，把未记载的费用说成了定论。"
+  ],
+  "reason": "LRYY 写明了各家确认命中的字段名、会拆掉前缀的具体改动，以及百炼托管的 DeepSeek/Kimi/GLM 与原厂缓存参数不是同一套，并用符号把未公开的数字留成缺口。V3AR 的一屏总览和 F1/F2/F3 分类更好扫，但开头的 Kimi「1.25x起」和智谱「写入不加价」与同文矩阵、未决列表冲突。要落地调用时 LRYY 略有用。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "V3AR",
+      "taxonomy": "V3AR",
+      "coverage": "LRYY",
+      "doubts": "tie",
+      "pitfalls": "LRYY",
+      "accuracy": "LRYY",
+      "sourcing": "LRYY",
+      "concision": "tie"
+    },
+    "overall": "LRYY",
+    "strength": 1,
+    "errors": {
+      "LRYY": [
+        "表头声明「命中价/写入价为相对未缓存输入价的倍数」，但 Kimi 写入价写成「$3/M(5min)或$6/M(1h)」，Gemini 写入价写成「explicit $0.5/M/h(2027起$1)」，这两格不是相对倍数，不能与同列的 1.25x 并列比较。"
+      ],
+      "V3AR": [
+        "一屏总览写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」，同文矩阵却写 Kimi「5m档=标准价;1h档=2x」，5 分钟档不是 1.25x 起。",
+        "一屏总览写「DeepSeek、智谱写入不加价」，但矩阵里智谱写入费是「∅官方未详述」，第5节又写「智谱 GLM 的写入费、精确失效触发条件:官方文档未详述」，把未记载的费用说成了定论。"
+      ]
+    },
+    "unsure": [
+      "LRYY 把 OpenAI 一律写成命中「0.1x」、写入「1.25x（implicit/explicit均适用）」，同一行 TTL 又包含「早期」档；V3AR 拆成 GPT-5.6+ 为 0.1x 且写入 1.25x、GPT-5.5 及更早为 0.5x 且写入免费。2025 年 gpt-4o 档确是命中约 0.5x、写入不另收费，gpt-4.1 一代还有约 0.25x 档，但是否到 2026-09 被统一改价无法确定。",
+      "DeepSeek 命中价 LRYY 写「0.1x」，V3AR 写「约0.02x」，引用的新闻页也不同（news0802 与 news260910），无法裁定哪份是现价。",
+      "智谱 TTL：V3AR 写「5min自动刷新」，LRYY 写「官方未给∅」。",
+      "Gemini implicit 折扣：V3AR 写「两模式均0.1x」，LRYY 写「implicit官方未给%」。",
+      "两份都把 Gemini 命中字段写成 total_cached_tokens；此前常见字段名是 cachedContentTokenCount，不确定 2026 是否改名。",
+      "Anthropic 自动缓存上线日期冲突：V3AR 为「2025-03-13」，LRYY 为「2026-02-19」。",
+      "LRYY 的 Fable5.1/Mythos5.1、deepseek-v4-pro、K2.7-code 与 V3AR 的 GPT-6/GPT-5.6 无法用既有知识核实。",
+      "V3AR 称 AWS Bedrock 上的 Claude 另有一条不需要 cache_control 的 Implicit Prompt Caching，是否已上线不确定。",
+      "OpenRouter：V3AR 用 FAQ「no markup on inference pricing」得出照抄上游折扣；LRYY 称其倍率表 OpenAI 行为「0.25x–0.5x」，与直连 0.1x 不一致。",
+      "显式断点参数名冲突：V3AR 为 prompt_cache_breakpoint，LRYY 为 prompt_cache_options。",
+      "两份都写 Anthropic 最小可缓存长度 512–4096；2025 年常见档是 1024 与 2048，不确定之后是否增加 512/4096。"
+    ],
+    "reason": "LRYY 写明了各家确认命中的字段名、会拆掉前缀的具体改动，以及百炼托管的 DeepSeek/Kimi/GLM 与原厂缓存参数不是同一套，并用符号把未公开的数字留成缺口。V3AR 的一屏总览和 F1/F2/F3 分类更好扫，但开头的 Kimi「1.25x起」和智谱「写入不加价」与同文矩阵、未决列表冲突。要落地调用时 LRYY 略有用。",
+    "_codes": {
+      "x": "LRYY",
+      "y": "V3AR"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

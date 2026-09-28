@@ -1,0 +1,38 @@
+# r2-conda
+question: conda 今天还是不是独立于 pixi 的环境管理器？它的锁文件叫什么、从哪一版能读 pixi.lock？Python 怎么装？和 pip 混用时官方怎么说？私有 channel 怎么写？
+checked: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt, https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html, https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-pkgs.rst.txt, https://docs.conda.io/projects/conda/en/latest/commands/create.html, https://docs.conda.io/projects/conda/en/latest/commands/export.html, https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/authenticated-channels.html, https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/install-packages-from-pypi.html, https://docs.conda.io/projects/conda/en/latest/user-guide/configuration/custom-env-and-pkg-locations.html, https://docs.conda.io/projects/conda/en/latest/dev-guide/plugins/environment_exporters.html
+
+## claims
+- [C1] D2：锁文件从 conda 26.5 起（原句含版本号）。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "Lockfile support is available in conda 26.5 and later." | type: official
+- [C2] D2/D10：紧接 C1 同一小节：原生支持 conda-lock.yaml 与 pixi.lock。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "Conda supports ``conda-lock.yaml`` and ``pixi.lock`` natively, and these lockfile types can be used to exactly recreate environments on Windows, Linux, and macOS (depending on package availability)." | type: official
+- [C3] D2：导出锁文件。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "conda export --name my-env --file conda-lock.yaml" | type: official
+- [C4] D2：用锁文件创建环境（示例名是 conda-lock.yaml）。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "conda create --name my-env --file conda-lock.yaml" | type: official
+- [C5] D1：规格文件 environment.yml，命令 conda create --file environment.yml。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "conda create --file environment.yml" | type: official
+- [C6] D1/D4/D8：示例 channel 为 conda-forge，依赖含 python 与 numpy。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "uses ``conda-forge`` as its channel and adds the dependencies ``python`` and ``numpy``." | type: official
+- [C7] D4：按包名 python 安装指定版本。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "conda create -n myenv python=3.9" | type: official
+- [C8] D4/D6：只 conda create --name 时目录在 /envs/，且不装任何包。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "This creates the myenv environment in ``/envs/``. No packages will be installed in this environment." | type: official
+- [C9] D4：包从 channel 下载；此句 default channel 的链接是 https://repo.anaconda.com/pkgs/ 。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html | quote: "packages are automatically downloaded and updated from the default channel." | type: official
+- [C10] D6：prefix 即环境完整路径（-p/--prefix）。 | src: https://docs.conda.io/projects/conda/en/latest/commands/create.html | quote: "Full path to environment location (i.e. prefix)." | type: official
+- [C11] D6/D9：用 envs_dirs 与 pkgs_dirs 分别改环境目录和包目录。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/configuration/custom-env-and-pkg-locations.html | quote: "we can change where conda saves its environments and packages with the settings `envs_dirs` and `pkgs_dirs`, respectively." | type: official
+- [C12] D9：默认包缓存目录。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-pkgs.rst.txt | quote: "By default, Anaconda/Miniconda stores packages in ~/anaconda/pkgs/ (or ~/opt/pkgs/ on macOS Catalina)." | type: official
+- [C13] D8：私有 channel 的 HTTP basic 登录。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/authenticated-channels.html | quote: "conda auth login https://example.com/my-protected-channel --basic" | type: official
+- [C14] D8：裸 channel 名默认对应 anaconda.org 上的同名 channel。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/authenticated-channels.html | quote: "When you provide a bare channel name such as `my-private-channel`, `conda-auth` uses the corresponding channel on `anaconda.org` by default." | type: official
+- [C15] D8：把 channel 加到列表最前。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html | quote: "conda config --add channels new_channel" | type: official
+- [C16] D8：默认 channel_alias。 | src: https://docs.conda.io/projects/conda/en/latest/commands/create.html | quote: "The default channel_alias is https://conda.anaconda.org/." | type: official
+- [C17] D10：pip 用过之后 conda 不知道这些改动。 | src: https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt | quote: "Once pip has been used, conda will be unaware of the changes." | type: official
+- [C18] D10：conda 26.9 起可用 conda-pypi 把 PyPI 纯 Python wheel 与 conda 包一起安装。 | src: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/install-packages-from-pypi.html | quote: "In conda version 26.9 and later, you can use the `conda-pypi` channel to install supported pure Python wheels from the Python Package Index (PyPI) alongside conda packages directly with `conda install`." | type: official
+
+## conflicts
+- 锁文件：https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-environments.rst.txt 写 "Lockfile support is available in conda 26.5 and later." 与 "Conda supports ``conda-lock.yaml`` and ``pixi.lock`` natively"。https://docs.conda.io/projects/conda/en/latest/commands/create.html 与 https://docs.conda.io/projects/conda/en/latest/commands/export.html 的 Lockfiles 只列 "explicit: explicit.txt"。同页另有 "``@EXPLICIT`` lockfiles allow you to (re)create environments without invoking the solver." export 页："The set of supported formats depends on the plugins installed in your environment." https://docs.conda.io/projects/conda/en/latest/dev-guide/plugins/environment_exporters.html 的 built-in 无 conda-lock.yaml/pixi.lock。未裁决。
+- -n：用户指南 "conda create --file environment.yml"；create 页 "This command requires either the -n NAME or -p PREFIX option unless --dry-run or --download-only is specified."
+- pip：用户指南 "Once pip has been used, conda will be unaware of the changes."；https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/install-packages-from-pypi.html "conda loses track of pip-installed packages"；https://docs.conda.io/projects/conda/en/latest/_sources/user-guide/tasks/manage-pkgs.rst.txt "The command ``conda list`` shows packages installed this way, with a label showing that they were installed with pip."
+
+## gaps
+- D3：无 workspace。D5：无 build-backend。D7：environment.yml 无 dependency-groups；extras 只是包可选依赖，原句 "Extras are named groups of optional dependencies."
+- 无“conda 独立于 pixi”原句，也无 --file pixi.lock 示例。正文无文档版本页眉。
+- 同页有但未写入 quote：conda auth login my-private-channel --token；conda self install conda-auth；conda install -n myenv pip。未打开现行页核实 conda env create 非首选、add_pip_as_python_dependency、.condarc 密码 URL。
+
+## leads
+- https://conda-incubator.github.io/conda-lockfiles/getting-started/ 与 https://conda-incubator.github.io/conda-auth/ 不是 docs.conda.io。
+- solver：create.html 为 classic, libmamba；conda-pypi 页 "conda config --set solver rattler"。
+- export 示例 python URL：https://repo.anaconda.com/pkgs/main/osx-arm64/python-3.13.5-h2eb94d5_100_cp313.conda

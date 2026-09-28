@@ -1,0 +1,75 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": 0,
+    "concision": 1
+  },
+  "errors_x": [
+    "矩阵声明「命中价/写入价为相对未缓存输入价的倍数」，但 Kimi 写入价原文是「$3/M(5min)或$6/M(1h)」，Gemini 写入价原文是「explicit $0.5/M/h(2027起$1)」，这两格都不是相对输入价的倍数。"
+  ],
+  "errors_y": [
+    "Gemini 显式触发写成「generateContent创建`cachedContents`再引用」；显式缓存是先创建 cachedContents，再交给 generateContent 引用。",
+    "命中确认字段写成「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」；totalTokenCount 是总 token 数，不能用来确认本次是否命中。",
+    "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，同文又把该断点写成 GPT-5.6+ 的「可选显式」，并写早期模型「仍纯隐式」。",
+    "坑里把 Gemini 与通义千问并称为「前两家官方写明\"无固定期限\"」，同文给 Gemini 的原话是「无法定义 TTL、不保证」，「无固定期限，系统定期清理」只写在通义千问上。"
+  ],
+  "reason": "A55L 用触发方式和写入溢价两条轴组织全文，写明 OpenAI/DeepSeek 仍可零改代码、Anthropic 仍要顶层 cache_control，并把缺口标在表内；Gemini 也是先创建缓存再引用。UUHC 的一屏结论、失效条件和 Azure/Bedrock 变体更好执行，但 Gemini 的创建路径和命中字段写错，又把可选的 OpenAI 断点写成必需。按文档做集成和算账时 A55L 更可靠，领先幅度有限。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "UUHC",
+      "taxonomy": "A55L",
+      "coverage": "UUHC",
+      "doubts": "A55L",
+      "pitfalls": "UUHC",
+      "accuracy": "A55L",
+      "sourcing": "tie",
+      "concision": "A55L"
+    },
+    "overall": "A55L",
+    "strength": 1,
+    "errors": {
+      "A55L": [
+        "矩阵声明「命中价/写入价为相对未缓存输入价的倍数」，但 Kimi 写入价原文是「$3/M(5min)或$6/M(1h)」，Gemini 写入价原文是「explicit $0.5/M/h(2027起$1)」，这两格都不是相对输入价的倍数。"
+      ],
+      "UUHC": [
+        "Gemini 显式触发写成「generateContent创建`cachedContents`再引用」；显式缓存是先创建 cachedContents，再交给 generateContent 引用。",
+        "命中确认字段写成「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」；totalTokenCount 是总 token 数，不能用来确认本次是否命中。",
+        "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，同文又把该断点写成 GPT-5.6+ 的「可选显式」，并写早期模型「仍纯隐式」。",
+        "坑里把 Gemini 与通义千问并称为「前两家官方写明\"无固定期限\"」，同文给 Gemini 的原话是「无法定义 TTL、不保证」，「无固定期限，系统定期清理」只写在通义千问上。"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式：A55L 写「默认自动(前一请求需≥256token，无手动断点概念)」，UUHC 写「必须传参才缓存」。",
+      "智谱命中价：A55L 写「~0.5x」，UUHC 用「2元 vs 8元/M」折算「约 0.25x」，并称五折是坊间说法。",
+      "Gemini 隐式折扣：UUHC 写「0.1x，隐式显式一致」，A55L 写「implicit官方未给%」。",
+      "OpenAI TTL：A55L 写新模型「30分钟」，UUHC 写「≥30分钟」且「非ZDR组织默认24h」。",
+      "Anthropic 存储：A55L 矩阵写「纯内存」，UUHC 称介质官方未公开。",
+      "OpenAI 显式接口：A55L 写 Chat Completions「prompt_cache_options」、最多 3 个断点；UUHC 写「prompt_cache_breakpoint」。",
+      "Gemini 最小长度：A55L「explicit 1024–4096；implicit 2048–4096」与 UUHC「2048(2.5)/4096(3.x)」不一致。",
+      "仅 UUHC 出现、无法核对的「0.05x(Opus5.5)」和 Bedrock「自动回溯约20个content block」。",
+      "A55L 把 Gemini 命中字段写成「usageMetadata.total_cached_tokens」，是否把 cachedContentTokenCount 写成了别的名字，不能完全确定。"
+    ],
+    "reason": "A55L 用触发方式和写入溢价两条轴组织全文，写明 OpenAI/DeepSeek 仍可零改代码、Anthropic 仍要顶层 cache_control，并把缺口标在表内；Gemini 也是先创建缓存再引用。UUHC 的一屏结论、失效条件和 Azure/Bedrock 变体更好执行，但 Gemini 的创建路径和命中字段写错，又把可选的 OpenAI 断点写成必需。按文档做集成和算账时 A55L 更可靠，领先幅度有限。",
+    "_codes": {
+      "x": "A55L",
+      "y": "UUHC"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

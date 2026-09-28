@@ -1,0 +1,80 @@
+{
+  "score": -2,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 0,
+    "coverage": -1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开头把安装解释器说成 uv 独有，但 PDM 同样有 pdm python install，conda/pixi 也会把 Python 装进环境，同条后文也写了这些。「只有 uv 把\"装 Python 解释器\"内置了」",
+    "把包括 conda 在内的六家都说成可互通的 PEP 517 后端；conda-build 走 meta.yaml，不是 PEP 517 后端。「构建后端各家不同，但都是 PEP 517 后端，可以互通」",
+    "Poetry 只用已有解释器，不绑定 pyenv，PATH 上的 python3.x 即可。「Poetry 要靠外部 pyenv」",
+    "pixi 能配私有 PyPI 索引，并用 keyring、netrc 或 uv 的凭证环境变量认证，并非官方明确不支持。「pixi 目前官方明确不支持私有 PyPI 仓库认证」",
+    "uv 在 2025 年 0.6 系列已能导出并安装 pylock.toml，不是 2026-07-28 的 0.12.0 才开始支持。「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」",
+    "同文表格写 uv 可用 uv pip install 导入 pylock，结论却把 uv 和 Poetry 说成只导出；uv 确能安装 pylock.toml。「uv/Poetry 仍只支持导出」"
+  ],
+  "errors_y": [
+    "一体化工具里 PDM 有 pdm-project/setup-pdm，pixi 有 prefix-dev/setup-pixi，同文 D10 也列出了，并非只有 uv。「唯一有官方 GH Action 的一体化工具」",
+    "依赖组在 [tool.poetry.group.<name>.dependencies]，源定义在 [[tool.poetry.source]]，不是三项都写进 [tool.poetry.dependencies]。「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」"
+  ],
+  "reason": "HNA5 开头就按「纯 Python 选 uv、要非 Python 依赖选 pixi/conda」给结论，并把 PEP 751 与 Poetry 的 [project] 答到分工具、分格式的程度，D1–D11 把锁文件、workspace、解释器和构建后端落到命令和版本。AHK3 的迁移命令和解析器更细、也更短，但开头写错只有 uv 能装解释器、六家都是 PEP 517、pixi 不支持私有 PyPI，PEP 751 又先写可导入再写成只导出，选型时会信错。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "HNA5",
+      "taxonomy": "tie",
+      "coverage": "HNA5",
+      "doubts": "HNA5",
+      "pitfalls": "HNA5",
+      "accuracy": "HNA5",
+      "sourcing": "HNA5",
+      "concision": "AHK3"
+    },
+    "overall": "HNA5",
+    "strength": 2,
+    "errors": {
+      "AHK3": [
+        "开头把安装解释器说成 uv 独有，但 PDM 同样有 pdm python install，conda/pixi 也会把 Python 装进环境，同条后文也写了这些。「只有 uv 把\"装 Python 解释器\"内置了」",
+        "把包括 conda 在内的六家都说成可互通的 PEP 517 后端；conda-build 走 meta.yaml，不是 PEP 517 后端。「构建后端各家不同，但都是 PEP 517 后端，可以互通」",
+        "Poetry 只用已有解释器，不绑定 pyenv，PATH 上的 python3.x 即可。「Poetry 要靠外部 pyenv」",
+        "pixi 能配私有 PyPI 索引，并用 keyring、netrc 或 uv 的凭证环境变量认证，并非官方明确不支持。「pixi 目前官方明确不支持私有 PyPI 仓库认证」",
+        "uv 在 2025 年 0.6 系列已能导出并安装 pylock.toml，不是 2026-07-28 的 0.12.0 才开始支持。「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」",
+        "同文表格写 uv 可用 uv pip install 导入 pylock，结论却把 uv 和 Poetry 说成只导出；uv 确能安装 pylock.toml。「uv/Poetry 仍只支持导出」"
+      ],
+      "HNA5": [
+        "一体化工具里 PDM 有 pdm-project/setup-pdm，pixi 有 prefix-dev/setup-pixi，同文 D10 也列出了，并非只有 uv。「唯一有官方 GH Action 的一体化工具」",
+        "依赖组在 [tool.poetry.group.<name>.dependencies]，源定义在 [[tool.poetry.source]]，不是三项都写进 [tool.poetry.dependencies]。「显式多源、依赖组、相对路径本地依赖仍要写 [tool.poetry.dependencies]」"
+      ]
+    },
+    "unsure": [
+      "Poetry 对 pylock.toml：AHK3 写 2.3.0+ 仅导出且需 poetry-plugin-export≥1.10，HNA5 写 issue #10356 无里程碑、未支持，无法裁定。",
+      "pip 26.1 安装 pylock.toml 是否仍不支持 extras/dependency-groups；HNA5 自标 weak，AHK3 称 pip 支持最完整。",
+      "conda 26.5 是否已能实验性导出 conda-lock.yaml 或兼容 pixi.lock；AHK3 仍写无官方锁。",
+      "HNA5 称 uv 内部 index 缺凭证会不警告地回退公共 PyPI，并承认 issue #12362 的修复计划未确认，该行为到 2026-09 是否仍在不确定。",
+      "AHK3 称 environment.yml 走 CEP 24，CEP 编号未核对。",
+      "AHK3 称 uv 从 Poetry/pip-tools 的迁移文档仍停在 GitHub #5200 未发布，不确定是否已过时。",
+      "pixi 构建后端与 workspace 字段：HNA5 的 init --format pyproject 默认 hatchling，AHK3 的 pixi-build-python 与 [workspace.dependencies]，不敢当错。",
+      "PDM v2.25.0/v2.28.0、pixi v0.75.0/v0.81.0 的具体日期，以及 uv issue #1804 是否仍为 wontfix，未核对。"
+    ],
+    "reason": "HNA5 开头就按「纯 Python 选 uv、要非 Python 依赖选 pixi/conda」给结论，并把 PEP 751 与 Poetry 的 [project] 答到分工具、分格式的程度，D1–D11 把锁文件、workspace、解释器和构建后端落到命令和版本。AHK3 的迁移命令和解析器更细、也更短，但开头写错只有 uv 能装解释器、六家都是 PEP 517、pixi 不支持私有 PyPI，PEP 751 又先写可导入再写成只导出，选型时会信错。",
+    "_codes": {
+      "x": "AHK3",
+      "y": "HNA5"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

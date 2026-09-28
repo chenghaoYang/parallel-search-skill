@@ -1,0 +1,73 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 0,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 1
+  },
+  "errors_x": [
+    "确认命中时把 DeepSeek 算进「多数厂商（OpenAI/DeepSeek/Kimi Chat/智谱/通义千问）用 `cached_tokens`」，DeepSeek 的字段是 prompt_cache_hit_tokens，同文矩阵里的写法才对。",
+    "表头规定命中价和写入价是「相对未缓存输入价的倍数」，Kimi 写入价却写成绝对金额「$3/M(5min)或$6/M(1h)」。"
+  ],
+  "errors_y": [
+    "Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是总 token 数，不能用来确认命中。",
+    "显式缓存的创建写成「显式：generateContent创建`cachedContents`再引用」，缓存对象要单独创建，generateContent 只负责引用。",
+    "OpenRouter 一行写「OpenAI仍需`prompt_cache_breakpoint`」，同文又说该断点只是 GPT-5.6+ 的可选项，OpenAI 自动缓存并不依赖它。"
+  ],
+  "reason": "RBAN 把要不要改代码和写入有没有溢价拆开，并写明 Anthropic 仍要顶层 cache_control、不是零参数自动，用户点名的疑点答得更死，缺口也标得更老实。B9PY 开篇更好扫，失效条件也更可操作，但 Gemini 命中字段和 OpenRouter 对 OpenAI 断点的写法会把实现带偏。两边在 OpenAI、DeepSeek、Anthropic、通义的主体价格和 TTL 上大体同向，所以 RBAN 只是略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "B9PY",
+      "taxonomy": "RBAN",
+      "coverage": "tie",
+      "doubts": "RBAN",
+      "pitfalls": "B9PY",
+      "accuracy": "RBAN",
+      "sourcing": "RBAN",
+      "concision": "RBAN"
+    },
+    "overall": "RBAN",
+    "strength": 1,
+    "errors": {
+      "B9PY": [
+        "Gemini 显式缓存的命中确认字段写成「显式`usageMetadata.totalTokenCount`」，totalTokenCount 是总 token 数，不能用来确认命中。",
+        "显式缓存的创建写成「显式：generateContent创建`cachedContents`再引用」，缓存对象要单独创建，generateContent 只负责引用。",
+        "OpenRouter 一行写「OpenAI仍需`prompt_cache_breakpoint`」，同文又说该断点只是 GPT-5.6+ 的可选项，OpenAI 自动缓存并不依赖它。"
+      ],
+      "RBAN": [
+        "确认命中时把 DeepSeek 算进「多数厂商（OpenAI/DeepSeek/Kimi Chat/智谱/通义千问）用 `cached_tokens`」，DeepSeek 的字段是 prompt_cache_hit_tokens，同文矩阵里的写法才对。",
+        "表头规定命中价和写入价是「相对未缓存输入价的倍数」，Kimi 写入价却写成绝对金额「$3/M(5min)或$6/M(1h)」。"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式相反：RBAN 写默认自动、门槛 256 token、无手动断点、写入 $3/M 或 $6/M；B9PY 写纯手动，须传 prompt_cache_options 或 cache_control，且按标准价写入。",
+      "智谱命中价 RBAN 约为 0.5x 且存储限时免费，B9PY 约为 0.25x（2元 vs 8元/M）并另计存储费。",
+      "Gemini 隐式缓存：B9PY 称命中与显式同为 0.1x，并引论坛称 TTL 无法定义、不保证；RBAN 称官方文档未给折扣、存储费和 TTL。",
+      "OpenAI 是否对隐式未命中也收 1.25x 写入价，以及 TTL 是固定 30 分钟还是非 ZDR 组织默认 24 小时，两文不一致，无法用更早的公开行为裁断。",
+      "RBAN 写 Anthropic 缓存为纯内存，B9PY 称存储介质官方未公开。",
+      "RBAN 的 prompt_cache_options、最多 3 个显式断点，与 B9PY 的 prompt_cache_breakpoint，参数形态无法核对。",
+      "B9PY 的 usage.total_cached_tokens 与 RBAN 的 usageMetadata.total_cached_tokens，我记得的 Gemini 响应字段是 cachedContentTokenCount，但是否已改名不能确定。"
+    ],
+    "reason": "RBAN 把要不要改代码和写入有没有溢价拆开，并写明 Anthropic 仍要顶层 cache_control、不是零参数自动，用户点名的疑点答得更死，缺口也标得更老实。B9PY 开篇更好扫，失效条件也更可操作，但 Gemini 命中字段和 OpenRouter 对 OpenAI 断点的写法会把实现带偏。两边在 OpenAI、DeepSeek、Anthropic、通义的主体价格和 TTL 上大体同向，所以 RBAN 只是略好。",
+    "_codes": {
+      "x": "RBAN",
+      "y": "B9PY"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

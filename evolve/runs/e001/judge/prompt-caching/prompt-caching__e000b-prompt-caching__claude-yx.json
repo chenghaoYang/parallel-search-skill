@@ -1,0 +1,76 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "把通义千问 explicit 错归为独立资源：「还各自提供一个要手动创建的独立缓存资源（explicit：Gemini 叫 cachedContent、Qwen 叫 explicit cache）」。百炼显式缓存是在请求 content 里加 cache_control 标记，没有独立资源或 ID（本文第 4 节自己也写了「Qwen 加了 cache_control 但没命中」）；独立资源只有 Gemini cachedContent 一家",
+    "OpenRouter 行自称透传，数字却和本文原生行对不上，也没加说明：「透传：Anthropic/Qwen有，OpenAI/Gemini/Grok无」与 OpenAI 行「1.25x（GPT-5.6+）」矛盾；「0.1x(DeepSeek/Anthropic/Qwen)」与 DeepSeek 行「命中比未命中低95~98%」矛盾"
+  ],
+  "errors_y": [
+    "OpenAI 旧款命中价写错：「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」以及矩阵「OpenAI GPT-5.5及更早」一行的「0.5x」。GPT-5 系列的缓存输入早就是 0.1x（如 GPT-5 输入 $1.25/M、缓存 $0.125/M），GPT-4.1 是 0.25x，0.5x 只适用于 GPT-4o 那一代",
+    "前后矛盾：概览写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」，矩阵里 Kimi 却是「5m档=标准价;1h档=2x」，也就是 Kimi 的 5 分钟档没有 1.25x 溢价"
+  ],
+  "reason": "VTL9 更贴合用户点名要的「怎么确认命中、哪些改动会失效」：各家命中字段基本都给了具体名字（A5H9 对 Anthropic 只写「3字段求和」，Qwen 没给字段名）；失效坑按现象/原因/处理列出，更具体、能直接照做；还如实标出了智谱指南和定价表的冲突。A5H9 的 F1/F2/F3 分类更干净，篇幅更紧凑，还多了云托管变体，但把 GPT-5.x 及更早的 OpenAI 命中价错写成 0.5x。综合看 VTL9 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "A5H9",
+      "taxonomy": "A5H9",
+      "coverage": "VTL9",
+      "doubts": "VTL9",
+      "pitfalls": "VTL9",
+      "accuracy": "VTL9",
+      "sourcing": "VTL9",
+      "concision": "A5H9"
+    },
+    "overall": "VTL9",
+    "strength": 1,
+    "errors": {
+      "A5H9": [
+        "OpenAI 旧款命中价写错：「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」以及矩阵「OpenAI GPT-5.5及更早」一行的「0.5x」。GPT-5 系列的缓存输入早就是 0.1x（如 GPT-5 输入 $1.25/M、缓存 $0.125/M），GPT-4.1 是 0.25x，0.5x 只适用于 GPT-4o 那一代",
+        "前后矛盾：概览写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」，矩阵里 Kimi 却是「5m档=标准价;1h档=2x」，也就是 Kimi 的 5 分钟档没有 1.25x 溢价"
+      ],
+      "VTL9": [
+        "把通义千问 explicit 错归为独立资源：「还各自提供一个要手动创建的独立缓存资源（explicit：Gemini 叫 cachedContent、Qwen 叫 explicit cache）」。百炼显式缓存是在请求 content 里加 cache_control 标记，没有独立资源或 ID（本文第 4 节自己也写了「Qwen 加了 cache_control 但没命中」）；独立资源只有 Gemini cachedContent 一家",
+        "OpenRouter 行自称透传，数字却和本文原生行对不上，也没加说明：「透传：Anthropic/Qwen有，OpenAI/Gemini/Grok无」与 OpenAI 行「1.25x（GPT-5.6+）」矛盾；「0.1x(DeepSeek/Anthropic/Qwen)」与 DeepSeek 行「命中比未命中低95~98%」矛盾"
+      ]
+    },
+    "unsure": [
+      "A5H9「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步」：2025-03-13 那次 token-saving 更新讲的是自动读取最长的已缓存前缀；顶层单个 cache_control 的自动缓存应该是后来才有的（VTL9 写的是 2026-02-19），疑似把两件事混在一起",
+      "A5H9 的 Gemini 命中字段「`usage.total_cached_tokens`」：generateContent 返回的是 usageMetadata.cachedContentTokenCount，前者可能只存在于 Interactions API",
+      "Gemini 显式缓存存储费：A5H9 写「explicit $0.50/M tok/时(2026底前)」，VTL9 写「$0.50~1.00/M tok/h」；已知 2.5 Pro 为 $4.50/M/h，两份可能都漏了 Pro 档",
+      "A5H9「Bedrock 上的 Claude 多了一条不需要 cache_control 的 Implicit Prompt Caching 通道」：没见过这个说法，可能和 Amazon Nova 的自动缓存弄混了",
+      "智谱：A5H9 写「约0.5x」「5min自动刷新」，VTL9 写「0.25x(GLM-5.3)~0.29x(GLM-5.3-Flash)」且 TTL「∅ 官方未写」，两份结论冲突",
+      "Kimi 1 小时档写入价：A5H9 写「1h档=2x」，VTL9 写「两档TTL写入价相同」，两份冲突",
+      "VTL9「Gemini(implicit) 24h自动清」",
+      "VTL9「`prompt_cache_retention`，跟是否复用无关，2026-05-29起未开ZDR组织默认24h」：与 2025 年的语义冲突（当时 24h retention 就是延长可复用时间）",
+      "OpenRouter 细节：VTL9 的「`session_id`（≤256字符）」「`X-OpenRouter-Cache` header」「最低30分钟」，A5H9 的「10分钟无活动后失效」「只在\"上游缓存价比常规价低\"时才启用」",
+      "VTL9「可选更贵的 1 小时档」把 Qwen(explicit) 和 Kimi 也算了进去，但它自己的表里 Qwen 更长档为「无」、Kimi「两档TTL写入价相同」",
+      "VTL9「OpenAI 上编辑了最后一条消息内容，没命中」「Kimi 改 tool_choice 没事，改 reasoning_effort 就失效」，无法核实",
+      "2026 年的新信息无法核实：GPT-5.6+ 的 1.25x 写入费、固定 30 分钟、`prompt_cache_breakpoint`/explicit mode；A5H9 的「GPT-6」；DeepSeek 命中约 0.02x；Anthropic 按模型 0.05x/0.025x；「Mythos 5.1」；Kimi K3/K2.6 价格"
+    ],
+    "reason": "VTL9 更贴合用户点名要的「怎么确认命中、哪些改动会失效」：各家命中字段基本都给了具体名字（A5H9 对 Anthropic 只写「3字段求和」，Qwen 没给字段名）；失效坑按现象/原因/处理列出，更具体、能直接照做；还如实标出了智谱指南和定价表的冲突。A5H9 的 F1/F2/F3 分类更干净，篇幅更紧凑，还多了云托管变体，但把 GPT-5.x 及更早的 OpenAI 命中价错写成 0.5x。综合看 VTL9 略好。",
+    "_codes": {
+      "x": "VTL9",
+      "y": "A5H9"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

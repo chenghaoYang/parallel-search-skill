@@ -1,0 +1,51 @@
+{
+  "exp": "s003",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "grok-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e003/skill",
+  "skill_sha": "73a9549218",
+  "skill_chars": 15318,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 19.8,
+  "spawns": 6,
+  "followups": 0,
+  "lead_web": 82,
+  "lead_tools": {
+    "read_file": 12,
+    "list_dir": 1,
+    "run_terminal_command": 10,
+    "search_replace": 4,
+    "spawn_subagent": 6,
+    "get_command_or_subagent_output": 1,
+    "web_search": 10,
+    "web_fetch": 72,
+    "write": 6
+  },
+  "cost_usd": 0.31,
+  "num_turns": 10,
+  "is_error": true,
+  "terminal_reason": "error_during_execution",
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 14682,
+    "len_ok": false,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.833,
+    "golden_missed": [
+      "pep751-final-pylock",
+      "pixi-python-as-conda-package"
+    ],
+    "urls": 49,
+    "traceable": 0.98,
+    "notes": {
+      "files": 6,
+      "claims": 170,
+      "claims_ok": 1.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/s003/py-packaging"
+}

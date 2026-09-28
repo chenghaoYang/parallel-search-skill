@@ -1,0 +1,77 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「唯一有官方 GH Action 的一体化工具」：PDM 有官方的 pdm-project/setup-pdm，本文自己的 D10 列也这么写了；pixi 同样有官方 setup-pixi",
+    "「Poetry 明确不会（BYOP）」以及矩阵里的「不自动装，需自带BYOP」：Poetry 2.1 起已提供实验性的 poetry python install/list/remove",
+    "「内部 index 缺凭证时会静默回退到公共 PyPI」：uv 现行文档写明，first-index 策略下遇到 401/403 会停止跨 index 搜索（可用 ignore-error-codes 调整，pytorch 索引除外）。这条引自 2024 年的旧 issue，已经过时"
+  ],
+  "errors_y": [
+    "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起就已初步支持 pylock.toml 的导出（uv export -o pylock.toml）、生成（uv pip compile）和安装（uv pip install -r / uv pip sync）。这里既漏掉了安装能力，也把起始版本写错了",
+    "「conda 免费层对大型商业组织不再免费」：200+ 员工需付费的条款针对的是 Anaconda 的发行版和 defaults 仓库，不针对 conda 工具本身（BSD 许可）或 conda-forge/Miniforge。文中把两者混为一谈，也没给出规避办法",
+    "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」：Poetry 安装文档里有专门的 CI recommendations 一节"
+  ],
+  "reason": "在用户点名的疑点上，WDQ5 更准确：它指出 uv 自 0.6.15 起就能导出/安装 pylock.toml，Poetry 2 只是部分切换到 [project]。GQZM 把 uv 写成仅处于 preview 的导出+校验，恰好答错了核心问题。WDQ5 的矩阵覆盖了 venv、非 Python 依赖和迁移等更多维度，坑点也更贴合用户点名的迁移、CI 缓存和私有源（index-strategy、缓存 key、uv 不读 poetry.lock）。GQZM 的来源更细，也写对了 poetry python install，但坑点多为新闻性条目。WDQ5 自身也有错（Poetry BYOP、uv 缺凭证回退已过时、唯一官方 Action），因此只判略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "WDQ5",
+      "taxonomy": "tie",
+      "coverage": "WDQ5",
+      "doubts": "WDQ5",
+      "pitfalls": "WDQ5",
+      "accuracy": "tie",
+      "sourcing": "GQZM",
+      "concision": "tie"
+    },
+    "overall": "WDQ5",
+    "strength": 1,
+    "errors": {
+      "GQZM": [
+        "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起就已初步支持 pylock.toml 的导出（uv export -o pylock.toml）、生成（uv pip compile）和安装（uv pip install -r / uv pip sync）。这里既漏掉了安装能力，也把起始版本写错了",
+        "「conda 免费层对大型商业组织不再免费」：200+ 员工需付费的条款针对的是 Anaconda 的发行版和 defaults 仓库，不针对 conda 工具本身（BSD 许可）或 conda-forge/Miniforge。文中把两者混为一谈，也没给出规避办法",
+        "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」：Poetry 安装文档里有专门的 CI recommendations 一节"
+      ],
+      "WDQ5": [
+        "「唯一有官方 GH Action 的一体化工具」：PDM 有官方的 pdm-project/setup-pdm，本文自己的 D10 列也这么写了；pixi 同样有官方 setup-pixi",
+        "「Poetry 明确不会（BYOP）」以及矩阵里的「不自动装，需自带BYOP」：Poetry 2.1 起已提供实验性的 poetry python install/list/remove",
+        "「内部 index 缺凭证时会静默回退到公共 PyPI」：uv 现行文档写明，first-index 策略下遇到 401/403 会停止跨 index 搜索（可用 ignore-error-codes 调整，pytorch 索引除外）。这条引自 2024 年的旧 issue，已经过时"
+      ]
+    },
+    "unsure": [
+      "Poetry 的 PEP 751 支持两份说法冲突：GQZM「仅导出(2.3.0+ via plugin)」，WDQ5「不支持，issue #10356无里程碑」。可能是原生不支持、但可以通过 export 插件导出",
+      "GQZM 对 PDM 写「仅导出(v2.26+,opt-in)」：印象中 PDM 约从 2.25 起能 opt-in 用 pylock.toml 作锁文件格式（lock.format），不只是导出",
+      "GQZM「26.2 进一步增强（--uploaded-prior-to、--only-final）」：这两个选项的引入版本、以及是否和 pylock 相关，都拿不准；两份文档对 pip 26.1 安装 pylock 的说法也无法核实",
+      "两份都说 Poetry 的依赖组必须留在 [tool.poetry]；但 Poetry 2.2 起似乎已支持 PEP 735 的 [dependency-groups]",
+      "GQZM「[tool.pixi.project]包一层」：pixi 已把 project 表更名为 workspace，旧名可能已弃用；pixi 的「原生[workspace.dependencies]」写法也存疑",
+      "GQZM「uv（唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具）」：PDM 同样有 python install、venv 管理和（实验性）workspace",
+      "WDQ5 说 Poetry 构建后端「固定poetry-core」：Poetry 2.x 的 build 可能已经支持其他后端",
+      "WDQ5 的 conda 26.5 原生导出 conda-lock.yaml/pixi.lock、pixi v0.75.0/v0.81.0 与 pixi publish、「明确不覆盖 conda 等非 PyPI 生态」（PEP 751 原文是否点名 conda），均无法核实",
+      "GQZM 的 Astral 被 OpenAI 收购（2026-03-19）、rye「2025-08 正式弃用」、libmamba「提速 50-80%」，均无法核实"
+    ],
+    "reason": "在用户点名的疑点上，WDQ5 更准确：它指出 uv 自 0.6.15 起就能导出/安装 pylock.toml，Poetry 2 只是部分切换到 [project]。GQZM 把 uv 写成仅处于 preview 的导出+校验，恰好答错了核心问题。WDQ5 的矩阵覆盖了 venv、非 Python 依赖和迁移等更多维度，坑点也更贴合用户点名的迁移、CI 缓存和私有源（index-strategy、缓存 key、uv 不读 poetry.lock）。GQZM 的来源更细，也写对了 poetry python install，但坑点多为新闻性条目。WDQ5 自身也有错（Poetry BYOP、uv 缺凭证回退已过时、唯一官方 Action），因此只判略好。",
+    "_codes": {
+      "x": "WDQ5",
+      "y": "GQZM"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

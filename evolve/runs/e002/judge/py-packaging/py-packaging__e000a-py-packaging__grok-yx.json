@@ -1,0 +1,74 @@
+{
+  "score": 2,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "Poetry 2 的标准字段写错：「[project.dependencies]管构建元数据」。PEP 621 是 [project] 下的 dependencies 数组，不是 [project.dependencies] 表，也不属于构建元数据。",
+    "把 pixi 的多环境表当成 workspace/monorepo：「原生[environments]+[feature]组合」。这两张表用来划分环境与 feature，不是 uv/PDM 那种多包成员。"
+  ],
+  "errors_y": [
+    "把 Anaconda 官方仓库的商业条款说成 conda 工具要收费：「conda 免费层对大型商业组织不再免费」「200+ 员工/合同工的组织需付费 Business license」。该 ToS 约束的是 Anaconda defaults 仓库，不是 conda 本身或 conda-forge。",
+    "选型把 uv 说成唯一全能项：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」。PDM 同样有 pdm python install、venv 管理和 workspace。"
+  ],
+  "reason": "7DFT 用同一套维度把锁文件、workspace、Python 版本、构建后端以及迁移、CI 缓存、私有源写到字段和命令，并对 PEP 751（实验性、不当默认）和 Poetry 2（[project] 与 [tool.poetry] 并存）给了可执行结论。4TG4 的全文链接和不确定声明更好，但把 Anaconda 商业条款误写成 conda 收费，CI 与「只有 uv」的选型也更不可靠。对这位用户的选择，7DFT 的决策价值更高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "7DFT",
+      "taxonomy": "7DFT",
+      "coverage": "7DFT",
+      "doubts": "7DFT",
+      "pitfalls": "7DFT",
+      "accuracy": "7DFT",
+      "sourcing": "4TG4",
+      "concision": "7DFT"
+    },
+    "overall": "7DFT",
+    "strength": 2,
+    "errors": {
+      "4TG4": [
+        "把 Anaconda 官方仓库的商业条款说成 conda 工具要收费：「conda 免费层对大型商业组织不再免费」「200+ 员工/合同工的组织需付费 Business license」。该 ToS 约束的是 Anaconda defaults 仓库，不是 conda 本身或 conda-forge。",
+        "选型把 uv 说成唯一全能项：「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」。PDM 同样有 pdm python install、venv 管理和 workspace。"
+      ],
+      "7DFT": [
+        "Poetry 2 的标准字段写错：「[project.dependencies]管构建元数据」。PEP 621 是 [project] 下的 dependencies 数组，不是 [project.dependencies] 表，也不属于构建元数据。",
+        "把 pixi 的多环境表当成 workspace/monorepo：「原生[environments]+[feature]组合」。这两张表用来划分环境与 feature，不是 uv/PDM 那种多包成员。"
+      ]
+    },
+    "unsure": [
+      "Poetry 是否在 2.1.0 提供实验性 poetry python install：4TG4 断言有，7DFT 断言 Poetry 不下载解释器、官方只建议 pyenv。",
+      "Poetry 的 pylock 支持：7DFT 称未实现、仅有无排期 issue #10356；4TG4 称 2.3.0 起可通过插件导出。",
+      "PDM 能否把 pylock 设为主锁：7DFT 称 v2.25.0 起 pdm config lock.format pylock；4TG4 称 v2.26+ 仅导出、主格式不变。",
+      "pixi 是否已有多包 workspace（[workspace.dependencies]）以及 issue #3474/#3889 是否在做 pylock 导出：4TG4 称路线图中，7DFT 称未提及。",
+      "conda 26.5 能否读 conda-lock.yaml/pixi.lock（7DFT），以及 conda export --platform 是否算原生多平台锁（4TG4 矩阵与后文「需手动重复 --platform」不完全一致）。",
+      "pip lock 与 pip install -r pylock.toml 在 2026 是否仍为 experimental（7DFT），以及 26.2 的 --uploaded-prior-to、--only-final（4TG4）。",
+      "7DFT「无默认后端」与 4TG4「pip 默认 setuptools(legacy)」：长期行为是缺省回退 setuptools，但 2026 的 pip 可能已取消该回退。",
+      "Poetry 解析器是否在官方 FAQ 公开为 PubGrub（4TG4 来源标题如此，7DFT 称官方未公开算法名）。",
+      "量化宣传：uv 比 pip 快 10-100x、pixi/rattler 比 conda 快 10x、libmamba 提速 50-80%；以及 4TG4 所称 Astral 被 OpenAI 收购（已标二手）。",
+      "7DFT 称 PDM 自 v2.5.0 起才把 PEP 582 降为实验性；默认改用 venv 可能更早。"
+    ],
+    "reason": "7DFT 用同一套维度把锁文件、workspace、Python 版本、构建后端以及迁移、CI 缓存、私有源写到字段和命令，并对 PEP 751（实验性、不当默认）和 Poetry 2（[project] 与 [tool.poetry] 并存）给了可执行结论。4TG4 的全文链接和不确定声明更好，但把 Anaconda 商业条款误写成 conda 收费，CI 与「只有 uv」的选型也更不可靠。对这位用户的选择，7DFT 的决策价值更高。",
+    "_codes": {
+      "x": "7DFT",
+      "y": "4TG4"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

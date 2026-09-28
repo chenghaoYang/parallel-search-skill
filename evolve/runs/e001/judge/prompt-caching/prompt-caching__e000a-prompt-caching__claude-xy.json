@@ -1,0 +1,76 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": -1
+  },
+  "errors_x": [
+    "「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」：DeepSeek 官方说法是“数小时到数天”，把它归到 ≤24h 量级不对，和本文 2.2 表「数小时到数天」自相矛盾",
+    "「Anthropic/Kimi/Qwen(explicit) 是 5 分钟量级（可选更贵的 1 小时档）」：通义千问显式缓存只有 5 分钟，没有 1 小时档（本文 2.2 表也写「无」）；Kimi 两档写入价相同（本文写「两档TTL写入价相同」），谈不上“更贵”"
+  ],
+  "errors_y": [
+    "「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」：totalTokenCount 是请求总 token 数，不是命中字段；Gemini generateContent 不论隐式还是显式，命中都看 usageMetadata.cachedContentTokenCount",
+    "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认隐式自动缓存，breakpoint 只是可选项，这句和本文 OpenAI 行、第 0 节第 7 条「仍要自己判断用不用」自相矛盾",
+    "「传言已过时」，以及 taxonomy 把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」：Anthropic 不加 cache_control 就完全不缓存；所谓自动缓存仍要加顶层 cache_control（本文自己也这样写），并没有“自动兜底”，照样得改代码"
+  ],
+  "reason": "DS9D 对用户最关心的疑点判断准确：Anthropic 仍要加 cache_control 参数，其余几家默认自动。它的双轴 taxonomy 干净，命中字段也都对。UTC2 覆盖更广（Azure/Bedrock/百炼、参数名更全、坑更多、来源更细），但开头给了误导性的「传言已过时」，把 Anthropic 错归为自动兜底，Gemini 命中字段写错，OpenRouter→OpenAI 一处前后矛盾，恰好伤到用户最看重的“要不要改代码”和“怎么确认命中”。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "DS9D",
+      "taxonomy": "DS9D",
+      "coverage": "UTC2",
+      "doubts": "DS9D",
+      "pitfalls": "UTC2",
+      "accuracy": "DS9D",
+      "sourcing": "UTC2",
+      "concision": "UTC2"
+    },
+    "overall": "DS9D",
+    "strength": 1,
+    "errors": {
+      "DS9D": [
+        "「Gemini(implicit)/DeepSeek 是小时到 24 小时量级自动清」：DeepSeek 官方说法是“数小时到数天”，把它归到 ≤24h 量级不对，和本文 2.2 表「数小时到数天」自相矛盾",
+        "「Anthropic/Kimi/Qwen(explicit) 是 5 分钟量级（可选更贵的 1 小时档）」：通义千问显式缓存只有 5 分钟，没有 1 小时档（本文 2.2 表也写「无」）；Kimi 两档写入价相同（本文写「两档TTL写入价相同」），谈不上“更贵”"
+      ],
+      "UTC2": [
+        "「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」：totalTokenCount 是请求总 token 数，不是命中字段；Gemini generateContent 不论隐式还是显式，命中都看 usageMetadata.cachedContentTokenCount",
+        "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认隐式自动缓存，breakpoint 只是可选项，这句和本文 OpenAI 行、第 0 节第 7 条「仍要自己判断用不用」自相矛盾",
+        "「传言已过时」，以及 taxonomy 把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」：Anthropic 不加 cache_control 就完全不缓存；所谓自动缓存仍要加顶层 cache_control（本文自己也这样写），并没有“自动兜底”，照样得改代码"
+      ]
+    },
+    "unsure": [
+      "Kimi 的触发方式两份结论相反：DS9D「全自动」，UTC2「纯手动，须传`prompt_cache_options`…或`cache_control`」，无法判断谁对",
+      "DeepSeek 命中价：UTC2「0.1x（$0.014 vs $0.14/M）」引用的是 2024 年公告价，很可能已过时；DS9D「命中比未命中低95~98%」无法核实",
+      "Gemini 隐式 TTL：DS9D「implicit 24h自动清」和 UTC2「无法定义、不保证」冲突；UTC2 这条依据的是论坛帖[24]，却标成「官方原话」，和开头「均为官方文档一手信息」不符",
+      "DS9D「另有独立的`prompt_cache_retention`，跟是否复用无关」：以往延长保留就是用来延长可复用时长的，这个说法可疑",
+      "Gemini 显式缓存创建时是否收费：DS9D「无写入费」对 UTC2「显式=标准输入价+…存储费」",
+      "智谱：UTC2「另计存储费(元/M/小时)」对 DS9D「未公开」；官方指南是否真写了“50%”（UTC2 称之为「坊间说的五折」）",
+      "Gemini 存储费「$0.5~1.0/M token/小时」可能漏了 Pro 档（以往是 $4.50/M/h）",
+      "UTC2 OpenAI「1.25x标准输入价」没限定 GPT-5.6+，旧模型历史上没有写入溢价；UTC2 Kimi「按标准价写入，2次命中回本」本身逻辑不通",
+      "UTC2 把「`tool_choice`/`reasoning.effort`/`verbosity`等采样参数」说成各家通用的失效条件，和 DS9D「Kimi 改 tool_choice 没事」冲突",
+      "通义千问隐式缓存门槛是否是「1024 tok，两模式相同」；Anthropic 是否真有 512 档、2048 档是否还在"
+    ],
+    "reason": "DS9D 对用户最关心的疑点判断准确：Anthropic 仍要加 cache_control 参数，其余几家默认自动。它的双轴 taxonomy 干净，命中字段也都对。UTC2 覆盖更广（Azure/Bedrock/百炼、参数名更全、坑更多、来源更细），但开头给了误导性的「传言已过时」，把 Anthropic 错归为自动兜底，Gemini 命中字段写错，OpenRouter→OpenAI 一处前后矛盾，恰好伤到用户最看重的“要不要改代码”和“怎么确认命中”。",
+    "_codes": {
+      "x": "DS9D",
+      "y": "UTC2"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

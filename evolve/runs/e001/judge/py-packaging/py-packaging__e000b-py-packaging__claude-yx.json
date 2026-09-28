@@ -1,0 +1,81 @@
+{
+  "score": -2,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「pixi 目前官方明确不支持私有 PyPI 仓库认证」错：pixi 支持 [pypi-options] 的 index-url/extra-index-urls 私有源，并通过 keyring/.netrc 认证（原文括号里的 keyring/.netrc 本身就是认证手段）",
+    "「只有 uv 把\"装 Python 解释器\"内置了」错且自相矛盾：同一句紧接着就写 PDM 有 pdm python install，PDM 同样会下载解释器",
+    "「uv(0.12.0+，2026-07-28)支持导出/导入」版本错：uv 自 0.6.15（2025-04）起就能用 uv export / uv pip compile 生成 pylock.toml、用 uv pip install/sync 安装",
+    "「但 uv/Poetry 仍只支持导出」错：uv 也能从 pylock.toml 安装、并用 uv pip compile 直接生成，且与本文 §3 表格「`uv pip install`可导入」自相矛盾",
+    "「uv 用自己的 uv_build（0.12+ 新项目默认）」版本错：uv init 从 0.8.0（2025-07）起就默认用 uv_build",
+    "「Poetry 要靠外部 pyenv」过时：Poetry 2.1 起有实验性 poetry python install"
+  ],
+  "errors_y": [
+    "「唯一有官方 GH Action 的一体化工具」错：PDM 有官方 pdm-project/setup-pdm（本文 D10 列自己也标为“官方”），uv 并非唯一",
+    "「**Poetry 明确不会**（BYOP）」过时：Poetry 2.1 起有实验性 poetry python install（依赖 pbs-installer/python-build-standalone）可下载解释器",
+    "「终审对正文抽查 34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」各项相加只有 33，与 34 自相矛盾"
+  ],
+  "reason": "BP8N 对用户点名的 pylock 疑点答得准（uv 0.6.15+ 导出/安装，pip 25.1 生成、26.1 安装），§0 直接给出新项目选 uv 的结论；坑点（index 策略和凭证回退、迁移要重新 lock、CI 缓存 key）可操作，并逐条标了一手来源。F5CJ 在关键点上有多处硬伤（pixi「不支持私有 PyPI 认证」、uv pylock「0.12.0+」「只支持导出」、「只有 uv 内置装 Python」），也没给出明确的选型建议，只在篇幅上略紧凑。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "BP8N",
+      "taxonomy": "BP8N",
+      "coverage": "BP8N",
+      "doubts": "BP8N",
+      "pitfalls": "BP8N",
+      "accuracy": "BP8N",
+      "sourcing": "BP8N",
+      "concision": "F5CJ"
+    },
+    "overall": "BP8N",
+    "strength": 2,
+    "errors": {
+      "BP8N": [
+        "「唯一有官方 GH Action 的一体化工具」错：PDM 有官方 pdm-project/setup-pdm（本文 D10 列自己也标为“官方”），uv 并非唯一",
+        "「**Poetry 明确不会**（BYOP）」过时：Poetry 2.1 起有实验性 poetry python install（依赖 pbs-installer/python-build-standalone）可下载解释器",
+        "「终审对正文抽查 34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」各项相加只有 33，与 34 自相矛盾"
+      ],
+      "F5CJ": [
+        "「pixi 目前官方明确不支持私有 PyPI 仓库认证」错：pixi 支持 [pypi-options] 的 index-url/extra-index-urls 私有源，并通过 keyring/.netrc 认证（原文括号里的 keyring/.netrc 本身就是认证手段）",
+        "「只有 uv 把\"装 Python 解释器\"内置了」错且自相矛盾：同一句紧接着就写 PDM 有 pdm python install，PDM 同样会下载解释器",
+        "「uv(0.12.0+，2026-07-28)支持导出/导入」版本错：uv 自 0.6.15（2025-04）起就能用 uv export / uv pip compile 生成 pylock.toml、用 uv pip install/sync 安装",
+        "「但 uv/Poetry 仍只支持导出」错：uv 也能从 pylock.toml 安装、并用 uv pip compile 直接生成，且与本文 §3 表格「`uv pip install`可导入」自相矛盾",
+        "「uv 用自己的 uv_build（0.12+ 新项目默认）」版本错：uv init 从 0.8.0（2025-07）起就默认用 uv_build",
+        "「Poetry 要靠外部 pyenv」过时：Poetry 2.1 起有实验性 poetry python install"
+      ]
+    },
+    "unsure": [
+      "Poetry 对 pylock 的支持两份说法冲突：F5CJ「Poetry(2.3.0+)只支持导出」（需 poetry-plugin-export≥1.10），BP8N「Poetry 未支持」（issue #10356 无里程碑），无法确认哪方对",
+      "BP8N「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」：依赖组一直写在 [tool.poetry.group.*]，且 Poetry 2.2 起似乎已支持 PEP 735 [dependency-groups]，这句可能过时",
+      "BP8N「内部 index 缺凭证时会静默回退到公共 PyPI」：uv 的 first-index 默认遇 401/403 会停止，可能只有私有源对未认证请求返回 404 时才会回退，这里可能概括过度",
+      "BP8N 的 uv issue #1804「wontfix」、pip 26.1「不支持extras/dependency-groups」、pixi v0.75.0/pixi publish/v0.81.0、conda 26.5 原生导出 conda-lock.yaml/兼容 pixi.lock、pixi 认证「OAuth/OIDC」都无法核实",
+      "F5CJ 的 uv 0.12.0 发布日期（2026-07-28）和「校验支持」、「`[workspace]`(2024 年从`[project]`改名)+`[workspace.dependencies]`」、「environment.yml 走独立的 CEP 24 标准」都无法核实",
+      "F5CJ 把 pip 列为 PEP 621 的「读取但官方未细列完整度」一方：pip 实际上把 [project] 交给构建后端处理，自己不解析，这个表述可疑；把 conda-build 算不算 PEP 517 后端标为「存疑」也显得概念混淆",
+      "两份都说 PDM workspace 是 v2.28（2026-06）加入的实验特性、PDM pylock 从 v2.25 起 opt-in，无法核实"
+    ],
+    "reason": "BP8N 对用户点名的 pylock 疑点答得准（uv 0.6.15+ 导出/安装，pip 25.1 生成、26.1 安装），§0 直接给出新项目选 uv 的结论；坑点（index 策略和凭证回退、迁移要重新 lock、CI 缓存 key）可操作，并逐条标了一手来源。F5CJ 在关键点上有多处硬伤（pixi「不支持私有 PyPI 认证」、uv pylock「0.12.0+」「只支持导出」、「只有 uv 内置装 Python」），也没给出明确的选型建议，只在篇幅上略紧凑。",
+    "_codes": {
+      "x": "F5CJ",
+      "y": "BP8N"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000b/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

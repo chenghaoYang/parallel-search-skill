@@ -1,0 +1,13 @@
+你是 deep-search skill 自进化实验的提案者。实验号 e004，方向：分工纪律：主 agent 不许自己碰网页。证据就在 g000a/s000a/g002/s002 的 meta.json——lead_web 40~120+，Grok 主 agent 派完工人后边等边自己 web_fetch 几十上百次，分工名存实亡，原始页面灌进主上下文。改 SKILL.md（必要时 references/harness.md、references/worker.md），让任何外层的主 agent 都守规矩：不要只加一句口号，要给可执行的替代动作——派出整批后到收束前唯一允许的动作是等整批（一次 wait 调用）或结束回合；等待中想到要查的先记进 log.md，留给下一轮简报；想自己开页面时改为派一个工人。注意别把正常规则（终审工人回原页核对、工人自己搜索）误伤。。当前目录就是仓库（精简副本）。
+先读 evolve/program.md（尤其「不能做什么」），再读 evolve/results.tsv、evolve/journal.md、skills/deep-search/ 全部文件。
+证据：evolve/runs/<实验号>/<任务>/（report.md、prompt.md、ds/log.md、ds/grid.md、ds/brief.md、ds/notes/、ds/audit*.md、ds/snapshots/、meta.json），
+盲评判决 evolve/runs/<实验号>/judge/**.json（reason、errors_x、errors_y、dims；x 是该实验自己的运行）。这次可用的实验号：g000a、s000a、g002、s002。
+任务原文在 bench/tasks/<任务>/task.md。
+运行设置（固定，不能改）：Grok Build，grok-4.7 主 agent → grok-4.7 或 swe-2 工人，web_search + web_fetch，参数 --rounds 3 --workers 6 --budget 9000。
+
+要做的：
+1. 从证据里找一个具体失分点或浪费（写出是哪几次运行、哪一段、判决里哪条理由），提出一个可检验的假设。不要重复 journal.md 里已经弃掉的想法，除非你能说清这次有什么不同。
+2. 执行 cp -R skills/deep-search evolve/candidates/e004/skill，只改这个副本。改动围绕这一个想法，越小越好；删规则也是合法的实验。
+3. 不写任何领域事实或任务相关提示（产品名、厂商名、字段名、结论），skill 必须对任意调研题都成立。不改其他任何文件。
+4. 写 evolve/candidates/e004/hypothesis.md：证据 → 假设 → 改动（文件、大意）→ 预期变好的维度/指标 → 风险。
+最后回复 ≤ 6 行：一句话描述（会写进 results.tsv）、改了哪些文件、预期效果。

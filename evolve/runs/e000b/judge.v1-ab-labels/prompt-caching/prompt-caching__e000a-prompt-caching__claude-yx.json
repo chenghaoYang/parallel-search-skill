@@ -1,0 +1,71 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": -1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「OpenAI GPT-5.5及更早 … 0.5x」「旧款0.5x」——GPT-5 系列缓存输入是 0.1x（$0.125 vs $1.25），GPT-4.1 是 0.25x，只有 GPT-4o 那一代是 0.5x",
+    "「2025-03-13 上线的'Automatic Caching'」——2025-03-13 的 token-saving updates 是缓存感知限速和自动回查最长已缓存前缀，并没有顶层 `cache_control` 自动缓存，功能和日期混在了一起",
+    "「Anthropic/Kimi … 1小时档写入价接近5分钟档的2倍」——Anthropic 1h 写入 2x、5m 写入 1.25x，两者之比约 1.6 倍"
+  ],
+  "errors_y": [
+    "Gemini 命中确认字段写成「显式`usageMetadata.totalTokenCount`」——totalTokenCount 是总 token 数，命中应看 `usageMetadata.cachedContentTokenCount`",
+    "DeepSeek「0.1x（$0.014 vs $0.14/M）[13]」引用的是 2024-08 发布公告的旧价，之后经 V3/V3.1/V3.2 多轮调价（V3.2 为 $0.028/$0.28），作为现行价格已过时",
+    "把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」——原生 API 不加 `cache_control` 就不缓存，所谓自动缓存仍须在请求顶层显式加 `cache_control`（A 第0节自己也这么写），「自动兜底」说法不成立"
+  ],
+  "reason": "A 的命中字段、失效参数（tool_choice/reasoning.effort/text.format、tools→system→messages 层级）和云平台变体（Azure PTU-M、Bedrock、百炼代理第三方模型）细到字段名和数值，矩阵每格都标了一手来源，坑点也更能直接照做。B 的 F1/F2/F3 分类更清楚，「Anthropic 仍需至少一个 cache_control」的判断也更稳；但矩阵没有引用，Anthropic 和千问的命中字段没写名字，还有 OpenAI 旧款 0.5x 和自动缓存日期两处错误。两份都有确定错误，而且在 Kimi 是否自动缓存上互相矛盾，所以 A 只是略胜。",
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "B",
+      "coverage": "A",
+      "doubts": "A",
+      "pitfalls": "A",
+      "accuracy": "tie",
+      "sourcing": "A",
+      "concision": "tie"
+    },
+    "overall": "A",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "Gemini 命中确认字段写成「显式`usageMetadata.totalTokenCount`」——totalTokenCount 是总 token 数，命中应看 `usageMetadata.cachedContentTokenCount`",
+        "DeepSeek「0.1x（$0.014 vs $0.14/M）[13]」引用的是 2024-08 发布公告的旧价，之后经 V3/V3.1/V3.2 多轮调价（V3.2 为 $0.028/$0.28），作为现行价格已过时",
+        "把 Anthropic 归入「双轨（自动兜底+手动/显式可选）」——原生 API 不加 `cache_control` 就不缓存，所谓自动缓存仍须在请求顶层显式加 `cache_control`（A 第0节自己也这么写），「自动兜底」说法不成立"
+      ],
+      "B": [
+        "「OpenAI GPT-5.5及更早 … 0.5x」「旧款0.5x」——GPT-5 系列缓存输入是 0.1x（$0.125 vs $1.25），GPT-4.1 是 0.25x，只有 GPT-4o 那一代是 0.5x",
+        "「2025-03-13 上线的'Automatic Caching'」——2025-03-13 的 token-saving updates 是缓存感知限速和自动回查最长已缓存前缀，并没有顶层 `cache_control` 自动缓存，功能和日期混在了一起",
+        "「Anthropic/Kimi … 1小时档写入价接近5分钟档的2倍」——Anthropic 1h 写入 2x、5m 写入 1.25x，两者之比约 1.6 倍"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式两份矛盾：A 称「纯手动，必须传 prompt_cache_options 才缓存」，B 称默认隐式自动（mode 仅 implicit、最小 256 tok）；Kimi K2 系列 2025 年起就是自动缓存，A 的说法存疑，但 2026 版文档无法核实",
+      "智谱命中折扣：A ≈0.25x（2 vs 8 元/M，GLM-5.3），B 约 0.5x；按已知 GLM-4.5/4.6/5 定价约 0.2x，倾向 A 正确，但 GLM-5.3 无法核实",
+      "智谱 TTL：A 称官方未写，B 称「5min自动刷新」；B 第0节说智谱「写入不加价」，矩阵又写「∅官方未详述」，前后不一致",
+      "OpenAI TTL 两份矛盾：A「≥30分钟；2026-05后非ZDR组织默认24h」，B「GPT-5.6+ 固定30m(仅此值)」；`prompt_cache_breakpoint` 和 1.25x 写入价超出我的已知范围",
+      "A 矩阵把 OpenAI「1.25x标准输入价」写入费写成不分代际；如果只适用于 GPT-5.6+（B 的说法），A 对旧模型有误导",
+      "B「DeepSeek 命中价约为原价的2%」依据的是 2026-09 新公告，无法核实",
+      "Gemini 显式缓存存储费两份都写 $0.5~1.0/M/小时，都没提 Pro 系列（2.5 Pro/3 Pro 按已知为 $4.50/M/小时）",
+      "B 的 Gemini 命中字段 `usage.total_cached_tokens` 看起来是 Interactions API 的字段；常用的 generateContent 返回 `usageMetadata.cachedContentTokenCount`，两份都没写",
+      "A 称通义千问隐式和显式最小长度都是 1024 tok；我印象中隐式是 256 tok，不确定",
+      "A 写 Kimi「按标准价写入，2次命中回本」：写入如果就是标准价，就不存在回本问题，疑似和 1h 档混淆",
+      "A 称 OpenRouter 要用 `session_id` 做粘性路由，B 称 sticky routing 在满足条件时自动启用",
+      "两份都称 Bedrock 上的 Claude 有无需 cache_control 的 Implicit Prompt Caching，超出已知范围"
+    ],
+    "reason": "A 的命中字段、失效参数（tool_choice/reasoning.effort/text.format、tools→system→messages 层级）和云平台变体（Azure PTU-M、Bedrock、百炼代理第三方模型）细到字段名和数值，矩阵每格都标了一手来源，坑点也更能直接照做。B 的 F1/F2/F3 分类更清楚，「Anthropic 仍需至少一个 cache_control」的判断也更稳；但矩阵没有引用，Anthropic 和千问的命中字段没写名字，还有 OpenAI 旧款 0.5x 和自动缓存日期两处错误。两份都有确定错误，而且在 Kimi 是否自动缓存上互相矛盾，所以 A 只是略胜。"
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

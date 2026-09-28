@@ -1,0 +1,88 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「只有 uv 把\"装 Python 解释器\"内置了」：PDM 的 `pdm python install` 同样会下载并安装解释器（文中下一句就写了），Poetry 2.1 起也有实验性的 `poetry python install`。",
+    "「Poetry 要靠外部 pyenv」（矩阵里是「`poetry env use`，需外部 pyenv」）：Poetry 2.1.0 起已有实验性的 `poetry python install/list/remove`。",
+    "「uv 用自己的 uv_build（0.12+ 新项目默认）」：uv 0.8.0（2025-07）起 `uv init` 就已默认使用 uv_build 后端。",
+    "「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」：uv 自 0.6.15（2025-04）起就支持导出和安装 pylock.toml，`uv pip compile -o pylock.toml` 也能直接生成，版本下限和“不会生成”都不对。",
+    "「pixi 目前官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」：pixi 有 `[pypi-options]` 的 `index-url`/`extra-index-urls`，可以经 keyring/.netrc 认证私有 PyPI 源，所说的限制不存在。",
+    "「原生 workspace 三家有，两家没有」：六个工具里 pip、Poetry、conda 三家都没有原生 workspace，数错了。"
+  ],
+  "errors_y": [
+    "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起就能用 `uv export` 导出、用 `uv pip compile` 生成、用 `uv pip install -r`/`uv pip sync` 安装 pylock.toml，既不是只在 preview，也不是 0.12.x 才开始。",
+    "「conda 免费层对大型商业组织不再免费」：200+ 员工须付费的条款针对的是 Anaconda 的 defaults 渠道/Distribution 等服务，conda 工具本身（BSD）和 conda-forge/miniforge 不受此限，说成 conda 的“免费层”是混淆。",
+    "「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」：PDM 同样有 `pdm python install` 和 venv 管理，本文自己的矩阵也列了 PDM workspace，“唯一”说不通。"
+  ],
+  "reason": "JT73 开头就给出分场景的选型规则（纯 PyPI 项目选 uv，要 conda 二进制选 pixi/conda），两条分类轴贯穿全文，逐格引用一手来源并如实列出缺口，确信的错误也更少。ZNHP 对 PEP 751 疑点答得更准（uv 能导出/导入、PDM 能作锁格式），但 Python 版本管理、uv_build 默认版本、pixi 私有 PyPI 等处有多处明确错误，而且始终没说新项目该选哪个 PyPI 工具。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "JT73",
+      "taxonomy": "JT73",
+      "coverage": "JT73",
+      "doubts": "ZNHP",
+      "pitfalls": "tie",
+      "accuracy": "JT73",
+      "sourcing": "JT73",
+      "concision": "tie"
+    },
+    "overall": "JT73",
+    "strength": 1,
+    "errors": {
+      "JT73": [
+        "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起就能用 `uv export` 导出、用 `uv pip compile` 生成、用 `uv pip install -r`/`uv pip sync` 安装 pylock.toml，既不是只在 preview，也不是 0.12.x 才开始。",
+        "「conda 免费层对大型商业组织不再免费」：200+ 员工须付费的条款针对的是 Anaconda 的 defaults 渠道/Distribution 等服务，conda 工具本身（BSD）和 conda-forge/miniforge 不受此限，说成 conda 的“免费层”是混淆。",
+        "「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」：PDM 同样有 `pdm python install` 和 venv 管理，本文自己的矩阵也列了 PDM workspace，“唯一”说不通。"
+      ],
+      "ZNHP": [
+        "「只有 uv 把\"装 Python 解释器\"内置了」：PDM 的 `pdm python install` 同样会下载并安装解释器（文中下一句就写了），Poetry 2.1 起也有实验性的 `poetry python install`。",
+        "「Poetry 要靠外部 pyenv」（矩阵里是「`poetry env use`，需外部 pyenv」）：Poetry 2.1.0 起已有实验性的 `poetry python install/list/remove`。",
+        "「uv 用自己的 uv_build（0.12+ 新项目默认）」：uv 0.8.0（2025-07）起 `uv init` 就已默认使用 uv_build 后端。",
+        "「uv(0.12.0+，2026-07-28)支持导出/导入但不会原生生成它」：uv 自 0.6.15（2025-04）起就支持导出和安装 pylock.toml，`uv pip compile -o pylock.toml` 也能直接生成，版本下限和“不会生成”都不对。",
+        "「pixi 目前官方明确不支持私有 PyPI 仓库认证（只有 keyring/.netrc，没有私有 index 机制）」：pixi 有 `[pypi-options]` 的 `index-url`/`extra-index-urls`，可以经 keyring/.netrc 认证私有 PyPI 源，所说的限制不存在。",
+        "「原生 workspace 三家有，两家没有」：六个工具里 pip、Poetry、conda 三家都没有原生 workspace，数错了。"
+      ]
+    },
+    "unsure": [
+      "PDM 能否用 pylock.toml 作锁文件：ZNHP 说「可以把它设为替代锁格式（仍\"实验性\"）」，JT73 说「仅导出(v2.26+,opt-in)」；印象中 PDM 有 `lock.format = pylock` 配置，倾向 ZNHP 正确，但不确信。",
+      "JT73「`[tool.pixi.project]`包一层」：pixi 已把 `[project]` 改名为 `[workspace]`，pyproject 里现在应为 `[tool.pixi.workspace]`，旧名可能只是兼容保留。",
+      "JT73「没有 Action、没有 CI 指南」：Poetry 安装文档似乎有 CI recommendations 小节（不过不涉及缓存）。",
+      "JT73「26.2 进一步增强（`--uploaded-prior-to`、`--only-final`）」：`--uploaded-prior-to` 印象中 pip 26.0 就已加入，而且未必是 pylock 专属。",
+      "JT73「提速 50-80%」（libmamba）和「pixi 号称比 conda 快 10x」：数字无法核实。",
+      "JT73「Astral 已被 OpenAI 收购」（2026-03-19，二手信源）：无法确认。",
+      "JT73「`uv_build`(可换6种)」：`uv init --build-backend` 的可选项似乎不止 6 种。",
+      "JT73「`poetry.lock` v2.0」：Poetry 2.x 写出的 lock-version 可能已是 2.1。",
+      "两份都说 pip 26.1 才支持 `pip install -r pylock.toml`（ZNHP 还给了日期 2026-04-26），也都提到 pixi 的 `[workspace.dependencies]` 表，这两点都无法核实。",
+      "ZNHP「pip（读取但官方未细列完整度）」：pip 作为前端本身不读 `[project]`，由构建后端读取。",
+      "ZNHP「`pixi-build-python`；无声明时退回 setuptools」：pixi 的 pyproject 模板默认用 hatchling，“退回 setuptools”存疑。",
+      "ZNHP「`[workspace]`(2024 年从`[project]`改名)」：改名时间可能是 2025 年。",
+      "ZNHP「`conda-lock`(第三方)」：conda-lock 在 conda 官方 GitHub 组织下，算不算第三方有争议。",
+      "ZNHP「pip/uv/Poetry/PDM 都支持 `.netrc`」：Poetry 是否支持 .netrc 存疑。"
+    ],
+    "reason": "JT73 开头就给出分场景的选型规则（纯 PyPI 项目选 uv，要 conda 二进制选 pixi/conda），两条分类轴贯穿全文，逐格引用一手来源并如实列出缺口，确信的错误也更少。ZNHP 对 PEP 751 疑点答得更准（uv 能导出/导入、PDM 能作锁格式），但 Python 版本管理、uv_build 默认版本、pixi 私有 PyPI 等处有多处明确错误，而且始终没说新项目该选哪个 PyPI 工具。",
+    "_codes": {
+      "x": "ZNHP",
+      "y": "JT73"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e001/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

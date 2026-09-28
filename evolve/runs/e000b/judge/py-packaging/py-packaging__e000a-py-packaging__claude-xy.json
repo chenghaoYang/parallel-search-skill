@@ -1,0 +1,79 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「唯一有官方 GH Action 的一体化工具」：PDM 有官方的 pdm-project/setup-pdm（本文矩阵自己也写了「官方`pdm-project/setup-pdm`」），pixi 也有官方 setup-pixi，这里自相矛盾",
+    "「Poetry 明确不会（BYOP）」：Poetry 2.1 起提供实验性的 `poetry python install/list/remove`（基于 python-build-standalone），并不是明确不能自装解释器",
+    "「终审对正文抽查 34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」：各项加起来是 33 条，不是 34 条"
+  ],
+  "errors_y": [
+    "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 从 0.6.15（2025-04）起就支持 `uv export -o pylock.toml`、`uv pip compile -o pylock.toml`，也能用 `uv pip install -r pylock.toml`/`uv pip sync` 安装。漏掉安装能力、版本起点写错，由此得出的「pip 支持最完整」也有误导",
+    "「conda 免费层对大型商业组织不再免费」：200+ 员工这条条款约束的是 Anaconda 的仓库（defaults channel）和 Anaconda 产品，不是 BSD 许可的 conda 工具本身；conda 配 conda-forge（如 Miniforge）照样免费",
+    "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」：Poetry 官方文档安装部分有「CI recommendations」一节（只是不讲缓存）"
+  ],
+  "reason": "用户点名的疑点，AY7Y 答得对：uv 从 0.6.15 起就能导出和安装 pylock.toml；Poetry 2 也没有完全切到 [project]，并列出了具体保留项。JMHP 把 uv 的支持说成只有 preview 的导出+校验，还说 pip 最完整，关键问题答偏了。AY7Y 在私有源（index-strategy、依赖混淆）和 CI 缓存这两块的坑写得更实用、细到字段级；JMHP 胜在来源精确到具体页面，Poetry 的 Python 管理也写对了。但 AY7Y 的错误（「唯一官方 Action」「Poetry 不会装 Python」）不如 JMHP 的错误处在核心位置。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "AY7Y",
+      "taxonomy": "tie",
+      "coverage": "AY7Y",
+      "doubts": "AY7Y",
+      "pitfalls": "AY7Y",
+      "accuracy": "AY7Y",
+      "sourcing": "JMHP",
+      "concision": "tie"
+    },
+    "overall": "AY7Y",
+    "strength": 1,
+    "errors": {
+      "AY7Y": [
+        "「唯一有官方 GH Action 的一体化工具」：PDM 有官方的 pdm-project/setup-pdm（本文矩阵自己也写了「官方`pdm-project/setup-pdm`」），pixi 也有官方 setup-pixi，这里自相矛盾",
+        "「Poetry 明确不会（BYOP）」：Poetry 2.1 起提供实验性的 `poetry python install/list/remove`（基于 python-build-standalone），并不是明确不能自装解释器",
+        "「终审对正文抽查 34 条具体主张：30 条 supported、2 条 weak、1 条 unsupported（已改写/删除）、0 条 contradicted」：各项加起来是 33 条，不是 34 条"
+      ],
+      "JMHP": [
+        "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 从 0.6.15（2025-04）起就支持 `uv export -o pylock.toml`、`uv pip compile -o pylock.toml`，也能用 `uv pip install -r pylock.toml`/`uv pip sync` 安装。漏掉安装能力、版本起点写错，由此得出的「pip 支持最完整」也有误导",
+        "「conda 免费层对大型商业组织不再免费」：200+ 员工这条条款约束的是 Anaconda 的仓库（defaults channel）和 Anaconda 产品，不是 BSD 许可的 conda 工具本身；conda 配 conda-forge（如 Miniforge）照样免费",
+        "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」：Poetry 官方文档安装部分有「CI recommendations」一节（只是不讲缓存）"
+      ]
+    },
+    "unsure": [
+      "AY7Y「uv 忘记给内部 index 配凭证时会静默回退到公共 PyPI 装同名包，不报错不警告」：uv 文档说 first-index 默认遇到 401/403 就停止（可用 ignore-error-codes 调整），只有 404 才继续找下一个 index。这条可能已过时或说得太绝对",
+      "Poetry 对 PEP 751 的支持两份说法冲突：AY7Y「Poetry 未支持（issue #10356 无里程碑）」，JMHP「仅导出(2.3.0+ via plugin)」，无法核实哪份对",
+      "AY7Y「固定`poetry-core`」：印象中 Poetry 2.1 让 `poetry build` 不再绑定特定构建后端，不确定",
+      "AY7Y「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」：依赖组实际写在 `[tool.poetry.group.*]`，而且 Poetry 2.2 疑似已支持 PEP 735 的 `[dependency-groups]`",
+      "AY7Y「此前完全依赖第三方 conda-lock」：conda 原生就有 `conda list --explicit` 这类单平台锁定方式，conda-lock 也在 conda 组织名下",
+      "AY7Y 的 pixi v0.75.0/v0.81.0 日期和 `pixi publish`、conda 26.5 原生导出 lock、PDM v2.25.0/v2.28.0，以及两份都写的 pip 26.1 安装 pylock，均在知识边界外，无法核实",
+      "JMHP「26.2 进一步增强（`--uploaded-prior-to`、`--only-final`）」：`--uploaded-prior-to` 可能是 pip 26.0 就加的通用选项，并非 pylock 专属增强",
+      "JMHP「`[tool.pixi.project]`包一层，映射标准字段(实验性)」：pixi 已改名为 `[tool.pixi.workspace]`，pyproject 支持是否还算实验性存疑；「原生`[workspace.dependencies]`」这个表是否存在也存疑",
+      "JMHP「唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具」：本文矩阵里 PDM 也有 `pdm python install` 和实验性 workspace",
+      "JMHP「PDM 仅导出(v2.26+,opt-in)」与 AY7Y「PDM v2.25.0 opt-in」版本和能力说法不一致",
+      "JMHP「Astral 已被 OpenAI 收购（2026-03-19）」「rye 2025-08 正式弃用」「uv_build(可换6种)」无法核实"
+    ],
+    "reason": "用户点名的疑点，AY7Y 答得对：uv 从 0.6.15 起就能导出和安装 pylock.toml；Poetry 2 也没有完全切到 [project]，并列出了具体保留项。JMHP 把 uv 的支持说成只有 preview 的导出+校验，还说 pip 最完整，关键问题答偏了。AY7Y 在私有源（index-strategy、依赖混淆）和 CI 缓存这两块的坑写得更实用、细到字段级；JMHP 胜在来源精确到具体页面，Poetry 的 Python 管理也写对了。但 AY7Y 的错误（「唯一官方 Action」「Poetry 不会装 Python」）不如 JMHP 的错误处在核心位置。",
+    "_codes": {
+      "x": "AY7Y",
+      "y": "JMHP"
+    },
+    "_attr": [
+      6,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

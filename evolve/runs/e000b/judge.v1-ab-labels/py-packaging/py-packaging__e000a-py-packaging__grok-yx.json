@@ -1,0 +1,64 @@
+{
+  "score": -2,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 0,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "把 Anaconda 条款写成 conda 的收费限制：「200+ 员工/合同工的组织需付费 Business license」。该限制针对 Anaconda 官方 defaults 渠道/商业发行版，不是 conda 工具或 conda-forge。",
+    "「conda 原生不感知 PyPI 包」不成立：`environment.yml` 长期支持 `pip:` 段安装 PyPI 包。",
+    "锁文件格把 `conda export --platform` 写成「(可重复)原生多平台」；该命令一次只导出一个平台的显式规格，不是单文件多平台锁。"
+  ],
+  "errors_y": [
+    "开篇称 uv 是「唯一有官方 GH Action 的一体化工具」，但同文 D10 写明 PDM 有官方 `pdm-project/setup-pdm`。",
+    "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」；依赖组的表名是 `[tool.poetry.group.<name>.dependencies]`，不是 `[tool.poetry.dependencies]`。"
+  ],
+  "reason": "A 开篇就能选型，D1–D11 整表贯穿，锁文件、workspace、私有源和 CI 细到字段与命令，坑也可执行。B 的深链更易核对，但把 Anaconda 商业条款说成 conda 要付费，并写 conda 不感知 PyPI，私有源也更粗。对要做选择的读者，A 更可靠。",
+  "raw": {
+    "dims": {
+      "orientation": "A",
+      "taxonomy": "A",
+      "coverage": "A",
+      "doubts": "tie",
+      "pitfalls": "A",
+      "accuracy": "A",
+      "sourcing": "B",
+      "concision": "A"
+    },
+    "overall": "A",
+    "strength": 2,
+    "errors": {
+      "A": [
+        "开篇称 uv 是「唯一有官方 GH Action 的一体化工具」，但同文 D10 写明 PDM 有官方 `pdm-project/setup-pdm`。",
+        "写「显式多源、依赖组、相对路径本地依赖仍要写 `[tool.poetry.dependencies]`」；依赖组的表名是 `[tool.poetry.group.<name>.dependencies]`，不是 `[tool.poetry.dependencies]`。"
+      ],
+      "B": [
+        "把 Anaconda 条款写成 conda 的收费限制：「200+ 员工/合同工的组织需付费 Business license」。该限制针对 Anaconda 官方 defaults 渠道/商业发行版，不是 conda 工具或 conda-forge。",
+        "「conda 原生不感知 PyPI 包」不成立：`environment.yml` 长期支持 `pip:` 段安装 PyPI 包。",
+        "锁文件格把 `conda export --platform` 写成「(可重复)原生多平台」；该命令一次只导出一个平台的显式规格，不是单文件多平台锁。"
+      ]
+    },
+    "unsure": [
+      "Poetry 能否自装解释器：A 写「明确不会（BYOP）」，B 写 2.1.0 起实验性 `poetry python install`。",
+      "uv 的 pylock 能力：A 写 0.6.15+ 可导出/安装，B 写 0.12.11+/0.12.17+ 仍是 preview 导出+校验。",
+      "Poetry 对 PEP 751：A 写未支持（issue #10356 无里程碑），B 写 2.3.0+ 经插件仅导出。",
+      "PDM 的 pylock opt-in 版本：A 为 v2.25.0（2025-06），B 为 v2.26+。",
+      "pip 26.1 是否不支持 extras/dependency-groups（仅 A），以及 26.2 的 `--uploaded-prior-to` / `--only-final`（仅 B）。",
+      "A 称 conda 26.5 起可实验性原生导出 `conda-lock.yaml`/兼容 `pixi.lock`；B 未提该版本。",
+      "B 称 Astral 于 2026-03-19 被 OpenAI 收购，并标明为二手信源。"
+    ],
+    "reason": "A 开篇就能选型，D1–D11 整表贯穿，锁文件、workspace、私有源和 CI 细到字段与命令，坑也可执行。B 的深链更易核对，但把 Anaconda 商业条款说成 conda 要付费，并写 conda 不感知 PyPI，私有源也更粗。对要做选择的读者，A 更可靠。"
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

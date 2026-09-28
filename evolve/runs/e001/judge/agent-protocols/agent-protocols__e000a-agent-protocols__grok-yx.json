@@ -1,0 +1,62 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 0,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [],
+  "errors_y": [],
+  "reason": "U2LT 用同一套维度把抽象名、状态、版本节奏和治理成熟度对到一张表里，大厂支持也按证据强弱分级，用户能直接比较并选择。XYSS 的一屏地图更清楚，ACP 撞名和 SSE 废弃的结论也更稳。就整份文档的使用价值，U2LT 略高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "XYSS",
+      "taxonomy": "U2LT",
+      "coverage": "U2LT",
+      "doubts": "XYSS",
+      "pitfalls": "tie",
+      "accuracy": "tie",
+      "sourcing": "U2LT",
+      "concision": "tie"
+    },
+    "overall": "U2LT",
+    "strength": 1,
+    "errors": {
+      "U2LT": [],
+      "XYSS": []
+    },
+    "unsure": [
+      "U2LT 把「remove protocol-level sessions and the Mcp-Session-Id header」说成「无握手」「没有协商」「彻底无状态」，session 与 initialize 是否在 2026-07-28 一起删除无法确认。",
+      "U2LT「MCP强制OAuth2.1+PKCE」可能把「启用鉴权时必须用 OAuth 2.1」写成了所有连接（含 stdio）都强制。",
+      "ACP-IBM 并入日期冲突：U2LT 写 2025-08-25，XYSS 写公告 2025-08-29、仓库归档 2025-08-27，且 XYSS 开头又把归档写进 08-29。",
+      "A2A 加入 AAIF 的日期冲突：XYSS 为 2026-08-17，U2LT 为 2026-08-27。",
+      "Zed ACP 起点冲突：XYSS 写 2025-06-23 与「v1 稳定；v2 alpha」，U2LT 写 2025-08 发布、wire「1」稳定但包 v0.13.6 且预 1.0 仍有 breaking change；U2LT 另称 Zed+JetBrains 联合治理，XYSS 未写。",
+      "弃用窗口冲突：XYSS「SEP 转正后 3 个月即可移除」，U2LT「至少12个月弃用窗口」。",
+      "XYSS 的第三个 ACP（Cisco/AGNTCY Agent Connect Protocol）及分类表「✝→A2A」是推断；文中承认没有官方弃用声明。",
+      "大厂交叉冲突：OpenAI×AG-UI，XYSS 为 In Progress，U2LT 为未列入集成列表；Anthropic×AG-UI，XYSS 为无官方声明，U2LT 为集成列表含 Claude。",
+      "两份都把 MCP 版本起点写成 2024-10-07；广为人知的首个协议修订号是 2024-11-05，2024-10-07 是否为正式版本号无法确认。",
+      "XYSS 的「Windows ODR」无法确认所指产品。"
+    ],
+    "reason": "U2LT 用同一套维度把抽象名、状态、版本节奏和治理成熟度对到一张表里，大厂支持也按证据强弱分级，用户能直接比较并选择。XYSS 的一屏地图更清楚，ACP 撞名和 SSE 废弃的结论也更稳。就整份文档的使用价值，U2LT 略高。",
+    "_codes": {
+      "x": "XYSS",
+      "y": "U2LT"
+    },
+    "_attr": [
+      0,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

@@ -1,0 +1,4 @@
+[run] e001/prompt-caching: ok, 21.6 min, 6786 chars, golden 0.75, spawns 11, $6.6636026999999975
+[run] e001/py-packaging: ok, 23.3 min, 7033 chars, golden 0.917, spawns 9, $6.2212209
+[run] e001/agent-protocols: ok, 29.9 min, 7165 chars, golden 0.8, spawns 15, $9.936036800000009
+[judge] e001 vs e000a,e000b: 24 verdicts to collect

@@ -1,0 +1,71 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 0,
+    "pitfalls": 0,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "开篇写「四者官方都自称互补、可叠加」，与同文矩阵「官方文档未提A2A/ACP/AG-UI」矛盾，标注 [6][23] 也只覆盖 A2A 和 AG-UI。",
+    "AG-UI 鉴权写成「CORS+token+审计日志，实现方自定」；规范并未把 CORS 和审计日志定义为鉴权。",
+    "「Anthropic 无独立框架,MCP即其出品」不成立：Anthropic 有 Claude Agent SDK，而同段把 OpenAI Agents SDK 算作自家框架。"
+  ],
+  "errors_y": [
+    "Google×MCP 被标成「❓ 未查到官方 MCP 支持声明」，图例把 ❓ 定义为「已查证官方渠道、未见表态」，开篇也写「未查到明确的 MCP 声明」；Google ADK 官方文档把 MCP 作为一等工具集成，并非未表态。"
+  ],
+  "reason": "MVV7 的分类轴贯穿到拓扑、格式、状态和 A2A 绑定，并把第三个 ACP 写进对照，选型时更耐看。64B9 引用更密，A2UI、NLWeb、AGENTS.md 也更清楚，但 Google 的 MCP 支持被标成未表态，协议层对照更粗。对这位用户 MVV7 略有用，差距不大。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "MVV7",
+      "coverage": "MVV7",
+      "doubts": "tie",
+      "pitfalls": "tie",
+      "accuracy": "64B9",
+      "sourcing": "64B9",
+      "concision": "tie"
+    },
+    "overall": "MVV7",
+    "strength": 1,
+    "errors": {
+      "64B9": [
+        "Google×MCP 被标成「❓ 未查到官方 MCP 支持声明」，图例把 ❓ 定义为「已查证官方渠道、未见表态」，开篇也写「未查到明确的 MCP 声明」；Google ADK 官方文档把 MCP 作为一等工具集成，并非未表态。"
+      ],
+      "MVV7": [
+        "开篇写「四者官方都自称互补、可叠加」，与同文矩阵「官方文档未提A2A/ACP/AG-UI」矛盾，标注 [6][23] 也只覆盖 A2A 和 AG-UI。",
+        "AG-UI 鉴权写成「CORS+token+审计日志，实现方自定」；规范并未把 CORS 和审计日志定义为鉴权。",
+        "「Anthropic 无独立框架,MCP即其出品」不成立：Anthropic 有 Claude Agent SDK，而同段把 OpenAI Agents SDK 算作自家框架。"
+      ]
+    },
+    "unsure": [
+      "MVV7「MCP 2026-07-28 版从有状态改无状态」「旧版(≤2025-11-25)要求 stateful initialize 握手」：不能独立确认该版规范是否取消有状态握手。",
+      "64B9 称 Microsoft「四项全线官方确认」、Google/Microsoft 对 AG-UI 为 ✅；MVV7 称「AG-UI 无大厂官方采用声明」且各厂 AG-UI 均为「—」。哪边符合官方一手，不能确定。",
+      "64B9 称 Copilot CLI 于 2026-01-28 public preview、命令为 copilot --acp；MVV7 把 Microsoft×ACP-Zed 标成「○ VS Code仅讨论中issue,无承诺」，并写「唯一确认厂商原生实现是 Google Gemini CLI」。不能独立确认 Copilot CLI 公告。",
+      "64B9 将 A2A 传输写成「JSON-RPC2.0 over HTTP(S)，SSE 流式+webhook 异步」，MVV7 写 JSON-RPC/gRPC/HTTP+REST 三绑定；gRPC 绑定我较有把握，REST 是否在现行规范里与二者并列，不够确信到算 64B9 写错。",
+      "64B9「AG-UI 只是它众多可选传输之一」（指 A2UI）以及「没有厂商发布第五个独立协议」「此后 ACP 在社区语境里基本特指 Zed 版」：Agentic Commerce Protocol 是否应算进同一张协议清单，边界拿不准。",
+      "64B9「8 公司指导委员会」和 ACP-Zed「v1.9.1（2026-09-18）」是否把实现版本写成协议版本。",
+      "MVV7 的精确数字与无出处产品名：AG-UI「30种类型化JSON事件」、A2A「7态枚举」、ACP-IBM「终版v1.0.3」、CopilotKit「$27M」融资与采用挂钩、「Gemini Enterprise支持MCP服务器」。"
+    ],
+    "reason": "MVV7 的分类轴贯穿到拓扑、格式、状态和 A2A 绑定，并把第三个 ACP 写进对照，选型时更耐看。64B9 引用更密，A2UI、NLWeb、AGENTS.md 也更清楚，但 Google 的 MCP 支持被标成未表态，协议层对照更粗。对这位用户 MVV7 略有用，差距不大。",
+    "_codes": {
+      "x": "MVV7",
+      "y": "64B9"
+    },
+    "_attr": [
+      7,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "yx"
+}

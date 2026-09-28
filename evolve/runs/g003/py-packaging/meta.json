@@ -1,0 +1,69 @@
+{
+  "exp": "g003",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "grok",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e003/skill",
+  "skill_sha": "73a9549218",
+  "skill_chars": 15318,
+  "status": "crash",
+  "returncode": 1,
+  "minutes": 17.8,
+  "spawns": 6,
+  "followups": 0,
+  "lead_web": 88,
+  "lead_tools": {
+    "list_dir": 2,
+    "read_file": 15,
+    "write": 21,
+    "spawn_subagent": 6,
+    "web_fetch": 88,
+    "search_replace": 136,
+    "get_command_or_subagent_output": 1,
+    "grep": 2,
+    "Web search:": 17,
+    "run_terminal_command": 44
+  },
+  "cost_usd": 19.47,
+  "num_turns": 7,
+  "is_error": true,
+  "terminal_reason": "error_during_execution",
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 0,
+    "len_ok": false,
+    "sections": 0.0,
+    "sections_missing": [
+      "overview",
+      "taxonomy",
+      "matrix",
+      "pitfalls",
+      "open",
+      "sources"
+    ],
+    "golden": 0.0,
+    "golden_missed": [
+      "pep751-final-pylock",
+      "uv-pylock-export-not-replace",
+      "pip-pylock-experimental",
+      "poetry2-project-table-optional",
+      "poetry-lock-file",
+      "pdm-lock-pylock-switch",
+      "pixi-lock-file",
+      "uv-workspace-monorepo",
+      "uv-python-install-pin",
+      "pixi-python-as-conda-package",
+      "uv-build-backend-native",
+      "poetry-build-backend-core"
+    ],
+    "urls": 0,
+    "traceable": 0.0,
+    "notes": {
+      "files": 6,
+      "claims": 170,
+      "claims_ok": 1.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/g003/py-packaging"
+}

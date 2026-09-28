@@ -1,0 +1,77 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "Poetry 2.1.0 起已有实验性 `poetry python install`（下载 python-build-standalone），故「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」及矩阵中「不下载解释器，`env use`从已装版本选」不成立",
+    "「pixi 底层是否为 Resolvo：官方均未公开」有误：prefix.dev 官方博客 The new rattler resolver 就是介绍 resolvo 作为 rattler（pixi 所用）的求解器",
+    "引用编号错位：pip 的 D9「PyPA维护[22]」中 [22] 是 Poetry 的 managing-environments 页；Poetry 的 D7「`run`要求项目内[30]」中 [30] 是 PDM CHANGELOG"
+  ],
+  "errors_y": [
+    "「conda 免费层对大型商业组织不再免费」混淆了 conda 与 Anaconda：200+ 员工付费条款针对 Anaconda 的 defaults 仓库/发行版，conda 本体（BSD 许可）与 conda-forge（如 Miniforge）不受此限",
+    "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」不准确：Poetry 安装文档有 CI recommendations 一节；且 GitHub 官方 actions/setup-python 原生支持 `cache: poetry`，据此得出「Poetry 没有官方 CI 缓存方案」有误导性"
+  ],
+  "reason": "GBTE 在用户点名的迁移/CI 缓存/私有源上细到配置键和 action 选项（如 setup-python `cache: poetry` 实际缓存 venv、setup-miniconda 需 `use-only-tar-bz2`），PEP 751 状态标注更严谨（pip 标 experimental、PDM 可选主格式），且几乎逐格有一手出处。LZVM 开头的两大阵营/世代框架更易建立全局认知，并独有 Poetry 2.1 `poetry python install`、Anaconda 授权、rye 退役等要点，但 CI 结论有误导、授权条款混淆 conda 与 Anaconda、矩阵大量格子无出处。GBTE 的主要硬伤是漏掉 Poetry 的实验性 Python 管理，整体仍略优。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "LZVM",
+      "taxonomy": "LZVM",
+      "coverage": "GBTE",
+      "doubts": "GBTE",
+      "pitfalls": "GBTE",
+      "accuracy": "GBTE",
+      "sourcing": "GBTE",
+      "concision": "tie"
+    },
+    "overall": "GBTE",
+    "strength": 1,
+    "errors": {
+      "GBTE": [
+        "Poetry 2.1.0 起已有实验性 `poetry python install`（下载 python-build-standalone），故「只有 uv、PDM、pixi 能帮你下载/管理 Python 解释器本身」「pip、Poetry 要求 Python 已装好」及矩阵中「不下载解释器，`env use`从已装版本选」不成立",
+        "「pixi 底层是否为 Resolvo：官方均未公开」有误：prefix.dev 官方博客 The new rattler resolver 就是介绍 resolvo 作为 rattler（pixi 所用）的求解器",
+        "引用编号错位：pip 的 D9「PyPA维护[22]」中 [22] 是 Poetry 的 managing-environments 页；Poetry 的 D7「`run`要求项目内[30]」中 [30] 是 PDM CHANGELOG"
+      ],
+      "LZVM": [
+        "「conda 免费层对大型商业组织不再免费」混淆了 conda 与 Anaconda：200+ 员工付费条款针对 Anaconda 的 defaults 仓库/发行版，conda 本体（BSD 许可）与 conda-forge（如 Miniforge）不受此限",
+        "「Poetry 官方文档只给了缓存目录路径，没有 Action、没有 CI 指南」不准确：Poetry 安装文档有 CI recommendations 一节；且 GitHub 官方 actions/setup-python 原生支持 `cache: poetry`，据此得出「Poetry 没有官方 CI 缓存方案」有误导性"
+      ]
+    },
+    "unsure": [
+      "两份都把 uv 的 pylock.toml 支持定在 0.12.x（GBTE「uv 能读(0.12.0+)/导出+hash(0.12.11+)」、LZVM「0.12.11+/0.12.17+」）；印象中 uv 0.6.15（2025-04）已能 `uv export` 到 pylock.toml 并 `uv pip install -r pylock.toml`，不确定这些版本号是否指后续新增能力",
+      "PDM 对 PEP 751：GBTE「可选主格式v2.25.0」「`pdm config lock.format pylock`」与 LZVM「仅导出(v2.26+,opt-in)」「Poetry/PDM 只能\"导出\"到它」冲突；倾向 GBTE 正确，但不确定",
+      "Poetry 对 PEP 751：GBTE「Poetry 未实现，只是无排期的开放 issue #10356」与 LZVM「仅导出(2.3.0+ via plugin)」冲突，无法判断",
+      "LZVM「26.2 进一步增强（`--uploaded-prior-to`、`--only-final`）」：这些选项可能更早（26.0）就已引入；两份所称 pip 26.1 起支持 `pip install -r pylock.toml` 亦无法核实",
+      "两份都称 PDM v2.28 起有实验性 `[tool.pdm.workspace]`，无法核实",
+      "pixi monorepo：GBTE「原生`[environments]`+`[feature]`组合」更像多环境而非多包 workspace；LZVM「原生`[workspace.dependencies]`」「`[tool.pixi.project]`包一层」字段名可能不准或已过时（新版为 `[tool.pixi.workspace]`）",
+      "LZVM「`poetry.lock` v2.0(私有)」：Poetry 2.x 写入的 lock-version 似为 2.1",
+      "GBTE「未公开算法名」（Poetry）：Poetry 的 mixology 求解器源码注明是 PubGrub 移植，是否算官方公开见仁见智",
+      "GBTE「无默认后端，按PEP517/518委托」（pip）：pip 在缺 `[build-system]` 时会回退 setuptools legacy 后端，取决于如何理解“默认”",
+      "LZVM「uv 背后的 Astral 已被 OpenAI 收购」（自注二手信源），是否已完成交割无法核实",
+      "GBTE「26.5+支持读`conda-lock.yaml`/`pixi.lock`」「26.5.0插件化`BaseSolver`」无法核实"
+    ],
+    "reason": "GBTE 在用户点名的迁移/CI 缓存/私有源上细到配置键和 action 选项（如 setup-python `cache: poetry` 实际缓存 venv、setup-miniconda 需 `use-only-tar-bz2`），PEP 751 状态标注更严谨（pip 标 experimental、PDM 可选主格式），且几乎逐格有一手出处。LZVM 开头的两大阵营/世代框架更易建立全局认知，并独有 Poetry 2.1 `poetry python install`、Anaconda 授权、rye 退役等要点，但 CI 结论有误导、授权条款混淆 conda 与 Anaconda、矩阵大量格子无出处。GBTE 的主要硬伤是漏掉 Poetry 的实验性 Python 管理，整体仍略优。",
+    "_codes": {
+      "x": "GBTE",
+      "y": "LZVM"
+    },
+    "_attr": [
+      9,
+      0
+    ]
+  },
+  "task": "py-packaging",
+  "x": "e002/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

@@ -1,0 +1,71 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": 1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "Streamable HTTP 用 SSE 事件 id 与 Last-Event-ID 支持断线后续传，并未取消跨请求恢复。原文作「Streamable HTTP 仍用 SSE 做单次请求内的流式响应，只是取消跨请求恢复」。"
+  ],
+  "errors_y": [
+    "第五节把 ACP-IBM 鉴权细节的出处写成 workos.com 博客并标 [9]，文末 [9] 却是 IBM 官方页。原文作「ACP-IBM 的鉴权细节（capability token、K8s RBAC）仅二手来源（workos.com 博客）[9]」。"
+  ],
+  "reason": "6JP7 把分类轴落到协议连接的两端，四族划分一直用到对照表和 ACP 撞名，开篇就对两个疑点给出结论，大厂支持也写到产品名。8QMP 的一手链接和证据分级更容易核对，A2UI、Claude Code 适配器、Copilot CLI 这类上手会踩的坑也更具体，但 taxonomy 把 AG-UI 与 Zed ACP 并成一层，开篇又把 Google 的 MCP 留成未证实。就这份要快速建立分类和对比的任务，6JP7 略高一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "8QMP",
+      "taxonomy": "6JP7",
+      "coverage": "6JP7",
+      "doubts": "6JP7",
+      "pitfalls": "8QMP",
+      "accuracy": "8QMP",
+      "sourcing": "8QMP",
+      "concision": "6JP7"
+    },
+    "overall": "6JP7",
+    "strength": 1,
+    "errors": {
+      "6JP7": [
+        "Streamable HTTP 用 SSE 事件 id 与 Last-Event-ID 支持断线后续传，并未取消跨请求恢复。原文作「Streamable HTTP 仍用 SSE 做单次请求内的流式响应，只是取消跨请求恢复」。"
+      ],
+      "8QMP": [
+        "第五节把 ACP-IBM 鉴权细节的出处写成 workos.com 博客并标 [9]，文末 [9] 却是 IBM 官方页。原文作「ACP-IBM 的鉴权细节（capability token、K8s RBAC）仅二手来源（workos.com 博客）[9]」。"
+      ]
+    },
+    "unsure": [
+      "6JP7 版本表把 MCP 写成自「2024-10-07」起，同文坑点又把旧 SSE 教程对应到 2024-11-05；不能肯定公开规范里有 2024-10-07 这一版。",
+      "A2A 并入 AAIF 的日期和地位用语对不上：6JP7 为「2026-08-17」hosted project，8QMP 为「2026-08-27」成长期项目。",
+      "A2A 版本 6JP7 写「v1.0.1(2026-05-28)」，8QMP 写「v1.0.0（2026-03-12，生产就绪）」；可能是先后两个发行，也可能有一方把现行版写错。",
+      "6JP7 称 OpenAI 的 AG-UI 为「In Progress」，引用落在 OpenAI 的 MCP/AgentKit 文档上；8QMP 对同一格标「❓」未见表态。",
+      "微软对 Zed ACP：6JP7 写「无直接支持；AHP 可用 ACP 作后端」，8QMP 写 Copilot CLI 于 2026-01-28 以「copilot --acp」进入 public preview。",
+      "6JP7 分类表把 AGNTCY ACP 标成「✝→A2A」，第五节又承认没有官方弃用声明、该结论是推断。",
+      "6JP7「相关 SEP 转正后 3 个月即可移除」以及 AG-UI「刚融完 A 轮」未能核对。",
+      "8QMP 写 Google「未查到明确的 MCP 支持声明」；若 Google Cloud / ADK 确有官方 MCP 材料，这是漏检，句子本身只是在报告检索结果。",
+      "8QMP 的 ACP-Zed 鉴权链到 protocol/v2，版本栏又写「协议版本 1」；6JP7 称 v2 为 alpha，可能把草案写成了现行。",
+      "A2A 传输 6JP7 写「JSON-RPC 2.0／gRPC／HTTP+REST 三选一」，8QMP 写 JSON-RPC over HTTP(S) 加 SSE 与 webhook；不能肯定三种绑定是否都已是正式可选项。",
+      "8QMP 开篇写「没有厂商发布第五个独立协议」，后文又称 A2UI 为「独立声明式 UI 协议」。"
+    ],
+    "reason": "6JP7 把分类轴落到协议连接的两端，四族划分一直用到对照表和 ACP 撞名，开篇就对两个疑点给出结论，大厂支持也写到产品名。8QMP 的一手链接和证据分级更容易核对，A2UI、Claude Code 适配器、Copilot CLI 这类上手会踩的坑也更具体，但 taxonomy 把 AG-UI 与 Zed ACP 并成一层，开篇又把 Google 的 MCP 留成未证实。就这份要快速建立分类和对比的任务，6JP7 略高一筹。",
+    "_codes": {
+      "x": "6JP7",
+      "y": "8QMP"
+    },
+    "_attr": [
+      1,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000b/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

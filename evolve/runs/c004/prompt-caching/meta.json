@@ -1,0 +1,63 @@
+{
+  "exp": "c004",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e004/skill",
+  "skill_sha": "be9c5f18ca",
+  "skill_chars": 15239,
+  "status": "crash",
+  "returncode": 1,
+  "minutes": 3.5,
+  "spawns": 6,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 2,
+    "Read": 3,
+    "Write": 3,
+    "Agent": 6
+  },
+  "cost_usd": 1.0183715000000002,
+  "num_turns": 1,
+  "is_error": true,
+  "terminal_reason": "api_error",
+  "rate_limit_lines": 22,
+  "mech": {
+    "chars": 0,
+    "len_ok": false,
+    "sections": 0.0,
+    "sections_missing": [
+      "overview",
+      "taxonomy",
+      "matrix",
+      "pitfalls",
+      "open",
+      "sources"
+    ],
+    "golden": 0.0,
+    "golden_missed": [
+      "openai-implicit-baseline",
+      "openai-gpt56-pricing",
+      "anthropic-auto-and-manual",
+      "anthropic-cache-pricing",
+      "anthropic-cache-ttl",
+      "gemini-implicit-default",
+      "gemini-min-tokens",
+      "deepseek-disk-cache-automatic",
+      "deepseek-hit-miss-fields",
+      "kimi-automatic-ttl",
+      "qwen-implicit-cache",
+      "openrouter-provider-varies"
+    ],
+    "urls": 0,
+    "traceable": 0.0,
+    "notes": {
+      "files": 0,
+      "claims": 0,
+      "claims_ok": 0.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/c004/prompt-caching"
+}

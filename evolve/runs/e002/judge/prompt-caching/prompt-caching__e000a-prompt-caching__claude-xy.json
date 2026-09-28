@@ -1,0 +1,76 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Gemini 用 `usageMetadata.total_cached_tokens`」：generateContent 的 usageMetadata 里没有这个字段，命中字段是 `cachedContentTokenCount`，这里把两套 API 的字段名拼成了一个不存在的路径",
+    "「OpenRouter 官方表里 OpenAI 那一行写的是 0.25x–0.5x」「部分数字比厂商直连价更贵，可能是加成」：0.25x–0.5x 就是 OpenAI 旧模型直连的缓存读价（GPT-4o 0.5x、GPT-4.1/o 系 0.25x），拿它和 GPT-5 系的 0.1x 比较，再推断出网关可能加价，是错误对比；OpenRouter 的推理价格按上游原价透传"
+  ],
+  "errors_y": [
+    "「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是请求的总 token 数，不能用来判断是否命中。Gemini generateContent 不论隐式还是显式缓存，都看 `usageMetadata.cachedContentTokenCount`，按隐式/显式分成两个字段也不对",
+    "「双轨（自动兜底+手动/显式可选）：OpenAI(仅5.6+)、Anthropic、Gemini、通义千问」：Anthropic 没有零改动的兜底缓存，不加 `cache_control`（顶层或块级）就不会缓存，这一点文中自己也写了需要顶层 `cache_control`，把它归进「自动兜底」不准确"
+  ],
+  "reason": "UZL6 的一屏总结更利落，分类以「分类」列的形式贯穿矩阵，对照粒度到了字段路径、参数名和价格数值，踩坑清单也更好操作：隐藏参数导致失效、断点上限、回本估算、Azure/Bedrock/百炼等平台差异都有，整体更实用。HKMT 对「Anthropic 是否还要手动」的回答更精确（仍需一个顶层字段），不确定性标注也更系统，但把对 OpenRouter 加价的误判放在头条，又在四处重复。两份在 Gemini 命中字段上都有错，所以 UZL6 只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "UZL6",
+      "taxonomy": "UZL6",
+      "coverage": "UZL6",
+      "doubts": "HKMT",
+      "pitfalls": "UZL6",
+      "accuracy": "tie",
+      "sourcing": "HKMT",
+      "concision": "tie"
+    },
+    "overall": "UZL6",
+    "strength": 1,
+    "errors": {
+      "HKMT": [
+        "「Gemini 用 `usageMetadata.total_cached_tokens`」：generateContent 的 usageMetadata 里没有这个字段，命中字段是 `cachedContentTokenCount`，这里把两套 API 的字段名拼成了一个不存在的路径",
+        "「OpenRouter 官方表里 OpenAI 那一行写的是 0.25x–0.5x」「部分数字比厂商直连价更贵，可能是加成」：0.25x–0.5x 就是 OpenAI 旧模型直连的缓存读价（GPT-4o 0.5x、GPT-4.1/o 系 0.25x），拿它和 GPT-5 系的 0.1x 比较，再推断出网关可能加价，是错误对比；OpenRouter 的推理价格按上游原价透传"
+      ],
+      "UZL6": [
+        "「显式`usageMetadata.totalTokenCount`」：totalTokenCount 是请求的总 token 数，不能用来判断是否命中。Gemini generateContent 不论隐式还是显式缓存，都看 `usageMetadata.cachedContentTokenCount`，按隐式/显式分成两个字段也不对",
+        "「双轨（自动兜底+手动/显式可选）：OpenAI(仅5.6+)、Anthropic、Gemini、通义千问」：Anthropic 没有零改动的兜底缓存，不加 `cache_control`（顶层或块级）就不会缓存，这一点文中自己也写了需要顶层 `cache_control`，把它归进「自动兜底」不准确"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式两份直接冲突：HKMT「默认自动…无手动断点概念」，UZL6「纯手动，须传`prompt_cache_options`…或`cache_control`」",
+      "智谱命中价冲突：HKMT「~0.5x…折扣最小的一家」，UZL6「≈0.25x（2元 vs 8元/M）」；我记得 z.ai 上 GLM 系列缓存价一直约为输入价的 0.2x，所以更倾向 HKMT 有误",
+      "HKMT「Chat Completions 靠 `prompt_cache_options` 参数」，这和「enabled by default」矛盾，可能是把 Kimi 的参数混了进来",
+      "OpenAI TTL：HKMT「30分钟（新模型）」是固定值，UZL6 则是「≥30分钟；2026-05后非ZDR组织默认24h」",
+      "UZL6 DeepSeek「$0.014 vs $0.14/M」引用的是 2024 年公告，可能是旧价",
+      "智谱存储：HKMT「存储限时免费」，UZL6「另计存储费(元/M/小时)」，UZL6 没提现阶段免费",
+      "HKMT 说 Anthropic「纯内存」，UZL6 说官方未公开存储介质",
+      "Gemini 最小长度两份都说 2048 起（HKMT「implicit 2048–4096」、UZL6「2048(2.5)」），和我记得的 2.5 Flash 1024 不一致",
+      "HKMT「implicit官方未给%」：Gemini 定价页的 context caching 价通常也适用于隐式命中（UZL6「0.1x，隐式显式一致」）",
+      "UZL6 Kimi「按标准价写入」和「2次命中回本」自相矛盾，也和 HKMT 的「$6/M(1h)」对不上",
+      "UZL6 中这几条无法核实：Bedrock「新增Implicit(全自动)」、「Opus 4.6及更早不支持自动缓存」、Azure「PTU-M不支持」、OpenRouter「`session_id`做粘性路由」",
+      "截止日期之后的新模型和新价格无法核实：Fable5.1/Mythos5.1 0.025x、Opus5.5 0.05x、GPT-5.6 `prompt_cache_breakpoint`、OpenAI 写入 1.25x、Gemini 存储费 2027 年涨价"
+    ],
+    "reason": "UZL6 的一屏总结更利落，分类以「分类」列的形式贯穿矩阵，对照粒度到了字段路径、参数名和价格数值，踩坑清单也更好操作：隐藏参数导致失效、断点上限、回本估算、Azure/Bedrock/百炼等平台差异都有，整体更实用。HKMT 对「Anthropic 是否还要手动」的回答更精确（仍需一个顶层字段），不确定性标注也更系统，但把对 OpenRouter 加价的误判放在头条，又在四处重复。两份在 Gemini 命中字段上都有错，所以 UZL6 只是略胜。",
+    "_codes": {
+      "x": "HKMT",
+      "y": "UZL6"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

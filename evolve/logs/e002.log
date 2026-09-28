@@ -1,0 +1,4 @@
+[run] e002/agent-protocols: ok, 20.4 min, 8995 chars, golden 0.8, spawns 11, $7.482014200000007
+[run] e002/prompt-caching: ok, 23.5 min, 7959 chars, golden 0.833, spawns 11, $5.930382100000001
+[run] e002/py-packaging: ok, 23.9 min, 8999 chars, golden 1.0, spawns 10, $6.892600700000002
+[judge] e002 vs e000a,e000b: 24 verdicts to collect

@@ -1,0 +1,18 @@
+[judge] e000b vs e000a: 8 verdicts to collect
+---
+exp:          e000b
+vs:           e000a
+score:        +0.500
+task_scores:  prompt-caching:+0.500 py-packaging:+0.500
+wins:         2/2  (verdicts 8)
+dims_net:     orientation:+3 taxonomy:+5 coverage:-1 doubts:+5 pitfalls:-2 accuracy:+0 sourcing:-5 concision:+3
+golden:       0.916  (vs 1.0)
+chars_max:    8010
+len_ok:       2/2
+traceable:    1.0
+spawns:       12.0
+lead_web:     0
+cost_usd:     15.35  (vs per run 6.535)
+minutes:      23.2
+skill_chars:  13564
+statuses:     {'ok': 2}

@@ -1,0 +1,340 @@
+{
+ "task_id": "structured-outputs",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "openai-strict-vs-json-mode",
+   "claim": "OpenAI 的 Structured Outputs（strict + json_schema）保证输出符合所给 JSON Schema；而 JSON mode（json_object）只保证输出是合法 JSON，不保证符合 schema。",
+   "groups": [
+    [
+     "json_schema",
+     "strict"
+    ],
+    [
+     "json_object",
+     "JSON mode",
+     "json mode",
+     "JSON Mode"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "While both ensure valid JSON is produced, only Structured Outputs ensure schema adherence."
+  },
+  {
+   "id": "openai-all-fields-required",
+   "claim": "OpenAI strict 模式要求 properties 里声明的每个字段都必须列进 required，没有传统意义的可选字段；想要可选语义只能用 [type, \"null\"] 这类可空联合类型来模拟。",
+   "groups": [
+    [
+     "required"
+    ],
+    [
+     "null",
+     "nullable",
+     "可空",
+     "optional",
+     "可选"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "To use Structured Outputs, all fields or function parameters must be specified as `required`."
+  },
+  {
+   "id": "openai-additional-properties-false",
+   "claim": "OpenAI strict 模式要求每个 object（含嵌套对象）都必须显式设 additionalProperties: false，否则 schema 会被拒。",
+   "groups": [
+    [
+     "additionalProperties"
+    ],
+    [
+     "false"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "Structured Outputs only supports generating specified keys / values, so we require developers to set `additionalProperties: false` to opt into Structured Outputs."
+  },
+  {
+   "id": "openai-unsupported-composition",
+   "claim": "OpenAI strict 只支持 JSON Schema 子集：allOf、not、if/then/else、dependentRequired、dependentSchemas 等组合/条件关键字不支持，且根 schema 必须是 object、顶层不能用 anyOf（Zod discriminated union 会直接报错）。",
+   "groups": [
+    [
+     "allOf"
+    ],
+    [
+     "anyOf"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "Some type-specific keywords are not yet supported - Composition: `allOf`, `not`, `dependentRequired`, `dependentSchemas`, `if`, `then`, `else`"
+  },
+  {
+   "id": "openai-schema-size-limits",
+   "claim": "OpenAI 对 strict schema 有硬上限：整个 schema 最多 5000 个 object 属性、最多 10 层嵌套，属性名/定义名/枚举值/const 合计不超过 120,000 字符。",
+   "groups": [
+    [
+     "5000",
+     "5,000"
+    ],
+    [
+     "10",
+     "10 层",
+     "10 levels",
+     "10-layer",
+     "ten levels"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "A schema may have up to 5000 object properties total, with up to 10 levels of nesting."
+  },
+  {
+   "id": "openai-key-ordering",
+   "claim": "OpenAI Structured Outputs 会按 schema 里 properties 键的顺序生成输出字段，可以刻意把要先展示的字段排在前面。",
+   "groups": [
+    [
+     "same order",
+     "ordering",
+     "顺序",
+     "键序",
+     "按顺序"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "When using Structured Outputs, outputs will be produced in the same order as the ordering of keys in the schema."
+  },
+  {
+   "id": "openai-streaming-supported",
+   "claim": "OpenAI 的 strict Structured Outputs 可以和 streaming 一起用：流式增量拼出的最终文本仍然符合 schema，官方建议走 SDK 的流式解析。",
+   "groups": [
+    [
+     "stream",
+     "streaming",
+     "流式"
+    ]
+   ],
+   "hosts": [
+    "developers.openai.com",
+    "platform.openai.com"
+   ],
+   "source": "https://developers.openai.com/api/docs/guides/structured-outputs",
+   "quote": "You can use streaming to process model responses or function call arguments as they are being generated, and parse them as structured data."
+  },
+  {
+   "id": "anthropic-native-output-config",
+   "claim": "Anthropic 已有正式的结构化输出能力，不再只能靠 tool use 硬凑：响应用 output_config.format（type: json_schema）约束，工具参数用 strict: true 保证校验；beta 期的 output_format 参数和 beta header 已迁移/不再必需。",
+   "groups": [
+    [
+     "output_config",
+     "output_format"
+    ],
+    [
+     "strict"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+   "quote": "The `output_format` parameter has moved to `output_config.format`, and beta headers are no longer required."
+  },
+  {
+   "id": "anthropic-optional-properties-ordering",
+   "claim": "Anthropic 的结构化输出允许真正的可选字段（不要求所有 properties 都进 required），字段顺序是 required 在前、optional 在后。",
+   "groups": [
+    [
+     "required"
+    ],
+    [
+     "optional",
+     "可选"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+   "quote": "properties in objects maintain their defined ordering from your schema, with one important caveat: required properties appear first, followed by optional properties"
+  },
+  {
+   "id": "anthropic-subset-gaps",
+   "claim": "Anthropic 的 schema 子集和 OpenAI 不完全一样：不支持递归 schema、不支持外部 $ref（本地 $ref/$def 可以）、不支持 minimum/maximum/multipleOf 数值约束和 minLength/maxLength 字符串约束。",
+   "groups": [
+    [
+     "recursive",
+     "递归",
+     "external $ref",
+     "外部 $ref",
+     "外部$ref"
+    ],
+    [
+     "minimum",
+     "maximum",
+     "minLength",
+     "maxLength",
+     "multipleOf",
+     "数值约束"
+    ]
+   ],
+   "hosts": [
+    "platform.claude.com",
+    "docs.claude.com",
+    "docs.anthropic.com"
+   ],
+   "source": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+   "quote": "Not supported: Recursive schemas; Complex types within enums; External `$ref`; Numerical constraints (such as `minimum`, `maximum`, `multipleOf`); String constraints (`minLength`, `maxLength`)"
+  },
+  {
+   "id": "gemini-response-json-schema",
+   "claim": "Gemini 在旧的 OpenAPI 3.0 子集 responseSchema 之外新增了 responseJsonSchema，接受标准 JSON Schema（支持 anyOf、$ref 递归、prefixItems、additionalProperties、type:null 等），已覆盖所有在支持的 Gemini 模型（2.5 系列及以后），也适用于 OpenAI 兼容接口。",
+   "groups": [
+    [
+     "responseJsonSchema",
+     "response_json_schema"
+    ],
+    [
+     "$ref",
+     "anyOf",
+     "prefixItems",
+     "Pydantic",
+     "Zod"
+    ]
+   ],
+   "hosts": [
+    "ai.google.dev",
+    "blog.google"
+   ],
+   "source": "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-api-structured-outputs/",
+   "quote": "We've now added support for JSON Schema to all actively supported Gemini models."
+  },
+  {
+   "id": "gemini-property-ordering",
+   "claim": "Gemini 2.5 及以后输出保持 schema 键序，不需要额外操作；只有老的 Gemini 2.0 需要显式写 propertyOrdering 列表来指定字段顺序。",
+   "groups": [
+    [
+     "propertyOrdering"
+    ],
+    [
+     "2.0",
+     "Gemini 2.0",
+     "gemini-2.0",
+     "2.0 系"
+    ]
+   ],
+   "hosts": [
+    "ai.google.dev"
+   ],
+   "source": "https://ai.google.dev/gemini-api/docs/generate-content/structured-output",
+   "quote": "Gemini 2.0 requires an explicit `propertyOrdering` list within the JSON input to define the preferred structure."
+  },
+  {
+   "id": "deepseek-json-object-valid-only",
+   "claim": "DeepSeek 的 JSON Output（response_format: {\"type\": \"json_object\"}）只保证输出是合法 JSON 字符串，不做 schema 级强制，字段对不对要自己在应用层校验。",
+   "groups": [
+    [
+     "json_object"
+    ],
+    [
+     "valid JSON",
+     "合法 JSON",
+     "合法的 JSON",
+     "合法JSON",
+     "valid json",
+     "语法"
+    ]
+   ],
+   "hosts": [
+    "api-docs.deepseek.com"
+   ],
+   "source": "https://api-docs.deepseek.com/guides/json_mode/",
+   "quote": "DeepSeek provides JSON Output to ensure the model outputs valid JSON strings."
+  },
+  {
+   "id": "deepseek-prompt-must-contain-json",
+   "claim": "用 DeepSeek JSON Output 时官方要求 system 或 user prompt 里必须包含单词 \"json\"，并建议给出期望 JSON 的示例格式；max_tokens 太小会把 JSON 截断。",
+   "groups": [
+    [
+     "json"
+    ],
+    [
+     "prompt",
+     "提示词",
+     "提示",
+     "system prompt",
+     "user prompt"
+    ]
+   ],
+   "hosts": [
+    "api-docs.deepseek.com"
+   ],
+   "source": "https://api-docs.deepseek.com/guides/json_mode/",
+   "quote": "Include the word \"json\" in the system or user prompt"
+  },
+  {
+   "id": "xai-implicit-strict-tools",
+   "claim": "xAI Grok 的 response_format json_schema 在使用受支持 schema 特性时保证输出匹配 schema；工具调用的 schema 始终被强制，strict 旗标隐式恒为 true。",
+   "groups": [
+    [
+     "implicitly",
+     "implicit",
+     "隐式",
+     "默认",
+     "always",
+     "恒"
+    ],
+    [
+     "strict"
+    ]
+   ],
+   "hosts": [
+    "docs.x.ai"
+   ],
+   "source": "https://docs.x.ai/developers/model-capabilities/text/structured-outputs",
+   "quote": "the `strict` flag is implicitly always `true`"
+  },
+  {
+   "id": "mistral-json-schema-mode",
+   "claim": "Mistral 区分两档：response_format json_object 只保证合法 JSON，json_schema 才保证输出遵循所给 schema。",
+   "groups": [
+    [
+     "json_schema"
+    ],
+    [
+     "json_object"
+    ]
+   ],
+   "hosts": [
+    "docs.mistral.ai"
+   ],
+   "source": "https://docs.mistral.ai/api/",
+   "quote": "enables JSON schema mode, which guarantees the message the model generates is in JSON and follows the schema you provide"
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（参数名、schema 关键字、版本号）或中英双写；所有 quote 均为 2026-09-24 打开官方文档逐字摘抄。"
+}

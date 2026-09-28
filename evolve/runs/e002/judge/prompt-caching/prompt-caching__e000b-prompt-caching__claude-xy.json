@@ -1,0 +1,81 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": -1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "Gemini 命中字段写成「usageMetadata.total_cached_tokens」：generateContent 的 usageMetadata 里叫 cachedContentTokenCount，total_cached_tokens 是 Interactions API 的 usage 字段，这个拼接出来的路径在两个 API 里都没有",
+    "OpenRouter 一行写「官方给分供应商倍率表，未声明\"不加价\"⚔」，§0/§4 还让用户核对「是否比直连贵」：OpenRouter 官方 FAQ 明确说透传上游价格、推理不加价；缓存文档里 OpenAI 的 0.25x–0.5x 是 GPT-4o/4.1 时代没更新的旧倍率，不是加价的迹象，整条提醒是误导",
+    "自相矛盾：§4 说「自动触发的厂商没有手动断点可补救」，可自己的矩阵里 OpenAI（自动触发）写着「可选最多3显式断点」"
+  ],
+  "errors_y": [
+    "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」，矩阵里「GPT-5.5及更早」也写 0.5x：GPT-5/5.1/5.2 的缓存输入本来就是 0.1x（GPT-5 $1.25→$0.125），GPT-4.1、o3 是 0.25x，只有 GPT-4o 一代才是 0.5x",
+    "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步」：2025-03-13 那次 token-saving 更新是『自动读取最长已缓存前缀 + cache-aware 限速』，仍然要逐块打断点；顶层单个 cache_control、自动放置断点是后来才有的功能，日期张冠李戴",
+    "自相矛盾：§0 说「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起」，矩阵里 Kimi 却是「5m档=标准价」；§0 说「DeepSeek、智谱写入不加价」，矩阵和 §5 却写智谱写入费「∅官方未详述」"
+  ],
+  "reason": "5FJ4 的一屏总结更完整、更好扫读，F1/F2/F3 家族贯穿矩阵，OpenAI 按代际拆开，OpenRouter 的「不加价」和粘性路由条件也写对了，踩坑清单更可操作；4B2X 的来源最扎实（逐行引用、缺口/冲突标记、分清官方与推断），对 Anthropic 那个疑点的回答也更可信，但把 OpenRouter 误读成可能加价、Gemini 字段路径写错，总结里过程性的赘述也多。两份各有约两处确信错误（5FJ4 是 OpenAI 旧款 0.5x、自动缓存日期），整体实用价值 5FJ4 略高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "5FJ4",
+      "taxonomy": "5FJ4",
+      "coverage": "5FJ4",
+      "doubts": "4B2X",
+      "pitfalls": "5FJ4",
+      "accuracy": "4B2X",
+      "sourcing": "4B2X",
+      "concision": "5FJ4"
+    },
+    "overall": "5FJ4",
+    "strength": 1,
+    "errors": {
+      "4B2X": [
+        "Gemini 命中字段写成「usageMetadata.total_cached_tokens」：generateContent 的 usageMetadata 里叫 cachedContentTokenCount，total_cached_tokens 是 Interactions API 的 usage 字段，这个拼接出来的路径在两个 API 里都没有",
+        "OpenRouter 一行写「官方给分供应商倍率表，未声明\"不加价\"⚔」，§0/§4 还让用户核对「是否比直连贵」：OpenRouter 官方 FAQ 明确说透传上游价格、推理不加价；缓存文档里 OpenAI 的 0.25x–0.5x 是 GPT-4o/4.1 时代没更新的旧倍率，不是加价的迹象，整条提醒是误导",
+        "自相矛盾：§4 说「自动触发的厂商没有手动断点可补救」，可自己的矩阵里 OpenAI（自动触发）写着「可选最多3显式断点」"
+      ],
+      "5FJ4": [
+        "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」，矩阵里「GPT-5.5及更早」也写 0.5x：GPT-5/5.1/5.2 的缓存输入本来就是 0.1x（GPT-5 $1.25→$0.125），GPT-4.1、o3 是 0.25x，只有 GPT-4o 一代才是 0.5x",
+        "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步」：2025-03-13 那次 token-saving 更新是『自动读取最长已缓存前缀 + cache-aware 限速』，仍然要逐块打断点；顶层单个 cache_control、自动放置断点是后来才有的功能，日期张冠李戴",
+        "自相矛盾：§0 说「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起」，矩阵里 Kimi 却是「5m档=标准价」；§0 说「DeepSeek、智谱写入不加价」，矩阵和 §5 却写智谱写入费「∅官方未详述」"
+      ]
+    },
+    "unsure": [
+      "4B2X「Chat Completions 靠 `prompt_cache_options` 参数」：我知道的只有 prompt_cache_key/prompt_cache_retention，Chat Completions 默认就自动缓存，不需要这个参数",
+      "4B2X「即使 OpenAI 的自动缓存，首次写入也要多付 1.25x」没按模型代际区分，旧款 OpenAI 模型一向不收写入费",
+      "5FJ4 DeepSeek「命中价约为原价的2%左右」「约0.02x」跟 4B2X 的 0.1x 对不上；「因架构升级价格本身很低」这个理由也说不通（基础价低不会改变命中价的倍率）",
+      "5FJ4「Bedrock 上的 Claude 多了一条不需要 `cache_control` 的 Implicit Prompt Caching 通道」无法核实",
+      "5FJ4 Gemini「`usage.total_cached_tokens`」只在 Interactions API 里成立，generateContent 用的是 usageMetadata.cachedContentTokenCount，文档没说明是哪个 API",
+      "两份都说智谱命中约 0.5x；z.ai 国际站的缓存价看着更像约 0.2x",
+      "4B2X 通义千问行最小长度写「1024 token」，没区分模式，隐式缓存的门槛可能更低（256）",
+      "Gemini 最小长度：4B2X「explicit 1024–4096；implicit 2048–4096」vs 5FJ4「2048-4096按模型」，两种模式的最小长度通常是同一套，数值不确定",
+      "智谱 TTL：5FJ4「5min自动刷新」vs 4B2X「官方未给∅」，互相冲突",
+      "4B2X 用 [4] token-saving-updates（2025-03 的文章）来支撑「0.025x（自 2026-09-01）」，引用对不上号",
+      "OpenAI 新模型固定 30 分钟 TTL、1.25x 写入费、显式断点（`prompt_cache_breakpoint`/最多3个），Anthropic 0.025x、512 token 最小长度，Gemini $0.5/M/h 存储费——都在我的知识截止之后，无法核实",
+      "5FJ4 OpenRouter sticky「10分钟无活动后失效」、「上游报错也不会更新」",
+      "Kimi 写入价：4B2X「$3/M(5min)或$6/M(1h)」vs 5FJ4「5m档=标准价;1h档=2x」；如果基础价是 $3，两者其实一致，那 4B2X 把 Kimi 归进「有溢价」就是自相矛盾"
+    ],
+    "reason": "5FJ4 的一屏总结更完整、更好扫读，F1/F2/F3 家族贯穿矩阵，OpenAI 按代际拆开，OpenRouter 的「不加价」和粘性路由条件也写对了，踩坑清单更可操作；4B2X 的来源最扎实（逐行引用、缺口/冲突标记、分清官方与推断），对 Anthropic 那个疑点的回答也更可信，但把 OpenRouter 误读成可能加价、Gemini 字段路径写错，总结里过程性的赘述也多。两份各有约两处确信错误（5FJ4 是 OpenAI 旧款 0.5x、自动缓存日期），整体实用价值 5FJ4 略高。",
+    "_codes": {
+      "x": "4B2X",
+      "y": "5FJ4"
+    },
+    "_attr": [
+      13,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e002/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

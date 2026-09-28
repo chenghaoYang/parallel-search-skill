@@ -1,0 +1,81 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 0,
+    "sourcing": 1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「Google 是 A2A 发起方，ACP-Zed/AG-UI 也有官方确认，但未查到明确的 MCP 声明」以及矩阵里的「❓ 未查到官方 MCP 支持声明」（图例中❓=已查证官方渠道、未见表态）：Google 早已官方支持 MCP，Gemini API/SDK、ADK 的 MCP 工具集、Gemini CLI、Google Cloud 托管 MCP 服务器都有一手文档",
+    "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」：按文中自己给的日期（2025-06-23 到 2026-08-27）算约 14 个月，应为一年多，不是近一年",
+    "「仅二手来源（workos.com 博客）[9]」：文末 [9] 指向的是 ibm.com/think 页面，引用和所说的来源对不上",
+    "「在社区语境里基本特指 Zed 版」：没有考虑 OpenAI 与 Stripe 在 2025-09 发布、同样简称 ACP 的 Agentic Commerce Protocol"
+  ],
+  "errors_y": [
+    "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」：MCP 规范写明授权整体为 OPTIONAL，stdio 传输不应走该流程、改从环境取凭据，说「强制」是夸大",
+    "第 0 节说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑 4 却让读者「判断兼容性看运行时 `protocolVersion` 协商结果」，前后矛盾",
+    "「⚠Gemini CLI首个集成方(Zed页列出)」：按它自己的图例，⚠=仅二手，但 Gemini CLI 是 Google 自家仓库原生实现的 ACP，属于一手证据",
+    "「指的基本是还活着的 Zed 这个」：没有考虑 OpenAI 与 Stripe 的 Agentic Commerce Protocol，它同样简称 ACP"
+  ],
+  "reason": "5ZMH 对协议本身的对比明显更深：核心抽象、状态、版本语义、成熟度等维度都覆盖到，坑也更能直接照做（按域名和仓库区分两个 ACP、MCP 2026-07-28 去掉会话、日期版本号不是 semver），大厂矩阵里 MCP 获四家支持这一关键事实也是对的。42JC 开头一屏更容易建立全局，对 SSE 的细微差别讲得更准，来源 URL 完整，列出的自家变体（AGENTS.md/NLWeb/A2UI）也更贴题；但它把 Google 的 MCP 支持标成❓，是核心交付物里的明显漏洞。5ZMH 自己也有问题：OAuth「强制」说法夸大、协商问题前后矛盾，两份都漏掉了第三个 ACP（Agentic Commerce Protocol），所以 5ZMH 只是略胜。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "42JC",
+      "taxonomy": "5ZMH",
+      "coverage": "5ZMH",
+      "doubts": "42JC",
+      "pitfalls": "5ZMH",
+      "accuracy": "tie",
+      "sourcing": "42JC",
+      "concision": "42JC"
+    },
+    "overall": "5ZMH",
+    "strength": 1,
+    "errors": {
+      "42JC": [
+        "「Google 是 A2A 发起方，ACP-Zed/AG-UI 也有官方确认，但未查到明确的 MCP 声明」以及矩阵里的「❓ 未查到官方 MCP 支持声明」（图例中❓=已查证官方渠道、未见表态）：Google 早已官方支持 MCP，Gemini API/SDK、ADK 的 MCP 工具集、Gemini CLI、Google Cloud 托管 MCP 服务器都有一手文档",
+        "「A2A 则在此前独立挂牌 Linux Foundation 近一年后，于 2026-08-27」：按文中自己给的日期（2025-06-23 到 2026-08-27）算约 14 个月，应为一年多，不是近一年",
+        "「仅二手来源（workos.com 博客）[9]」：文末 [9] 指向的是 ibm.com/think 页面，引用和所说的来源对不上",
+        "「在社区语境里基本特指 Zed 版」：没有考虑 OpenAI 与 Stripe 在 2025-09 发布、同样简称 ACP 的 Agentic Commerce Protocol"
+      ],
+      "5ZMH": [
+        "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」：MCP 规范写明授权整体为 OPTIONAL，stdio 传输不应走该流程、改从环境取凭据，说「强制」是夸大",
+        "第 0 节说 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑 4 却让读者「判断兼容性看运行时 `protocolVersion` 协商结果」，前后矛盾",
+        "「⚠Gemini CLI首个集成方(Zed页列出)」：按它自己的图例，⚠=仅二手，但 Gemini CLI 是 Google 自家仓库原生实现的 ACP，属于一手证据",
+        "「指的基本是还活着的 Zed 这个」：没有考虑 OpenAI 与 Stripe 的 Agentic Commerce Protocol，它同样简称 ACP"
+      ]
+    },
+    "unsure": [
+      "ACP-IBM 并入 A2A／归档的日期：42JC 写「2025-08-27」，5ZMH 写「2025-08-25」，不确定哪个对",
+      "ACP-Zed 版本：42JC 写「v1.9.1（2026-09-18）」，5ZMH 写「包版本v0.13.6(预1.0)」，两者互相矛盾，无法核实",
+      "5ZMH「MCP 2026-07-28 变成了彻底无状态协议」（删除 Mcp-Session-Id）、「SEP-2596」、「至少12个月弃用窗口」晚于我的知识范围，无法核实",
+      "5ZMH「日期版：2024-10-07→2026-07-28」：2024-10-07 只是发布前的内部版本号，首个公开规范是 2024-11-05",
+      "5ZMH 状态行对 ACP-Zed 写「客户端存会话线程」：ACP 中会话历史一般由 agent 持有（session/load 由 agent 回放）",
+      "5ZMH 状态行对 AG-UI 写「前端只管展示」：AG-UI 客户端会在 RunAgentInput 中提交 messages/state/tools，还支持前端工具和双向状态同步",
+      "42JC ACP-IBM 传输写作「REST/JSON-RPC over HTTP、WebSocket」：ACP 最终版是 REST，JSON-RPC/WebSocket 可能来自早期草案",
+      "42JC「Gemini CLI 原生 `--acp`」：该参数最初叫 `--experimental-acp`，是否已经改名不确定",
+      "42JC「计划移交独立基金会（不是 AAIF）」中「不是 AAIF」是否为官方原话不确定；5ZMH 的「VS Code被Zed页列为受支持编辑器」「Claude Managed Agents」、RFC 9207 是否已写进 MCP 授权规范，也都没能确认"
+    ],
+    "reason": "5ZMH 对协议本身的对比明显更深：核心抽象、状态、版本语义、成熟度等维度都覆盖到，坑也更能直接照做（按域名和仓库区分两个 ACP、MCP 2026-07-28 去掉会话、日期版本号不是 semver），大厂矩阵里 MCP 获四家支持这一关键事实也是对的。42JC 开头一屏更容易建立全局，对 SSE 的细微差别讲得更准，来源 URL 完整，列出的自家变体（AGENTS.md/NLWeb/A2UI）也更贴题；但它把 Google 的 MCP 支持标成❓，是核心交付物里的明显漏洞。5ZMH 自己也有问题：OAuth「强制」说法夸大、协商问题前后矛盾，两份都漏掉了第三个 ACP（Agentic Commerce Protocol），所以 5ZMH 只是略胜。",
+    "_codes": {
+      "x": "42JC",
+      "y": "5ZMH"
+    },
+    "_attr": [
+      10,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

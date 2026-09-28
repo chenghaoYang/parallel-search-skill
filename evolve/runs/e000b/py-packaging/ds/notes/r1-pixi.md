@@ -1,0 +1,43 @@
+# r1-pixi
+question: pixi 官方文档在 (D1) 项目元数据 pixi.toml vs pyproject.toml，(D2) pixi.lock 格式和平台覆盖，(D3) PEP 751 支持，(D4) Python 版本管理，(D5) 环境管理机制，(D6) workspace/monorepo 机制，(D8) 非 Python 二进制依赖，(D9) 私有源认证，(D10) 官方 CI 缓存方案等方面怎么说
+checked: https://pixi.prefix.dev/latest/reference/pixi_manifest/,https://pixi.prefix.dev/latest/python/pyproject_toml/,https://pixi.prefix.dev/latest/workspace/lock_file/,https://pixi.prefix.dev/latest/workspace/multi_environment/,https://pixi.prefix.dev/latest/deployment/authentication/,https://pixi.prefix.dev/latest/integration/ci/github_actions/,https://github.com/prefix-dev/pixi
+
+## claims
+- [C1] pixi 支持两种配置格式：pixi.toml 或 pyproject.toml；pixi.toml 更适合非 Python 项目，pyproject.toml 适合 Python 项目 | src: https://pixi.prefix.dev/latest/python/pyproject_toml/ | quote: "Pixi does not advise using the pyproject.toml file for anything else than Python projects, as the pixi.toml is better suited for other types of projects" | type: official
+- [C2] pyproject.toml 中使用 [tool.pixi] 表前缀（如 [tool.pixi.workspace]），内部结构与 pixi.toml 相同 | src: https://pixi.prefix.dev/latest/python/pyproject_toml/ | quote: "Pixi also supports the pyproject.toml file. It has the same structure as the pixi.toml file, except that you need to prepend the tables with tool.pixi" | type: official
+- [C3] pixi 运行 init 时自动在既有 pyproject.toml 中添加 [tool.pixi.workspace] 并注册当前项目为可编辑依赖 | src: https://pixi.prefix.dev/latest/python/pyproject_toml/ | quote: "Running pixi init in a folder with an existing pyproject.toml automatically adds a [tool.pixi.workspace] section and registers the current project as an editable PyPI dependency" | type: official
+- [C4] pixi.lock 是 YAML 格式，包含两部分：environments 定义（按平台列出包），packages 定义（去重后的包元数据） | src: https://pixi.prefix.dev/latest/workspace/lock_file/ | quote: "The lock file contains two main sections: Environment definitions listing packages by platform (linux-64, osx-64, etc.) and Package definitions with metadata like version, build, URL, checksums, and dependencies" | type: official
+- [C5] pixi.lock 同时为所有 environments 和所有 platforms 生成完整依赖解析结果，支持 linux-64、osx-64 等多平台 | src: https://pixi.prefix.dev/latest/workspace/lock_file/ | quote: "The lock file resolves packages for all environments and platforms listed in the manifest simultaneously, enabling consistent setups across different operating systems and CPU architectures" | type: official
+- [C6] pixi.lock 是人可读的 YAML，可直接查看变更，官方推荐提交版本控制 | src: https://pixi.prefix.dev/latest/workspace/lock_file/ | quote: "The Pixi lock file is human readable, so you can take a look at which packages are listed without extra tools - as well as easily track changes to the file" | type: official
+- [C7] pixi 管理 Python 版本通过在 dependencies 中指定 python 约束（如 python = ">=3.9"），pixi 自动安装对应 Python 版本 | src: https://pixi.prefix.dev/latest/python/pyproject_toml/ | quote: "The tool recognizes the standard requires-python field and converts it into a conda dependency" | type: official
+- [C8] pixi 可直接添加特定 Python 版本作为依赖（例 pixi add python=3.11） | src: https://prefix.dev/blog/using_python_projects_with_pixi | quote: "To add a specific Python version, use the command: pixi add python=3.11" | type: official
+- [C9] environments 默认存储在 .pixi/envs/ 目录下，每个 environment 是该目录的子目录 | src: https://github.com/prefix-dev/pixi | quote: "Pixi stores workspace environments in the .pixi/envs folder in a workspace's root" | type: official
+- [C10] pixi 支持 detached-environments 配置，可将 environments 放在项目外的自定义位置 | src: https://github.com/prefix-dev/pixi | quote: "environments created for a pixi global installation can be controlled using the PIXI_HOME environment variable" | type: official
+- [C11] pixi 有多 environment 和 feature 的 workspace 机制，官方称为 "Multi Environment" 和 "Workspaces"；environment 组合多个 features，支持 solve-group 保证版本一致 | src: https://pixi.prefix.dev/latest/workspace/multi_environment/ | quote: "A workspace can define multiple environments — for example, a default environment for development, a test environment with extra test dependencies, and a docs environment for building documentation" | type: official
+- [C12] pixi features 包含可复用的依赖和任务，environment 通过组合 features 进行配置 | src: https://pixi.prefix.dev/latest/workspace/multi_environment/ | quote: "Environments compose multiple features together and can specify: Dependencies and PyPI packages, Activation scripts, Supported platforms, Channel priorities, Default tasks, Solve groups" | type: official
+- [C13] pixi 支持通过 pixi run --environment test 等方式在特定 environment 执行命令 | src: https://pixi.prefix.dev/latest/workspace/multi_environment/ | quote: "Users activate environments via CLI flags: pixi run --environment test pytest, pixi shell -e cuda" | type: official
+- [C14] pixi 通过 conda-forge 包管理系统级依赖，支持 CUDA、编译器、C 库等非 Python 二进制包 | src: https://pixi.prefix.dev/latest/ | quote: "Pixi defaults to conda-forge, accessing over 30,000 packages spanning Python, C/C++, Java, Rust, Node.js, and CLI tools" | type: official
+- [C15] pixi 支持虚拟包声明（virtual packages）如 CUDA 版本，告知求解器特定平台上可用的运行时 | src: https://pixi.prefix.dev/latest/workspace/multi_environment/ | quote: "Multi-platform ML workspaces demonstrate another use case—defining CUDA, MLX, and CPU environments on a single workspace, each with platform-specific dependencies and configurations" | type: official
+- [C16] pixi-build-cmake 后端自动生成编译器依赖，支持 c、cxx、fortran、cuda 等编译器配置 | src: https://pixi.prefix.dev/latest/build/key_concepts/compilers/ | quote: "The pixi-build-cmake backend automatically generates appropriate compiler dependencies using conda-forge's compiler infrastructure" | type: official
+- [C17] 私有 prefix.dev 频道通过 OAuth/OIDC 或 bearer token 认证（pixi auth login prefix.dev 或 --token 标志） | src: https://pixi.prefix.dev/latest/deployment/authentication/ | quote: "OAuth/OIDC is the recommended approach for prefix.dev. Simply run pixi auth login prefix.dev to open a browser login" | type: official
+- [C18] pixi 支持基本 HTTP 认证（用户名/密码）和 S3 认证（access key/secret key） | src: https://pixi.prefix.dev/latest/deployment/authentication/ | quote: "Basic HTTP supports username/password pairs for self-hosted servers. S3 Authentication accepts access keys, secret keys, and optional session tokens" | type: official
+- [C19] pixi 凭证在 macOS Keychain、Windows 凭证管理器中存储；Linux 通过 libsecret；无 keychain 时回退到 ~/.rattler/credentials.json | src: https://pixi.prefix.dev/latest/deployment/authentication/ | quote: "On Windows, credentials go to the credentials manager. macOS stores them in Keychain. Linux uses GNOME Keyring via libsecret" | type: official
+- [C20] 可通过 RATTLER_AUTH_FILE 环境变量指定自定义认证文件位置 | src: https://pixi.prefix.dev/latest/deployment/authentication/ | quote: "You can override default credential storage using the RATTLER_AUTH_FILE environment variable pointing to a custom JSON credentials file" | type: official
+- [C21] setup-pixi GitHub Action 自动缓存，基于 pixi.lock 文件内容生成缓存键；缓存命中则跳过安装步骤 | src: https://pixi.prefix.dev/latest/integration/ci/github_actions/ | quote: "If a cache hit occurs, the installation step is bypassed entirely, using the previously cached environment instead" | type: official
+- [C22] setup-pixi 默认启用 project 环境缓存（需存在 pixi.lock），可通过 cache 参数控制；全局环境缓存默认禁用但可通过 global-cache: true 启用 | src: https://pixi.prefix.dev/latest/integration/ci/github_actions/ | quote: "Caching activates automatically when a pixi.lock file exists...Since global environments lack lock files, the cache will expire at the end of every month to ensure it does not go stale" | type: official
+- [C23] setup-pixi 缓存可通过 cache-key 和 global-cache-key 自定义前缀，完整键格式为 <prefix><conda-arch>-<hash> | src: https://pixi.prefix.dev/latest/integration/ci/github_actions/ | quote: "Customize prefixes using cache-key and global-cache-key inputs. Full keys follow the pattern <prefix><conda-arch>-<hash>" | type: official
+- [C24] setup-pixi 缓存可通过 cache-write 限制保存条件以避免超过 GitHub 10 GB 缓存限制 | src: https://pixi.prefix.dev/latest/integration/ci/github_actions/ | quote: "Use cache-write to limit saves to specific branches (e.g., main only) to avoid exceeding GitHub's 10 GB cache limit" | type: official
+
+## conflicts
+- (none detected in official docs)
+
+## gaps
+- PEP 751 pylock.toml 支持：官方文档中未找到任何提及
+- pixi 是否完全向后兼容 pixi.lock（forward compatibility 说有说无，但说了 backward compatible with lock file, but not forward compatible）
+- environment 的 activation script 具体用法/示例
+- 在 pyproject.toml 中混用 conda dependencies ([tool.pixi.dependencies]) 和 PyPI dependencies ([project].dependencies) 时的精确解析顺序
+
+## leads
+- D11 未在简报要求的问题范围内，无法填充
+- pixi 与 conda 的核心区别是内置强制的 lock file 和任务运行器，而 conda 本身缺乏这些
+- workspace/multi-environment 机制结合 solve-group 是 pixi 针对复杂项目（多 Python 版本、CUDA vs CPU 等）的差异化卖点

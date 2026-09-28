@@ -1,0 +1,67 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": 0,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": -1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Poetry 明确不会（BYOP）」「不自动装，需自带BYOP」：Poetry 2.1.0 起已有实验性 poetry python install（基于 python-build-standalone）",
+    "「唯一有官方 GH Action 的一体化工具」：PDM 有官方 pdm-project/setup-pdm（B 自己的 D10 列也写了），与自身矩阵矛盾",
+    "「抽查 34 条…30 supported、2 weak、1 unsupported、0 contradicted」合计只有 33，数字对不上"
+  ],
+  "errors_y": [
+    "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起已初步支持 pylock.toml 的导出（uv export / uv pip compile）和安装（uv pip install -r / uv pip sync），并非 0.12.x 才有，也不止导出+校验"
+  ],
+  "reason": "B 对用户点名的疑点答得更准：uv 自 0.6.15 起已支持 pylock 导出和安装，A 误写成 0.12.x 的 preview、仅导出+校验；B 讲 Poetry [project] 时列出了哪些字段仍要留在 [tool.poetry]，更细。私有源（index-strategy 与依赖混淆）、迁移（uv 不读 poetry.lock、须重新 lock）、CI 缓存几项坑，B 写得更具体可操作，11 维矩阵也更完整。A 的来源链接更具体，还指出了 conda 授权和 Poetry 能自装 Python（这里 B 写错了），所以 B 只是略胜。",
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "tie",
+      "coverage": "B",
+      "doubts": "B",
+      "pitfalls": "B",
+      "accuracy": "A",
+      "sourcing": "A",
+      "concision": "tie"
+    },
+    "overall": "B",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "「uv 仍在 preview 阶段（导出+校验，0.12.11+/0.12.17+）」：uv 自 0.6.15（2025-04）起已初步支持 pylock.toml 的导出（uv export / uv pip compile）和安装（uv pip install -r / uv pip sync），并非 0.12.x 才有，也不止导出+校验"
+      ],
+      "B": [
+        "「Poetry 明确不会（BYOP）」「不自动装，需自带BYOP」：Poetry 2.1.0 起已有实验性 poetry python install（基于 python-build-standalone）",
+        "「唯一有官方 GH Action 的一体化工具」：PDM 有官方 pdm-project/setup-pdm（B 自己的 D10 列也写了），与自身矩阵矛盾",
+        "「抽查 34 条…30 supported、2 weak、1 unsupported、0 contradicted」合计只有 33，数字对不上"
+      ]
+    },
+    "unsure": [
+      "B「uv 内部 index 缺凭证时会静默回退到公共 PyPI」：现行 uv 文档称 first-index 遇 401/403 默认停止搜索，该说法可能已过时，或只适用于未认证时返回 404 的私有源",
+      "A「PDM 仅导出(v2.26+,opt-in)」：印象中 PDM 可通过 lock.format=pylock 把 pylock.toml 用作锁文件（opt-in）；A/B 的版本号也不一致（2.26 vs 2.25）",
+      "Poetry 的 PEP 751 状态：A 称 2.3.0 起可经插件导出，B 称未支持（issue #10356），无法判断哪个是现状",
+      "A「26.2 进一步增强（--uploaded-prior-to、--only-final）」：--uploaded-prior-to 可能是更早版本加入的通用选项，并非专为 pylock",
+      "A「[tool.pixi.project]」：pixi 已改名为 [tool.pixi.workspace]，旧名可能只是兼容别名",
+      "A「poetry.lock v2.0」：Poetry 2.x 写入的 lock-version 可能是 2.1",
+      "A「conda 免费层对大型商业组织不再免费」：200+ 员工条款针对 Anaconda 的 defaults 渠道/发行版，不是开源的 conda 本身；改用 conda-forge/Miniforge 不受影响，表述容易误导",
+      "A「uv（唯一同时替代 pip+pyenv+venv 且自带 workspace 的工具）」：PDM 也有 pdm python install 和（实验性）workspace，「唯一」可能是夸大",
+      "A「Astral 已被 OpenAI 收购（2026-03-19）」、rye「2025-08 正式弃用」、libmamba「提速 50-80%」、「uv_build 可换6种」、「conda export --platform」无法核实",
+      "B「conda 26.5 起实验性原生导出 conda-lock.yaml/兼容 pixi.lock」、pixi v0.75.0/v0.81.0 的日期、「pip 26.1 安装不支持 extras/dependency-groups」无法核实",
+      "A 和 B 都说依赖组仍需写在 [tool.poetry]；Poetry 2.2 可能已支持 PEP 735 [dependency-groups]",
+      "B 引 setup-python #432 的缓存 key 问题可能已修复，Ubuntu 20.04 runner 也已退役"
+    ],
+    "reason": "B 对用户点名的疑点答得更准：uv 自 0.6.15 起已支持 pylock 导出和安装，A 误写成 0.12.x 的 preview、仅导出+校验；B 讲 Poetry [project] 时列出了哪些字段仍要留在 [tool.poetry]，更细。私有源（index-strategy 与依赖混淆）、迁移（uv 不读 poetry.lock、须重新 lock）、CI 缓存几项坑，B 写得更具体可操作，11 维矩阵也更完整。A 的来源链接更具体，还指出了 conda 授权和 Poetry 能自装 Python（这里 B 写错了），所以 B 只是略胜。"
+  },
+  "task": "py-packaging",
+  "x": "e000b/py-packaging",
+  "y": "e000a/py-packaging",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

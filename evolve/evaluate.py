@@ -160,6 +160,10 @@ def run_one(exp, task_id, rep, skill_dir, arm_id):
     env = dict(os.environ)
     if websearch:
         env["PPLX_WEB_SCRIPT"] = "/nonexistent/pplx_web.py"
+    if arm["harness"] == "claude-code":
+        # claude -p kills still-running background agents after a 600s ceiling; swe-2 workers exceed it.
+        # evaluate.py's own timeout_min is the real bound.
+        env["CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"] = "0"
     if arm["harness"] == "grok-build":
         prompt = grok_prompt(task, arm)
         desc, body = worker_body(skill_dir)
@@ -173,7 +177,8 @@ def run_one(exp, task_id, rep, skill_dir, arm_id):
         prompt = dev_prompt(task, arm) if websearch or arm.get("params") else cc_prompt(task)
         disallow = ["ScheduleWakeup", "CronCreate"] + ([] if websearch else ["WebSearch"])
         agents = worker_agent(arm["worker"], skill_dir, ("WebSearch",) if websearch else ())
-        cmd = ["claude", "-p", prompt, "--model", arm["lead"], "--output-format", "stream-json", "--verbose",
+        cli = str(Path.home() / ".local" / "bin" / arm["cli"]) if arm.get("cli") else "claude"
+        cmd = [cli, "-p", prompt, "--model", arm["lead"], "--output-format", "stream-json", "--verbose",
                "--dangerously-skip-permissions", "--strict-mcp-config", "--disallowedTools", *disallow,
                "--settings", json.dumps({"sandbox": {"enabled": False}}),
                "--agents", json.dumps(agents, ensure_ascii=False),
@@ -324,11 +329,12 @@ def judge(exp, vs_list, tasks):
             for vs in vs_list:
                 for ydir in run_dirs(vs, task_id):
                     for j in judges_for(exp):
-                        for order in ("xy", "yx"):
-                            dest = (RUNS / exp / "judge" / task_id /
-                                    f"{xdir.name}__{vs}-{ydir.name}__{j['judge']}-{order}.json")
-                            if not dest.exists():
-                                jobs.append((task_id, xdir, vs, ydir, j, order, dest))
+                        for n in range(j.get("passes", 1)):
+                            for order in ("xy", "yx"):
+                                tag = f"{j['judge']}-{order}" + (f"-p{n + 1}" if n else "")
+                                dest = RUNS / exp / "judge" / task_id / f"{xdir.name}__{vs}-{ydir.name}__{tag}.json"
+                                if not dest.exists():
+                                    jobs.append((task_id, xdir, vs, ydir, j, order, dest))
     print(f"[judge] {exp} vs {','.join(vs_list)}: {len(jobs)} verdicts to collect", flush=True)
     with ThreadPoolExecutor(CFG["judge_parallel"]) as pool:
         failed = sum(1 for r in pool.map(judge_job, jobs) if r is None)

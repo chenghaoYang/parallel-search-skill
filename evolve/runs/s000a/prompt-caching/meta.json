@@ -1,0 +1,56 @@
+{
+  "exp": "s000a",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "grok-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "98e621ff42",
+  "skill_chars": 14789,
+  "status": "timeout",
+  "returncode": -15,
+  "minutes": 75.0,
+  "spawns": 17,
+  "followups": 0,
+  "lead_web": 132,
+  "lead_tools": {
+    "read_file": 61,
+    "list_dir": 2,
+    "write": 31,
+    "spawn_subagent": 17,
+    "web_search": 28,
+    "get_command_or_subagent_output": 4,
+    "todo_write": 1,
+    "web_fetch": 104,
+    "run_terminal_command": 122,
+    "search_replace": 135,
+    "grep": 2
+  },
+  "cost_usd": 0.0,
+  "num_turns": null,
+  "is_error": null,
+  "terminal_reason": null,
+  "rate_limit_lines": 16,
+  "mech": {
+    "chars": 8797,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.917,
+    "golden_missed": [
+      "deepseek-disk-cache-automatic"
+    ],
+    "urls": 27,
+    "traceable": 0.963,
+    "notes": {
+      "files": 16,
+      "claims": 322,
+      "claims_ok": 0.929
+    },
+    "snapshots": {
+      "report.r1.md": 8979,
+      "report.r2.md": 8799,
+      "report.r3.md": 8797
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/s000a/prompt-caching"
+}

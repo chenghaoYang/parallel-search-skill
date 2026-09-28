@@ -1,0 +1,75 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "开头写「其余厂商是分钟/小时级精确时长」，Gemini 隐式缓存没有可承诺的固定 TTL；同文第5节也写明 DashScope 隐式只说定期清理、未给数字。"
+  ],
+  "errors_y": [
+    "Gemini 显式缓存的命中字段写成「显式`usageMetadata.totalTokenCount`」。该字段是本次总 token，显式命中计数是 usageMetadata.cachedContentTokenCount。",
+    "触发方式写成「显式：generateContent创建`cachedContents`再引用」。cachedContents 由缓存资源接口创建，generateContent 只在请求里引用已有 cache name。",
+    "Kimi 同一行给出命中「0.1x」和「按标准价写入，2次命中回本」。写入等于标准输入价时没有溢价可摊，一次命中后的花费已经低于全程不缓存。"
+  ],
+  "reason": "9HVT 直接回答了「现在还要不要改代码」：OpenAI 与 DeepSeek 仍是零改动，Anthropic 即使自动放置断点也要顶层 cache_control，并用 F1/F2/F3 把全自动、请求内断点和独立缓存资源分开，一屏能建立可用地图。ETNG 在字段名、绝对价格、失效参数和出处上更细，踩坑也更可操作，但把 Anthropic 说成「传言已过时／自动兜底」，又把显式命中字段写成 totalTokenCount，按它动手更容易在关键决策上走偏。综合下来 9HVT 对这位用户略高一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "9HVT",
+      "taxonomy": "9HVT",
+      "coverage": "ETNG",
+      "doubts": "9HVT",
+      "pitfalls": "ETNG",
+      "accuracy": "9HVT",
+      "sourcing": "ETNG",
+      "concision": "9HVT"
+    },
+    "overall": "9HVT",
+    "strength": 1,
+    "errors": {
+      "9HVT": [
+        "开头写「其余厂商是分钟/小时级精确时长」，Gemini 隐式缓存没有可承诺的固定 TTL；同文第5节也写明 DashScope 隐式只说定期清理、未给数字。"
+      ],
+      "ETNG": [
+        "Gemini 显式缓存的命中字段写成「显式`usageMetadata.totalTokenCount`」。该字段是本次总 token，显式命中计数是 usageMetadata.cachedContentTokenCount。",
+        "触发方式写成「显式：generateContent创建`cachedContents`再引用」。cachedContents 由缓存资源接口创建，generateContent 只在请求里引用已有 cache name。",
+        "Kimi 同一行给出命中「0.1x」和「按标准价写入，2次命中回本」。写入等于标准输入价时没有溢价可摊，一次命中后的花费已经低于全程不缓存。"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式：9HVT 归入全自动（「mode仅含implicit」，最小 256 tok，5 分钟写入为标准价、1 小时为 2x）；ETNG 写成纯手动（必须传 prompt_cache_options 或 cache_control，最小长度「未注明」）。离线无法裁定。",
+      "9HVT 开头把 Kimi 写入费归入「1.25x起」，矩阵又写「5m档=标准价;1h档=2x」，两处不能同时成立，但不知哪一处符合价目。",
+      "DeepSeek 命中倍率：9HVT「约0.02x」（news260910，称架构升级后）对 ETNG「0.1x（$0.014 vs $0.14/M）」；0.014/0.14 曾是公开价，2026-09 是否改过无法核实。",
+      "智谱：9HVT「约0.5x」「5min自动刷新」，写入费开头写「不加价」、矩阵又写「∅官方未详述」；ETNG 写「≈0.25x（2元 vs 8元/M，GLM-5.3）」、TTL「∅」、另计存储费。2 元/8 元是否就是命中价对输入价无法确认。",
+      "OpenAI 旧模型在 2026-09 是否仍为命中 0.5x、写入免费、5–10 分钟至 1 小时；ETNG 把 OpenAI 整体写成 0.1x、写入 1.25x、「≥30分钟」且非 ZDR 默认 24h，9HVT 则把 30 分钟固定 TTL 和 1.25x 写入限于 GPT-5.6+。",
+      "「约 20 个 block」：9HVT 归 DashScope（「只查最近20个 block」），ETNG 归 Bedrock Claude 的简化缓存管理。",
+      "两文都出现的 Gemini 隐式字段 usage.total_cached_tokens，与长期使用的 cachedContentTokenCount 是否为 2026 年的正式字段名，无法确认。",
+      "Anthropic 自动缓存日期：9HVT「2025-03-13」对 ETNG「2026-02-19」。ETNG「传言已过时」「自动兜底」把仍要顶层 cache_control 的机制说满了，但是否另有零改动路径无法核实。",
+      "Gemini 显式存储价：9HVT「$0.50/M tok/时(2026底前)」并称年底后翻倍；ETNG「标准输入价+$0.5~1.0/M token/小时存储费(2027起涨)」。创建时是否另收一整份标准输入价无法确认。",
+      "代际与型号无法核对：GPT-6、Opus 5.5、Fable 5.1、Mythos 5.1、GLM-5.3、kimi-k3，以及 9HVT 的 K2.6 命中 0.17x。",
+      "云上差异：ETNG 写 Azure 无扩展保留、PTU-M 不支持断点、约 15 次/分钟会 miss；9HVT 把约 15 req/min 归到 OpenAI 本身，并写 Azure GPT-5.6+ 与原生 30 分钟 TTL 几乎一致。Vertex 上 Claude 费率、Gemini 2.0 的 75% 折扣也未核实。"
+    ],
+    "reason": "9HVT 直接回答了「现在还要不要改代码」：OpenAI 与 DeepSeek 仍是零改动，Anthropic 即使自动放置断点也要顶层 cache_control，并用 F1/F2/F3 把全自动、请求内断点和独立缓存资源分开，一屏能建立可用地图。ETNG 在字段名、绝对价格、失效参数和出处上更细，踩坑也更可操作，但把 Anthropic 说成「传言已过时／自动兜底」，又把显式命中字段写成 totalTokenCount，按它动手更容易在关键决策上走偏。综合下来 9HVT 对这位用户略高一筹。",
+    "_codes": {
+      "x": "9HVT",
+      "y": "ETNG"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

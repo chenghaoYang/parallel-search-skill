@@ -1,0 +1,66 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": -1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Google | ❓ 未查到官方 MCP 支持声明」及 §0「未查到明确的 MCP 声明」：Google 已官方支持 MCP（Gemini CLI、ADK MCPToolset、Gemini API SDK、2025-12 推出的 Google 服务托管 MCP server），四家大厂对 MCP 其实全部支持",
+    "「没有厂商发布“第五个独立协议”」：OpenAI 与 Stripe 2025-09 发布了 Agentic Commerce Protocol（恰好又是一个 ACP），Google 2025-09 发布了 AP2；B 自己的矩阵也称 A2UI 为「独立声明式 UI 协议」",
+    "来源对不上：§5 称 ACP-IBM 鉴权细节「仅二手来源（workos.com 博客）[9]」，但 [9] 指向 ibm.com/think"
+  ],
+  "errors_y": [
+    "§0 写「MCP强制OAuth2.1+PKCE」，表内写「OAuth2.1强制」：MCP 规范明确 Authorization is OPTIONAL，stdio 传输应从环境变量取凭据；只有在 HTTP 上实现鉴权时才要求 OAuth2.1/PKCE 等",
+    "前后矛盾：§0 称 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑4 却说「判断兼容性看运行时 `protocolVersion` 协商结果」"
+  ],
+  "reason": "A 的对照矩阵维度更全（抽象/状态/版本语义/成熟度），写到了 MCP 2026-07-28 无状态化这类对开发者影响最大的变化，大厂矩阵整体也正确；B 开头的分层地图更容易上手，SSE 疑点答得更细（SSE 仍是 Streamable HTTP 内部的流式手段），URL 更完整，对 ACP-Zed/AG-UI 的厂商支持分级也更严谨。但 B 把 Google 的 MCP 支持标成 ❓，还断言没有第五个独立协议，在用户点名的大厂支持问题上有实质误导，所以 A 略胜；两份都漏了 OpenAI/Stripe 的 Agentic Commerce Protocol，也就是第三个 ACP。",
+  "raw": {
+    "dims": {
+      "orientation": "B",
+      "taxonomy": "A",
+      "coverage": "A",
+      "doubts": "B",
+      "pitfalls": "A",
+      "accuracy": "A",
+      "sourcing": "B",
+      "concision": "tie"
+    },
+    "overall": "A",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "§0 写「MCP强制OAuth2.1+PKCE」，表内写「OAuth2.1强制」：MCP 规范明确 Authorization is OPTIONAL，stdio 传输应从环境变量取凭据；只有在 HTTP 上实现鉴权时才要求 OAuth2.1/PKCE 等",
+        "前后矛盾：§0 称 2026-07-28 版「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，坑4 却说「判断兼容性看运行时 `protocolVersion` 协商结果」"
+      ],
+      "B": [
+        "「Google | ❓ 未查到官方 MCP 支持声明」及 §0「未查到明确的 MCP 声明」：Google 已官方支持 MCP（Gemini CLI、ADK MCPToolset、Gemini API SDK、2025-12 推出的 Google 服务托管 MCP server），四家大厂对 MCP 其实全部支持",
+        "「没有厂商发布“第五个独立协议”」：OpenAI 与 Stripe 2025-09 发布了 Agentic Commerce Protocol（恰好又是一个 ACP），Google 2025-09 发布了 AP2；B 自己的矩阵也称 A2UI 为「独立声明式 UI 协议」",
+        "来源对不上：§5 称 ACP-IBM 鉴权细节「仅二手来源（workos.com 博客）[9]」，但 [9] 指向 ibm.com/think"
+      ]
+    },
+    "unsure": [
+      "A 称 MCP 2026-07-28 删除协议级 session 和 `Mcp-Session-Id`，并经 SEP-2596 把 HTTP+SSE 正式标为 Deprecated：方向与传输工作组的公开讨论一致，但细节无法核实",
+      "ACP-Zed 版本两份说法冲突：A「包版本v0.13.6(预1.0)」vs B「v1.9.1（2026-09-18）」",
+      "ACP-IBM 并入/归档日期：A「2025-08-25」vs B「2025-08-27」",
+      "A「AG-UI 17种事件」：官方文档早期写的是约 16 种标准事件",
+      "A「日期版：2024-10-07→2026-07-28」：公开首版是 2024-11-05，2024-10-07 只出现在 SDK 的兼容版本列表里",
+      "B「ACP-IBM 传输 REST/JSON-RPC over HTTP、WebSocket」：IBM ACP 官方以 REST 为主，JSON-RPC/WebSocket 存疑",
+      "B「Gemini CLI 原生 `--acp`」：最初的开关是 `--experimental-acp`，不确定后来是否改名",
+      "A 把 Microsoft 对 ACP-Zed 的支持依据定为「VS Code被Zed页列为受支持编辑器」，而 B 称 VS Code 本体仍在 issue 讨论中；A 的集成列表里出现「Claude Managed Agents」",
+      "B「Copilot CLI ACP 2026-01-28 public preview」「A2UI v0.9.1 生产/v1.0 RC」；A「A2A v0.2.0(2025-06)」"
+    ],
+    "reason": "A 的对照矩阵维度更全（抽象/状态/版本语义/成熟度），写到了 MCP 2026-07-28 无状态化这类对开发者影响最大的变化，大厂矩阵整体也正确；B 开头的分层地图更容易上手，SSE 疑点答得更细（SSE 仍是 Streamable HTTP 内部的流式手段），URL 更完整，对 ACP-Zed/AG-UI 的厂商支持分级也更严谨。但 B 把 Google 的 MCP 支持标成 ❓，还断言没有第五个独立协议，在用户点名的大厂支持问题上有实质误导，所以 A 略胜；两份都漏了 OpenAI/Stripe 的 Agentic Commerce Protocol，也就是第三个 ACP。"
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

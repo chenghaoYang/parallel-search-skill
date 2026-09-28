@@ -1,0 +1,3 @@
+[run] g000a/prompt-caching: timeout, 75.0 min, 9498 chars, golden 0.917, spawns 6, $6.86
+[run] g000a/agent-protocols: timeout, 75.0 min, 8996 chars, golden 0.7, spawns 10, $10.21
+[run] g000a/py-packaging: timeout, 75.0 min, 8991 chars, golden 0.917, spawns 11, $9.63

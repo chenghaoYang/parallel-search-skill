@@ -1,0 +1,76 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 0,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": -1
+  },
+  "errors_x": [
+    "OpenRouter 行「透传：0.1x(DeepSeek/Anthropic/Qwen)~0.5x(Groq)」把 DeepSeek 经网关的命中价写成 0.1x，与同表 DeepSeek 行「命中比未命中低95~98%」自相矛盾（既然说是透传，两处至少有一处错），文中也没有解释"
+  ],
+  "errors_y": [
+    "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5/5.1/5.2 的缓存输入价早就是原价的 0.1x（如 GPT-5 $1.25→$0.125），GPT-4.1/o3 是 0.25x，只有 GPT-4o 这一代才是 0.5x",
+    "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步,只是不用逐块标记」：2025-03-13 那次 token-saving 更新只是让系统自动读取最长的已缓存前缀，仍要在内容块上逐个打 cache_control；在请求顶层放一个 cache_control 自动放置断点不是那次更新的内容，是后来才加的，日期对不上",
+    "结论3「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」和本文矩阵 Kimi 行「5m档=标准价」自相矛盾"
+  ],
+  "reason": "QXBX 在用户点名的「怎么确认命中、哪些改动会让缓存失效」上更扎实：各家 usage 字段都给了完整路径（包括 Anthropic、Qwen），坑表按现象-原因-处理写，拿来就能用，还如实标出了智谱口径冲突等缺口。WH26 的分类（F1/F2/F3）更清楚，而且贯穿整张矩阵，还补了 Bedrock/Vertex/Azure 的变体，但矩阵漏了 Anthropic 和 Qwen 的命中字段名，又把 GPT-5.5 及更早的命中价写成 0.5x、把 Anthropic 顶层自动缓存的上线日期写成 2025-03-13，关键结论的可信度打了折扣。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "tie",
+      "taxonomy": "WH26",
+      "coverage": "QXBX",
+      "doubts": "QXBX",
+      "pitfalls": "QXBX",
+      "accuracy": "QXBX",
+      "sourcing": "QXBX",
+      "concision": "WH26"
+    },
+    "overall": "QXBX",
+    "strength": 1,
+    "errors": {
+      "QXBX": [
+        "OpenRouter 行「透传：0.1x(DeepSeek/Anthropic/Qwen)~0.5x(Groq)」把 DeepSeek 经网关的命中价写成 0.1x，与同表 DeepSeek 行「命中比未命中低95~98%」自相矛盾（既然说是透传，两处至少有一处错），文中也没有解释"
+      ],
+      "WH26": [
+        "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5/5.1/5.2 的缓存输入价早就是原价的 0.1x（如 GPT-5 $1.25→$0.125），GPT-4.1/o3 是 0.25x，只有 GPT-4o 这一代才是 0.5x",
+        "「即使 2025-03-13 上线的\"Automatic Caching\"也没有免掉这一步,只是不用逐块标记」：2025-03-13 那次 token-saving 更新只是让系统自动读取最长的已缓存前缀，仍要在内容块上逐个打 cache_control；在请求顶层放一个 cache_control 自动放置断点不是那次更新的内容，是后来才加的，日期对不上",
+        "结论3「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」和本文矩阵 Kimi 行「5m档=标准价」自相矛盾"
+      ]
+    },
+    "unsure": [
+      "WH26 的 Gemini 命中字段「`usage.total_cached_tokens`」：generateContent 返回的是 `usageMetadata.cachedContentTokenCount`，这个名字可能出自 Interactions API",
+      "WH26「Bedrock 上的 Claude 多了一条不需要 `cache_control` 的 Implicit Prompt Caching 通道」，无法核实",
+      "Kimi 1h 档写入价：QXBX「两档TTL写入价相同」和 WH26「1h档=2x」互相冲突",
+      "智谱 TTL：WH26「5min自动刷新」和 QXBX「∅ 官方未写」互相冲突",
+      "OpenAI GPT-5.6+ 显式断点的参数名：WH26 写「`prompt_cache_breakpoint`」，QXBX 写「`mode: implicit`」/explicit，说法不同；两份都提到的 30 分钟 TTL 和 1.25x 写入费超出我的知识范围",
+      "DeepSeek 命中价：QXBX「低95~98%」、WH26「约0.02x」；据我所知 V3.2 是 0.1x，可能 2026-09 调过价",
+      "Gemini explicit 存储费：QXBX「$0.50~1.00/M tok/h」、WH26「$0.50/M tok/时(2026底前)」；据我所知 2.5 Pro/3 Pro 是 $4.50/M/h",
+      "QXBX「2026-05-29起未开ZDR组织默认24h」，以及说 prompt_cache_retention「跟是否复用无关」",
+      "QXBX 写 Gemini「implicit 24h自动清」",
+      "QXBX 写 OpenRouter「官方称\"最低30分钟\"」、`session_id`（≤256字符）、`X-OpenRouter-Cache`；WH26 写「sticky 10min无活动失效」「只在上游缓存价比常规价低时才启用」",
+      "两份都写的 Anthropic 最小长度 512 档，以及新模型 0.05x/0.025x 的命中价",
+      "QXBX 结论4「Anthropic/Kimi/Qwen(explicit) 是 5 分钟量级（可选更贵的 1 小时档）」和它自己表里 Qwen 更长档为「无」、Kimi 两档同价对不上，括号管到哪几家不清楚"
+    ],
+    "reason": "QXBX 在用户点名的「怎么确认命中、哪些改动会让缓存失效」上更扎实：各家 usage 字段都给了完整路径（包括 Anthropic、Qwen），坑表按现象-原因-处理写，拿来就能用，还如实标出了智谱口径冲突等缺口。WH26 的分类（F1/F2/F3）更清楚，而且贯穿整张矩阵，还补了 Bedrock/Vertex/Azure 的变体，但矩阵漏了 Anthropic 和 Qwen 的命中字段名，又把 GPT-5.5 及更早的命中价写成 0.5x、把 Anthropic 顶层自动缓存的上线日期写成 2025-03-13，关键结论的可信度打了折扣。",
+    "_codes": {
+      "x": "QXBX",
+      "y": "WH26"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

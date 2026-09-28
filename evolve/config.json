@@ -51,7 +51,8 @@
       "judges": [
         {
           "judge": "grok",
-          "model": "grok-4.7"
+          "model": "grok-4.7",
+          "passes": 2
         }
       ],
       "worker": "grok-4.7"
@@ -66,21 +67,45 @@
       "judges": [
         {
           "judge": "grok",
-          "model": "grok-4.7"
+          "model": "grok-4.7",
+          "passes": 2
         }
       ],
       "worker": "swe-2-shim",
       "note": "swe-2 via bench/devin_shim.py (devin2api omits usage.output_tokens_details, which Grok Build rejects)"
+    },
+    "cc-swe2": {
+      "harness": "claude-code",
+      "cli": "claude-devin",
+      "lead": "swe-2-max",
+      "worker": "swe-2-max",
+      "search": "websearch",
+      "params": "--rounds 3 --workers 6 --budget 9000",
+      "budget": 9000,
+      "max_budget_usd": 20,
+      "timeout_min": 75,
+      "judges": [
+        {
+          "judge": "claude-devin",
+          "model": "swe-2-max",
+          "passes": 2
+        }
+      ],
+      "note": "Claude Code harness routed to local devin2api (swe-2-max for lead+workers+judge) via ~/.local/bin/claude-devin. Added 2026-09-24 while Grok Build balance was exhausted (402)."
     }
   },
   "dev_tasks": [
     "prompt-caching",
     "agent-protocols",
-    "py-packaging"
+    "py-packaging",
+    "llm-inference",
+    "durable-execution"
   ],
   "holdout_tasks": [
     "js-runtimes",
-    "api-protocol"
+    "api-protocol",
+    "kv-stores",
+    "structured-outputs"
   ],
   "judges": [
     {

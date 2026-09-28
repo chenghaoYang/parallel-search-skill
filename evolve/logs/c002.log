@@ -1,0 +1,3 @@
+[run] c002/py-packaging: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $1.8547194999999996
+[run] c002/prompt-caching: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $1.9384674999999998
+[run] c002/agent-protocols: crash, 3.5 min, 0 chars, golden 0.0, spawns 6, $1.114254

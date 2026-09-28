@@ -1,0 +1,58 @@
+{
+  "exp": "e000b",
+  "task": "agent-protocols",
+  "rep": 1,
+  "arm": "dev",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "bee3e764c4",
+  "skill_chars": 13564,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 31.7,
+  "spawns": 13,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Bash": 30,
+    "Read": 21,
+    "Write": 7,
+    "Agent": 13,
+    "Edit": 24
+  },
+  "cost_usd": 8.425092799999996,
+  "num_turns": 13,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 14,
+  "mech": {
+    "chars": 8997,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.25,
+    "golden_missed": [
+      "mcp-usbc-analogy",
+      "mcp-sse-reclassified-2026",
+      "a2a-definition",
+      "acp-zed-definition",
+      "ag-ui-definition",
+      "aaif-governance-members",
+      "microsoft-a2a-v1-ga",
+      "anthropic-mcp-oauth",
+      "openai-mcp-responses-support"
+    ],
+    "urls": 45,
+    "traceable": 1.0,
+    "notes": {
+      "files": 12,
+      "claims": 142,
+      "claims_ok": 0.993
+    },
+    "snapshots": {
+      "report.r1.md": 7759,
+      "report.r2.md": 8942,
+      "report.r3.md": 8900
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/e000b/agent-protocols"
+}

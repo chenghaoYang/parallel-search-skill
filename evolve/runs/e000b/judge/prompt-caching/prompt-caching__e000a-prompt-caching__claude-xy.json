@@ -1,0 +1,80 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 1
+  },
+  "errors_x": [
+    "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5 系列旧款的缓存读取价本来就是 0.1x（GPT-5 为 $0.125 vs $1.25），GPT-4.1 是 0.25x，只有 GPT-4o/o1 那一代才是 0.5x，把旧款统一写成 0.5x 是错的",
+    "「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」和本文矩阵里 Kimi 的「5m档=标准价;1h档=2x」矛盾：按矩阵，Kimi 默认档没有 1.25x 起步的写入溢价"
+  ],
+  "errors_y": [
+    "Gemini 命中字段写成「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数，看不出是否命中；generateContent 下的命中字段是 usageMetadata.cachedContentTokenCount，而且字段不同是因为 API 形态不同，不是因为隐式/显式",
+    "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认就是自动缓存，断点只是可选项（本文第0节自己也写的是『可选显式』），经网关并不需要打断点",
+    "DeepSeek「0.1x（$0.014 vs $0.14/M）[13]」用的是 2024 年 8 月公告（V2 时期）的价格，V3、V3.2 之后已经调价多次（例如 V3.2 是 $0.028 vs $0.28），拿来当『截至 2026-09』的现价已经过时",
+    "「双轨（自动兜底+手动/显式可选）：OpenAI(仅5.6+)、Anthropic、Gemini、通义千问」外加「传言已过时」：Anthropic 原生 API 不加任何 cache_control 就不会缓存（本文自己也写了要加顶层 cache_control），根本没有『自动兜底』，这个定性会误导用户对核心疑点的判断",
+    "「OpenAI/Anthropic/通义千问(显式) 写入加价 1.25x」以及矩阵里 OpenAI 的「0.1x」「1.25x标准输入价」没区分模型代际：GPT-5.6 之前的 OpenAI 模型写入不加价，命中折扣也不都是 0.1x（GPT-4o 是 0.5x，GPT-4.1 是 0.25x）"
+  ],
+  "reason": "967Q 对用户的核心疑点结论准确：Anthropic 仍要加至少一个顶层 cache_control，只是不用逐块打断点，OpenAI 默认仍然零改动。它的 F1/F2/F3 分类轴清楚，贯穿矩阵和云托管变体，篇幅也更紧，确信错误主要只有 OpenAI 旧款 0.5x。JABC 的字段名、失效条件和逐格引用更细，但把 Anthropic 归进『自动兜底』双轨、Gemini 命中字段写成 totalTokenCount、说经 OpenRouter 调 OpenAI『仍需断点』、DeepSeek 用 2024 年价格，错误更多，而且正好落在用户最关心的问题上。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "967Q",
+      "taxonomy": "967Q",
+      "coverage": "JABC",
+      "doubts": "967Q",
+      "pitfalls": "JABC",
+      "accuracy": "967Q",
+      "sourcing": "JABC",
+      "concision": "967Q"
+    },
+    "overall": "967Q",
+    "strength": 1,
+    "errors": {
+      "967Q": [
+        "「OpenAI 新款(GPT-5.6+)0.1x、旧款0.5x」及矩阵「OpenAI GPT-5.5及更早 | F1纯自动 | 1024tok | 0.5x」：GPT-5 系列旧款的缓存读取价本来就是 0.1x（GPT-5 为 $0.125 vs $1.25），GPT-4.1 是 0.25x，只有 GPT-4o/o1 那一代才是 0.5x，把旧款统一写成 0.5x 是错的",
+        "「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起,长TTL更贵)」和本文矩阵里 Kimi 的「5m档=标准价;1h档=2x」矛盾：按矩阵，Kimi 默认档没有 1.25x 起步的写入溢价"
+      ],
+      "JABC": [
+        "Gemini 命中字段写成「隐式`usage.total_cached_tokens`；显式`usageMetadata.totalTokenCount`」：totalTokenCount 是总 token 数，看不出是否命中；generateContent 下的命中字段是 usageMetadata.cachedContentTokenCount，而且字段不同是因为 API 形态不同，不是因为隐式/显式",
+        "OpenRouter 行「OpenAI仍需`prompt_cache_breakpoint`」：OpenAI 默认就是自动缓存，断点只是可选项（本文第0节自己也写的是『可选显式』），经网关并不需要打断点",
+        "DeepSeek「0.1x（$0.014 vs $0.14/M）[13]」用的是 2024 年 8 月公告（V2 时期）的价格，V3、V3.2 之后已经调价多次（例如 V3.2 是 $0.028 vs $0.28），拿来当『截至 2026-09』的现价已经过时",
+        "「双轨（自动兜底+手动/显式可选）：OpenAI(仅5.6+)、Anthropic、Gemini、通义千问」外加「传言已过时」：Anthropic 原生 API 不加任何 cache_control 就不会缓存（本文自己也写了要加顶层 cache_control），根本没有『自动兜底』，这个定性会误导用户对核心疑点的判断",
+        "「OpenAI/Anthropic/通义千问(显式) 写入加价 1.25x」以及矩阵里 OpenAI 的「0.1x」「1.25x标准输入价」没区分模型代际：GPT-5.6 之前的 OpenAI 模型写入不加价，命中折扣也不都是 0.1x（GPT-4o 是 0.5x，GPT-4.1 是 0.25x）"
+      ]
+    },
+    "unsure": [
+      "Kimi 触发方式两份说法相反：967Q 写「F1默认,mode仅含implicit」，JABC 写「Kimi 反而是纯手动，必须传参才缓存」。已知 K2 系列是自动缓存，所以倾向 967Q，但 2026 年的现状无法确认",
+      "智谱命中价：967Q 写「约0.5x」，JABC 写「≈0.25x（2元 vs 8元/M，GLM-5.3）」。已知 GLM-4.5/4.6 定价表里的缓存价约为输入价的 0.2x，倾向 JABC",
+      "Anthropic 顶层 cache_control 自动缓存的上线日期：967Q 写「2025-03-13」，但那天的博客讲的是 simplified cache management 和 cache-aware rate limits，疑似混淆；JABC 写「2026-02-19」，无法核实",
+      "OpenAI GPT-5.6+ 的 TTL：967Q 写「固定30m(仅此值)」，JABC 写「≥30分钟；2026-05后非ZDR组织默认24h」，两者矛盾，无法核实",
+      "967Q 的 DeepSeek「约0.02x」出自 2026-09-10 的公告，无法核实",
+      "两份都把 Gemini 命中字段写成 usage.total_cached_tokens，这是 Interactions API 的字段；两份都没给出 generateContent 下的 usageMetadata.cachedContentTokenCount",
+      "Gemini 最小缓存长度两份都从 2048 起算，但已知 2.5 Flash 是 1024",
+      "Gemini explicit 存储价「$0.50/M tok/时」和「$0.5~1.0」对不上已知的 2.5 Pro $4.50、Flash $1.00，可能是新模型的新价格",
+      "Azure OpenAI 的断点、TTL、扩展保留细节两份矛盾；JABC 的 OpenRouter「session_id」和 967Q 的「provider.order 会覆盖它」都无法核实",
+      "Bedrock 上 Claude 的 implicit caching、Bedrock 上的 GPT-5.6 都无法核实"
+    ],
+    "reason": "967Q 对用户的核心疑点结论准确：Anthropic 仍要加至少一个顶层 cache_control，只是不用逐块打断点，OpenAI 默认仍然零改动。它的 F1/F2/F3 分类轴清楚，贯穿矩阵和云托管变体，篇幅也更紧，确信错误主要只有 OpenAI 旧款 0.5x。JABC 的字段名、失效条件和逐格引用更细，但把 Anthropic 归进『自动兜底』双轨、Gemini 命中字段写成 totalTokenCount、说经 OpenRouter 调 OpenAI『仍需断点』、DeepSeek 用 2024 年价格，错误更多，而且正好落在用户最关心的问题上。",
+    "_codes": {
+      "x": "967Q",
+      "y": "JABC"
+    },
+    "_attr": [
+      8,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "claude",
+  "model": "opus",
+  "order": "xy"
+}

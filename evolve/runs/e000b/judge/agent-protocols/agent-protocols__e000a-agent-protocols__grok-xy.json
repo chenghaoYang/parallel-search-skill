@@ -1,0 +1,68 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "Google 的 MCP 被标成「❓ 未查到官方 MCP 支持声明」，图例又把 ❓ 定义成「已查证官方渠道、未见表态」；Google 已有公开的官方 MCP 支持（ADK 与 Cloud 官方 MCP 服务），并非未表态。"
+  ],
+  "errors_y": [
+    "概述写「MCP强制OAuth2.1+PKCE」，对照表写「OAuth2.1强制+PKCE」；MCP 鉴权整体可选，stdio 用环境变量，只有实现了鉴权的 HTTP 传输才必须遵守 OAuth 2.1。",
+    "版本行写「日期版：2024-10-07→2026-07-28」；对外发布的 MCP 规范日期版从 2024-11-05 起，没有 2024-10-07 这一版。"
+  ],
+  "reason": "FUDS 一屏内用分层模型答完两个点名疑点，SSE 结论停在独立 HTTP+SSE 已被 Streamable HTTP 替换、SSE 仍可作其内部流式手段，链接也能逐条对上原文。LPN3 的分类轴和字段级矩阵更完整，并写明了 Google 的官方 MCP。但 LPN3 的「MCP强制OAuth2.1+PKCE」和日期版起点「2024-10-07」会误导鉴权与版本判断，所以对这位用户 FUDS 只略好一筹。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "FUDS",
+      "taxonomy": "LPN3",
+      "coverage": "LPN3",
+      "doubts": "FUDS",
+      "pitfalls": "tie",
+      "accuracy": "FUDS",
+      "sourcing": "FUDS",
+      "concision": "tie"
+    },
+    "overall": "FUDS",
+    "strength": 1,
+    "errors": {
+      "FUDS": [
+        "Google 的 MCP 被标成「❓ 未查到官方 MCP 支持声明」，图例又把 ❓ 定义成「已查证官方渠道、未见表态」；Google 已有公开的官方 MCP 支持（ADK 与 Cloud 官方 MCP 服务），并非未表态。"
+      ],
+      "LPN3": [
+        "概述写「MCP强制OAuth2.1+PKCE」，对照表写「OAuth2.1强制+PKCE」；MCP 鉴权整体可选，stdio 用环境变量，只有实现了鉴权的 HTTP 传输才必须遵守 OAuth 2.1。",
+        "版本行写「日期版：2024-10-07→2026-07-28」；对外发布的 MCP 规范日期版从 2024-11-05 起，没有 2024-10-07 这一版。"
+      ]
+    },
+    "unsure": [
+      "LPN3 称 2026-07-28 起 MCP「彻底无状态」「无握手」「没有协商」，protocolVersion 只在「_meta」里逐请求生效；所引官方原句只写了删除 protocol-level sessions 和 Mcp-Session-Id，握手是否一并取消无法从这句判定。",
+      "ACP-Zed 包版本冲突：FUDS 写「v1.9.1（2026-09-18）」，LPN3 写「包版本v0.13.6(预1.0)」；FUDS 鉴权链接路径含 /protocol/v2/，正文却写协议版本 1。",
+      "LPN3 把 A2A 传输写成「JSON-RPC2.0(主流)/gRPC/HTTP+REST」，gRPC 与 REST 是否仍是现行正式绑定无法确认。",
+      "LPN3 称 HTTP+SSE 在 2025-03-26 只是「软弃用」、到 2026-07-28 才按 SEP-2596「正式」Deprecated，并写「至少12个月弃用窗口」；2025-03-26 规范已使用 deprecated，之后是否另有生命周期状态无法确认。",
+      "ACP-IBM 停更日期 LPN3 写「2025-08-25」、FUDS 写「2025-08-27」，双方所引公告博文日期是 2025-08-29，仓库实际归档日未核对。",
+      "部分厂商 ✅ 来自对方集成页：LPN3 给 Anthropic 的 AG-UI 打 ✅ 并引用 AG-UI 集成列表；FUDS 概述称 Google 对 AG-UI「也有官方确认」，表内引用同样是 AG-UI 文档。"
+    ],
+    "reason": "FUDS 一屏内用分层模型答完两个点名疑点，SSE 结论停在独立 HTTP+SSE 已被 Streamable HTTP 替换、SSE 仍可作其内部流式手段，链接也能逐条对上原文。LPN3 的分类轴和字段级矩阵更完整，并写明了 Google 的官方 MCP。但 LPN3 的「MCP强制OAuth2.1+PKCE」和日期版起点「2024-10-07」会误导鉴权与版本判断，所以对这位用户 FUDS 只略好一筹。",
+    "_codes": {
+      "x": "FUDS",
+      "y": "LPN3"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

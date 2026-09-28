@@ -1,0 +1,59 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「未查到明确的 MCP 声明」以及矩阵「❓ 未查到官方 MCP 支持声明」：Google Cloud 的官方 MCP 服务和 ADK 的 MCP 支持都是公开一手事实，不是未表态。"
+  ],
+  "errors_y": [
+    "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」：鉴权在协议层是可选的，OAuth 2.1+PKCE 只在启用 HTTP 鉴权时强制，stdio 走环境变量。",
+    "「日期版：2024-10-07→2026-07-28」：对外发布的 MCP 规范版本从 2024-11-05 起算，没有 2024-10-07 这个版本号。"
+  ],
+  "reason": "A 把用户点名的 SSE 疑点写成「独立 HTTP+SSE 传输废弃、SSE 仍是 Streamable HTTP 的流式手段」，鉴权也没有写成一刀切强制，来源是可以打开的完整链接。B 的家族和字段级对照更完整，并正确写下 Google 的 MCP 支持，但鉴权强制和 2024-10-07 版本起点会把人带偏，所以 A 对这个用户略有用。",
+  "raw": {
+    "dims": {
+      "orientation": "A",
+      "taxonomy": "B",
+      "coverage": "B",
+      "doubts": "A",
+      "pitfalls": "tie",
+      "accuracy": "A",
+      "sourcing": "A",
+      "concision": "tie"
+    },
+    "overall": "A",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "「未查到明确的 MCP 声明」以及矩阵「❓ 未查到官方 MCP 支持声明」：Google Cloud 的官方 MCP 服务和 ADK 的 MCP 支持都是公开一手事实，不是未表态。"
+      ],
+      "B": [
+        "「MCP强制OAuth2.1+PKCE及RFC8707/9728/9207等」：鉴权在协议层是可选的，OAuth 2.1+PKCE 只在启用 HTTP 鉴权时强制，stdio 走环境变量。",
+        "「日期版：2024-10-07→2026-07-28」：对外发布的 MCP 规范版本从 2024-11-05 起算，没有 2024-10-07 这个版本号。"
+      ]
+    },
+    "unsure": [
+      "B 称 2026-07-28「彻底无状态」、删除 Mcp-Session-Id 且「没有协商」，同文坑点又写「看运行时 protocolVersion 协商结果」，无法判断哪句符合现行规范。",
+      "ACP-Zed 版本对不上：A 写「v1.9.1（2026-09-18）」，B 写「包版本v0.13.6(预1.0）」且预期仍有 breaking change。",
+      "ACP-IBM 并入日期 A 写 2025-08-27、B 写 2025-08-25，双方所引公告 URL 的日期是 2025-08-29。",
+      "A 把 ACP-IBM 传输写成「REST/JSON-RPC over HTTP、WebSocket」；B 把 A2A 传输写成「JSON-RPC2.0(主流)/gRPC/HTTP+REST」。我只确信 ACP-IBM 以 REST 为主、A2A 以 JSON-RPC over HTTP 为主。",
+      "A2UI 与 AG-UI 的关系：A 写「v0.9.1 生产/v1.0 RC，AG-UI 只是它可选传输之一」，B 写「AG-UI是承载它的传输协议」。",
+      "B 的 SEP-2596、至少 12 个月弃用窗口、AG-UI「17种事件」、Google ADK「双向」支持，都无法用已有知识钉死。"
+    ],
+    "reason": "A 把用户点名的 SSE 疑点写成「独立 HTTP+SSE 传输废弃、SSE 仍是 Streamable HTTP 的流式手段」，鉴权也没有写成一刀切强制，来源是可以打开的完整链接。B 的家族和字段级对照更完整，并正确写下 Google 的 MCP 支持，但鉴权强制和 2024-10-07 版本起点会把人带偏，所以 A 对这个用户略有用。"
+  },
+  "task": "agent-protocols",
+  "x": "e000b/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

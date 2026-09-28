@@ -1,0 +1,75 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": 0,
+    "doubts": 1,
+    "pitfalls": 0,
+    "accuracy": 1,
+    "sourcing": 0,
+    "concision": -1
+  },
+  "errors_x": [
+    "开篇把互补写成四方官方共识，但同文矩阵写明 MCP 官方文档未提 A2A/ACP/AG-UI，所引材料只覆盖 A2A 与 AG-UI：「四者官方都自称互补、可叠加，不是竞争关系」。"
+  ],
+  "errors_y": [
+    "MCP 日期版本的起点写成 2024-10-07，首个正式规范版本是 2024-11-05：「日期版：2024-10-07→2026-07-28」。",
+    "独立的 HTTP+SSE 传输在 2025-03-26 规范里已经标为 deprecated，不是拖到 2026-07-28 才正式弃用：「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」。",
+    "同文对 MCP 版本协商不能同时成立：「没有协商」与「判断兼容性看运行时 protocolVersion 协商结果」。",
+    "ACP-Zed 与 AG-UI 的主差别是编辑器驱动本地 agent，相对于把事件推给用户界面；治理不是主差别：「治理成熟度是两者主要差异」。"
+  ],
+  "reason": "QV83 开头就按交互段讲清四个协议，并对两个点名疑点给了能用的结论：IBM ACP 与 Zed ACP 不是一回事；独立 HTTP+SSE 已弃用，SSE 仍是 Streamable HTTP 里的可选流式机制。ZGYF 更密，A2UI 与 AG-UI 的分工也写得更清楚，但版本日期、弃用时间线，以及“有没有协商”前后不一致，ACP-Zed 和 AG-UI 的分类理由也偏了。对这位要快速建立可靠对照的用户，QV83 略好。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "QV83",
+      "taxonomy": "QV83",
+      "coverage": "tie",
+      "doubts": "QV83",
+      "pitfalls": "tie",
+      "accuracy": "QV83",
+      "sourcing": "tie",
+      "concision": "ZGYF"
+    },
+    "overall": "QV83",
+    "strength": 1,
+    "errors": {
+      "QV83": [
+        "开篇把互补写成四方官方共识，但同文矩阵写明 MCP 官方文档未提 A2A/ACP/AG-UI，所引材料只覆盖 A2A 与 AG-UI：「四者官方都自称互补、可叠加，不是竞争关系」。"
+      ],
+      "ZGYF": [
+        "MCP 日期版本的起点写成 2024-10-07，首个正式规范版本是 2024-11-05：「日期版：2024-10-07→2026-07-28」。",
+        "独立的 HTTP+SSE 传输在 2025-03-26 规范里已经标为 deprecated，不是拖到 2026-07-28 才正式弃用：「自协议版本 2025-03-26 起\"软弃用\"，2026-07-28 版正式按 feature lifecycle 政策标记为 Deprecated（SEP-2596）」。",
+        "同文对 MCP 版本协商不能同时成立：「没有协商」与「判断兼容性看运行时 protocolVersion 协商结果」。",
+        "ACP-Zed 与 AG-UI 的主差别是编辑器驱动本地 agent，相对于把事件推给用户界面；治理不是主差别：「治理成熟度是两者主要差异」。"
+      ]
+    },
+    "unsure": [
+      "ZGYF 称 2026-07-28 起无握手，且 protocolVersion 放在 _meta；我只确认到 2025-11-25 规范里它是 initialize 的顶层字段、Mcp-Session-Id 可选，无法核实 2026-07-28 是否改成这样。",
+      "ZGYF「MCP强制OAuth2.1+PKCE」可读成“凡鉴权必须走这套”或“所有部署都必须鉴权”；前者接近 HTTP 鉴权规范，后者对 stdio 不成立。",
+      "QV83「HTTP传输推荐OAuth；bearer/APIkey」里的 API key 更像现实做法，不一定是规范列出的鉴权方案。",
+      "AG-UI 事件数：ZGYF「17种事件」与 QV83「30种类型化JSON事件」冲突，1.0 规范的确切数量我不能确定。",
+      "QV83「AG-UI 无大厂官方采用声明」与 ZGYF 写的 Microsoft Learn / ADK 集成是否冲突，取决于算官方产品支持还是集成列表。",
+      "ZGYF「今天再看到 ACP，指的基本是还活着的 Zed 这个」未提 OpenAI/Stripe 的 Agentic Commerce Protocol；该协议真实存在，但是否足以否定“基本是”不好说。",
+      "ACP 并入 A2A 的日期：ZGYF 写 2025-08-25，QV83 写 2025-08-27，我记得公开说明大约在 2025-08-29。",
+      "QV83「旧版要求 stateful initialize 握手」：2026-07-28 之前 initialize 是必需的，但会话状态并非服务器强制。",
+      "ZGYF「至少12个月弃用窗口」和 QV83「2026-05 的 $27M 融资明确与 AG-UI 采用挂钩」我无法核对。"
+    ],
+    "reason": "QV83 开头就按交互段讲清四个协议，并对两个点名疑点给了能用的结论：IBM ACP 与 Zed ACP 不是一回事；独立 HTTP+SSE 已弃用，SSE 仍是 Streamable HTTP 里的可选流式机制。ZGYF 更密，A2UI 与 AG-UI 的分工也写得更清楚，但版本日期、弃用时间线，以及“有没有协商”前后不一致，ACP-Zed 和 AG-UI 的分类理由也偏了。对这位要快速建立可靠对照的用户，QV83 略好。",
+    "_codes": {
+      "x": "QV83",
+      "y": "ZGYF"
+    },
+    "_attr": [
+      4,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e002/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

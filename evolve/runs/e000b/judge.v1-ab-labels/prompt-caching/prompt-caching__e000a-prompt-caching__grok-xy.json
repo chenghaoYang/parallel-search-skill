@@ -1,0 +1,68 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": 1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "摘要写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起)」，但同文 Kimi 行是「5m档=标准价; 1h档=2x」，5 分钟档不是从 1.25 倍起。",
+    "摘要断言「DeepSeek、智谱写入不加价」，矩阵却把智谱写入费标为「∅官方未详述」，第5节也写「写入费……官方文档未详述」。"
+  ],
+  "errors_y": [
+    "开篇称「传言已过时」并把 Anthropic 划进「自动兜底」，但同文仍要求顶层 cache_control；相对 OpenAI/DeepSeek 的零改动，用户听到的「必须改请求」仍然成立。",
+    "Gemini 显式缓存写成「generateContent创建`cachedContents`再引用」；创建缓存的是 cachedContents 接口，generateContent 只在生成时引用已有缓存。",
+    "Gemini 显式命中字段写成「usageMetadata.totalTokenCount」；该字段是总 token，不能用来确认缓存命中。",
+    "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，与同文 OpenAI 行的「可选」矛盾；不传该参数也会走默认隐式缓存。"
+  ],
+  "reason": "A 开头就回答了要不要改代码，并用请求内断点对独立缓存对象把各家分开，读者能直接决定怎么接。B 的失效条件和逐格出处更细，但把 Anthropic 说成传言已过时，又写错 Gemini 显式缓存的创建方式和命中字段。对这位要落地的用户，A 的价值略高。",
+  "raw": {
+    "dims": {
+      "orientation": "A",
+      "taxonomy": "A",
+      "coverage": "B",
+      "doubts": "A",
+      "pitfalls": "B",
+      "accuracy": "A",
+      "sourcing": "B",
+      "concision": "tie"
+    },
+    "overall": "A",
+    "strength": 1,
+    "errors": {
+      "A": [
+        "摘要写「Anthropic、Kimi、DashScope(显式)明确收写入费(1.25x起)」，但同文 Kimi 行是「5m档=标准价; 1h档=2x」，5 分钟档不是从 1.25 倍起。",
+        "摘要断言「DeepSeek、智谱写入不加价」，矩阵却把智谱写入费标为「∅官方未详述」，第5节也写「写入费……官方文档未详述」。"
+      ],
+      "B": [
+        "开篇称「传言已过时」并把 Anthropic 划进「自动兜底」，但同文仍要求顶层 cache_control；相对 OpenAI/DeepSeek 的零改动，用户听到的「必须改请求」仍然成立。",
+        "Gemini 显式缓存写成「generateContent创建`cachedContents`再引用」；创建缓存的是 cachedContents 接口，generateContent 只在生成时引用已有缓存。",
+        "Gemini 显式命中字段写成「usageMetadata.totalTokenCount」；该字段是总 token，不能用来确认缓存命中。",
+        "OpenRouter 行写「OpenAI仍需`prompt_cache_breakpoint`」，与同文 OpenAI 行的「可选」矛盾；不传该参数也会走默认隐式缓存。"
+      ]
+    },
+    "unsure": [
+      "Kimi 是零改动自动（A：F1、mode 仅 implicit、门槛 256）还是必须传 prompt_cache_options 或 cache_control（B：纯手动，门槛未注明）。",
+      "智谱命中价与 TTL：A 约 0.5x、500+ token、5 分钟自动刷新；B 约 0.25x（2 元 vs 8 元/M）、512 token、TTL 未写，并另有按小时存储费。",
+      "DeepSeek 命中倍率：A 约 0.02x（news260910）对 B 的 0.1x（$0.014 vs $0.14/M，news0802）。",
+      "OpenAI 代际定价与 TTL：A 称 GPT-5.6+ 命中 0.1x、写入 1.25x、固定 30 分钟，更早模型 0.5x、写入免费、5–10 分钟到 1 小时或 24h；B 把全体写成 0.1x 与 1.25x，并称 2026-05 后非 ZDR 默认 24h。",
+      "Anthropic 自动放置断点的上线日：A 为 2025-03-13，B 为 2026-02-19。",
+      "Gemini 隐式 TTL 是否如 B 所称官方明确无法定义且不保证；显式存储费是 A 的 2026 年底后翻倍，还是 B 的 2027 起、每百万 token 每小时 $0.5–1.0。",
+      "「只回溯约 20 个 block」A 归在 DashScope，B 归在 Bedrock 简化缓存。",
+      "A 的 Gemini 字段 usage.total_cached_tokens，以及 B 的隐式同名字段，是否就是 cachedContentTokenCount。",
+      "OpenRouter 粘性路由是否 10 分钟无活动失效且仅在上游缓存价更低时启用；Azure 是 A 说的 GPT-5.6+ 与原生对齐，还是 B 说的纯内存 5–10 分钟、PTU-M 不支持断点。"
+    ],
+    "reason": "A 开头就回答了要不要改代码，并用请求内断点对独立缓存对象把各家分开，读者能直接决定怎么接。B 的失效条件和逐格出处更细，但把 Anthropic 说成传言已过时，又写错 Gemini 显式缓存的创建方式和命中字段。对这位要落地的用户，A 的价值略高。"
+  },
+  "task": "prompt-caching",
+  "x": "e000b/prompt-caching",
+  "y": "e000a/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

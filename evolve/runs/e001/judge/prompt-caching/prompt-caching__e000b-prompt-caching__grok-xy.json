@@ -1,0 +1,70 @@
+{
+  "score": 1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": 1,
+    "doubts": 1,
+    "pitfalls": 1,
+    "accuracy": 1,
+    "sourcing": 1,
+    "concision": 0
+  },
+  "errors_x": [],
+  "errors_y": [
+    "Gemini 的命中字段写成「usage.total_cached_tokens」；Gemini API 报告的是 usageMetadata.cachedContentTokenCount，并不是 usage.total_cached_tokens。",
+    "概述断言「DeepSeek、智谱写入不加价」，但矩阵把智谱写入费标成「∅官方未详述」，第5节又写「智谱 GLM 的写入费、精确失效触发条件: 官方文档未详述」，把未公开说成了不加价。"
+  ],
+  "reason": "N99U 开头就判定「OpenAI/DeepSeek 自动、Anthropic 仍要 cache_control」现在依然成立，并用命中字段、计费、TTL 和「现象-处理」表把用户点名的疑点落到可操作的对照上，智谱口径冲突也标成未决。THG8 的 F1/F2/F3 分类更干净，云托管和模型代际价差更全，但 Gemini 命中字段与官方用法不一致，智谱写入费前后矛盾，Anthropic 字段没有写出名字。对要改请求、对账和排失效的用户，N99U 略有用。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "N99U",
+      "taxonomy": "THG8",
+      "coverage": "N99U",
+      "doubts": "N99U",
+      "pitfalls": "N99U",
+      "accuracy": "N99U",
+      "sourcing": "N99U",
+      "concision": "tie"
+    },
+    "overall": "N99U",
+    "strength": 1,
+    "errors": {
+      "N99U": [],
+      "THG8": [
+        "Gemini 的命中字段写成「usage.total_cached_tokens」；Gemini API 报告的是 usageMetadata.cachedContentTokenCount，并不是 usage.total_cached_tokens。",
+        "概述断言「DeepSeek、智谱写入不加价」，但矩阵把智谱写入费标成「∅官方未详述」，第5节又写「智谱 GLM 的写入费、精确失效触发条件: 官方文档未详述」，把未公开说成了不加价。"
+      ]
+    },
+    "unsure": [
+      "Anthropic 自动缓存的日期对不上：N99U 写「2026-02-19 新增」，THG8 写「2025-03-13 上线」。",
+      "OpenAI 可选手动断点的参数名对不上：N99U 写默认「mode: implicit」，THG8 写「prompt_cache_breakpoint」。",
+      "OpenAI 命中价：N99U 表格统一写 0.1x；THG8 写 GPT-5.6+ 为 0.1x、更早为 0.5x 且写入免费。2025 前后缓存输入长期约半价，2026-09 是否仍分代计价无法确认。",
+      "智谱 TTL：N99U 称官方指南和定价页都没写；THG8 矩阵写「5min自动刷新」。",
+      "智谱命中折扣：N99U 称指南写「50%」、定价表为 0.25x～0.29x；THG8 写「约0.5x」。",
+      "Kimi 写入价：N99U 写「两档TTL写入价相同」；THG8 写「5m档=标准价; 1h档=2x」。",
+      "N99U 写 Gemini implicit「24h自动清」；THG8 只写「implicit系统自动」。显式缓存默认 1 小时两边一致，隐式是否有固定 24h 无法确认。",
+      "THG8 写 Gemini explicit 存储费「$0.50/M tok/时(2026底前)」且「2026年底后翻倍」；N99U 写「$0.50~1.00/M tok/h」。",
+      "THG8 写 Bedrock 上的 Claude 另有一条不需要 cache_control 的 Implicit Prompt Caching，且「计费和 TTL 与原生相同」。",
+      "THG8 写 OpenAI「约15 req/min/前缀」会错过缓存，以及 OpenRouter sticky「10分钟无活动后失效」。N99U 写 OpenRouter 官方称缓存「最低30分钟」，并自称与 Anthropic 5 分钟对不上。",
+      "两份的 OpenAI 命中字段路径不同：N99U 为 usage.input_tokens_details.cached_tokens，THG8 为 usage.prompt_tokens_details.cached_tokens，可能分属 Responses API 与 Chat Completions。",
+      "N99U 写 Kimi「改 tool_choice 没事，改 reasoning_effort 就失效」，无法用既有知识核对。"
+    ],
+    "reason": "N99U 开头就判定「OpenAI/DeepSeek 自动、Anthropic 仍要 cache_control」现在依然成立，并用命中字段、计费、TTL 和「现象-处理」表把用户点名的疑点落到可操作的对照上，智谱口径冲突也标成未决。THG8 的 F1/F2/F3 分类更干净，云托管和模型代际价差更全，但 Gemini 命中字段与官方用法不一致，智谱写入费前后矛盾，Anthropic 字段没有写出名字。对要改请求、对账和排失效的用户，N99U 略有用。",
+    "_codes": {
+      "x": "N99U",
+      "y": "THG8"
+    },
+    "_attr": [
+      3,
+      0
+    ]
+  },
+  "task": "prompt-caching",
+  "x": "e001/prompt-caching",
+  "y": "e000b/prompt-caching",
+  "judge": "grok",
+  "model": "grok-4.7",
+  "order": "xy"
+}

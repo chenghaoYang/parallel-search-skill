@@ -1,0 +1,402 @@
+{
+ "task_id": "durable-execution",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "temporal-deterministic-replay",
+   "claim": "Temporal 用每条 workflow execution 的 Event History 做恢复：worker 从头 replay workflow 代码，发出的 command 与已有历史逐条比对，因此 workflow 代码必须是确定性的。",
+   "groups": [
+    [
+     "Event History",
+     "event history",
+     "事件历史"
+    ],
+    [
+     "replay",
+     "重演",
+     "回放"
+    ],
+    [
+     "deterministic",
+     "确定性"
+    ]
+   ],
+   "hosts": [
+    "docs.temporal.io"
+   ],
+   "source": "https://docs.temporal.io/workflow-definition",
+   "quote": "When the Workflow's code replays, the Commands that are emitted are compared with the existing Event History."
+  },
+  {
+   "id": "temporal-ts-sandbox",
+   "claim": "Temporal TypeScript SDK 把 workflow 跑在确定性沙箱里：Math.random()、Date、setTimeout 被换成确定性版本，能 import 的 npm 包不能引用 Node.js 或 DOM API。",
+   "groups": [
+    [
+     "sandbox",
+     "沙箱",
+     "sandboxed"
+    ],
+    [
+     "Math.random"
+    ],
+    [
+     "Date",
+     "setTimeout"
+    ],
+    [
+     "Node.js",
+     "DOM",
+     "Node API",
+     "node api"
+    ]
+   ],
+   "hosts": [
+    "docs.temporal.io"
+   ],
+   "source": "https://docs.temporal.io/develop/typescript/workflows/basics",
+   "quote": "In the Temporal TypeScript SDK, Workflows run in a deterministic sandboxed environment."
+  },
+  {
+   "id": "temporal-official-sdks",
+   "claim": "Temporal 官方 SDK 现在覆盖 8 门语言：Go、Java、Python、TypeScript、.NET、Ruby、PHP、Rust。",
+   "groups": [
+    [
+     "Ruby"
+    ],
+    [
+     "PHP"
+    ],
+    [
+     "Rust"
+    ]
+   ],
+   "hosts": [
+    "docs.temporal.io"
+   ],
+   "source": "https://docs.temporal.io/encyclopedia/architecture/temporal-sdks",
+   "quote": "Each Temporal SDK targets a specific programming language."
+  },
+  {
+   "id": "temporal-cloud-actions-pricing",
+   "claim": "Temporal Cloud 按 Action 计费（启动 workflow、记 heartbeat、发消息都算 Action），起步价每百万 Action $50，量大阶梯降价，存储和 support 另算。",
+   "groups": [
+    [
+     "Action",
+     "action",
+     "Actions"
+    ],
+    [
+     "$50",
+     "50 美元",
+     "50美元",
+     "0.00005"
+    ],
+    [
+     "million",
+     "百万",
+     "per million",
+     "每百万",
+     "/M"
+    ]
+   ],
+   "hosts": [
+    "docs.temporal.io",
+    "temporal.io"
+   ],
+   "source": "https://docs.temporal.io/cloud/pricing",
+   "quote": "Actions pricing starts at $50 per million Actions ($0.00005 per Action)."
+  },
+  {
+   "id": "temporal-signal-with-start",
+   "claim": "Temporal 的 Signal 是发给正在运行的 workflow execution 的异步消息；如果执行还没启动，signalWithStart 可以先原子地启动再投递这条 signal。",
+   "groups": [
+    [
+     "Signal",
+     "signal",
+     "信号"
+    ],
+    [
+     "signalWithStart",
+     "Signal-With-Start",
+     "signal with start"
+    ]
+   ],
+   "hosts": [
+    "docs.temporal.io"
+   ],
+   "source": "https://docs.temporal.io/develop/typescript/workflows/message-passing",
+   "quote": "A Signal is an asynchronous message sent to a running Workflow Execution to change its state and control its flow"
+  },
+  {
+   "id": "restate-server-bsl-sdks-mit",
+   "claim": "Restate Server（自托管运行时）是 BSL 协议——source-available 但不是 OSI 开源；而所有 SDK 都是 MIT 协议。",
+   "groups": [
+    [
+     "BSL",
+     "Business Source License",
+     "business source"
+    ],
+    [
+     "MIT",
+     "MIT 协议",
+     "MIT license"
+    ],
+    [
+     "SDK",
+     "SDKs",
+     "sdk"
+    ]
+   ],
+   "hosts": [
+    "docs.restate.dev"
+   ],
+   "source": "https://docs.restate.dev/get-restate",
+   "quote": "Self contained binary under the BSL license"
+  },
+  {
+   "id": "restate-log-first-architecture",
+   "claim": "Restate 是 log-first 架构：每个 partition 有 leader/sequencer 把事件 quorum 复制到其它节点，log 是主持久层；partition processor 在 RocksDB 里维护物化状态缓存，并周期性把快照传 S3 以便裁剪 log。",
+   "groups": [
+    [
+     "log",
+     "日志",
+     "log-first",
+     "journal",
+     "日志优先",
+     "以日志为先"
+    ],
+    [
+     "RocksDB"
+    ],
+    [
+     "S3",
+     "snapshot",
+     "快照"
+    ]
+   ],
+   "hosts": [
+    "docs.restate.dev"
+   ],
+   "source": "https://docs.restate.dev/references/architecture",
+   "quote": "The log is the primary durability layer. A write is committed when a quorum of replicas acknowledges the append."
+  },
+  {
+   "id": "restate-ctx-run-journal",
+   "claim": "Restate 里非确定性操作（HTTP 调用、数据库响应、UUID 生成等）要包进 ctx.run，结果写进 execution log/journal，replay 时直接回放记录值而不是重跑。",
+   "groups": [
+    [
+     "ctx.run"
+    ],
+    [
+     "journal",
+     "execution log",
+     "日志"
+    ],
+    [
+     "non-deterministic",
+     "非确定性",
+     "不确定性"
+    ]
+   ],
+   "hosts": [
+    "docs.restate.dev"
+   ],
+   "source": "https://docs.restate.dev/develop/ts/durable-steps",
+   "quote": "Use ctx.run to safely wrap any non-deterministic operation, like HTTP calls or database responses, and have Restate store its result in the execution log."
+  },
+  {
+   "id": "dbos-postgres-library",
+   "claim": "DBOS 是嵌进应用的开源库而不是独立编排服务：所有 workflow checkpoint、step 输出、队列和调度状态都写进 Postgres 系统数据库，崩溃后从最后一个完成的 step 恢复。",
+   "groups": [
+    [
+     "Postgres",
+     "PostgreSQL"
+    ],
+    [
+     "library",
+     "库",
+     "embedded",
+     "嵌入"
+    ],
+    [
+     "system database",
+     "系统数据库",
+     "系统库"
+    ]
+   ],
+   "hosts": [
+    "docs.dbos.dev"
+   ],
+   "source": "https://docs.dbos.dev/architecture",
+   "quote": "The open-source DBOS library uses Postgres to orchestrate durable workflows and queues. There's no separate orchestration server and no infrastructure required besides Postgres."
+  },
+  {
+   "id": "dbos-deterministic-workflows",
+   "claim": "DBOS 同样要求 workflow 函数确定性（同样输入要以同样顺序调同样的 step），I/O 只能放进 step；step 至少执行一次、完成后不会再重跑。",
+   "groups": [
+    [
+     "deterministic",
+     "确定性"
+    ],
+    [
+     "step"
+    ],
+    [
+     "at least once",
+     "至少一次",
+     "at-least-once"
+    ]
+   ],
+   "hosts": [
+    "docs.dbos.dev"
+   ],
+   "source": "https://docs.dbos.dev/python/tutorials/workflow-tutorial",
+   "quote": "Steps are tried at least once but are never re-executed after they complete"
+  },
+  {
+   "id": "inngest-step-memoization",
+   "claim": "Inngest 的恢复模型是 step memoization：函数会被重新调用，但已成功执行过的 step 不会重跑，SDK 把持久化的结果直接注入 step.run 的返回值。",
+   "groups": [
+    [
+     "memoiz",
+     "备忘",
+     "memoized"
+    ],
+    [
+     "step.run"
+    ],
+    [
+     "re-executed",
+     "重跑",
+     "重新执行",
+     "重新调用"
+    ]
+   ],
+   "hosts": [
+    "inngest.com"
+   ],
+   "source": "https://www.inngest.com/docs/learn/how-functions-are-executed",
+   "quote": "The step's code is not executed, instead the SDK injects the result into the return value of step.run"
+  },
+  {
+   "id": "inngest-execution-billing",
+   "claim": "Inngest Cloud 按 execution 计费：一次函数运行本身算 1 个 execution，里面每个 step.run 再各算 1 个（5 个 step 的一次运行 = 6 个 execution）；免费档每月含 50k executions。",
+   "groups": [
+    [
+     "execution"
+    ],
+    [
+     "step.run"
+    ],
+    [
+     "50k",
+     "50,000",
+     "5万",
+     "5 万"
+    ]
+   ],
+   "hosts": [
+    "inngest.com"
+   ],
+   "source": "https://www.inngest.com/pricing",
+   "quote": "A function with 5 step.run() calls uses 6 executions total — 1 for the run, 5 for the steps."
+  },
+  {
+   "id": "inngest-sspl-license",
+   "claim": "Inngest 的 server 和 CLI 并不是 Apache 协议：用的是 SSPL 加延迟开源（DOSP，三年后转 Apache 2.0）；只有 SDK 直接是 Apache 2.0。",
+   "groups": [
+    [
+     "SSPL",
+     "Server Side Public License"
+    ],
+    [
+     "Apache",
+     "Apache 2.0",
+     "Apache-2.0"
+    ],
+    [
+     "SDK",
+     "SDKs",
+     "sdk"
+    ]
+   ],
+   "hosts": [
+    "github.com",
+    "inngest.com"
+   ],
+   "source": "https://github.com/inngest/inngest",
+   "quote": "available under the Server Side Public License and delayed open source publication (DOSP) under Apache 2.0"
+  },
+  {
+   "id": "inngest-waitforevent-future-only",
+   "claim": "Inngest 的 step.waitForEvent 从该 step 开始执行时才开始监听：早于它发出的事件不会被匹配，超时返回 null。",
+   "groups": [
+    [
+     "waitForEvent"
+    ],
+    [
+     "timeout",
+     "超时"
+    ],
+    [
+     "null"
+    ]
+   ],
+   "hosts": [
+    "inngest.com"
+   ],
+   "source": "https://www.inngest.com/docs/features/inngest-functions/steps-workflows/wait-for-event",
+   "quote": "events sent before the function is executed will not be handled by the wait"
+  },
+  {
+   "id": "hatchet-postgres-source-of-truth",
+   "claim": "Hatchet 以 PostgreSQL 为事实源存 workflow 定义和执行状态（排队、运行中、完成、输入输出、重试），Engine 负责调度分发并持久记录状态转移，高吞吐自托管时可再加 broker。",
+   "groups": [
+    [
+     "PostgreSQL",
+     "Postgres"
+    ],
+    [
+     "source of truth",
+     "事实源",
+     "单一事实源"
+    ],
+    [
+     "Engine",
+     "engine",
+     "引擎"
+    ]
+   ],
+   "hosts": [
+    "docs.hatchet.run"
+   ],
+   "source": "https://docs.hatchet.run/v1/architecture-and-guarantees",
+   "quote": "PostgreSQL is the durable store for workflow definitions and execution state"
+  },
+  {
+   "id": "hatchet-durable-task-checkpoint",
+   "claim": "Hatchet 的 durable task 只有两类持久操作——等待（时间流逝或收到事件）和 spawn 子任务——每发生一次就往 durable event log 写一个 checkpoint，worker 崩溃后据此恢复。",
+   "groups": [
+    [
+     "durable event log"
+    ],
+    [
+     "spawn",
+     "child",
+     "子任务"
+    ],
+    [
+     "wait",
+     "等待"
+    ]
+   ],
+   "hosts": [
+    "docs.hatchet.run"
+   ],
+   "source": "https://docs.hatchet.run/v1/durable-tasks",
+   "quote": "they wait (for time to pass or events to be received), and they spawn child tasks. Every time one of those happens, Hatchet writes a checkpoint to the durable event log."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（SDK 名、协议名、字段名、数字）或中英双写；针不许是长英文原句。"
+}

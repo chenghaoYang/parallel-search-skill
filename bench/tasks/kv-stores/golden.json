@@ -1,0 +1,337 @@
+{
+ "task_id": "kv-stores",
+ "checked": "2026-09-24",
+ "scoring": "一条 claim 命中，当且仅当 groups 里每一组至少有一个针出现在全文（大小写不敏感）。针不要求出现在同一句。sourced 再要求 hosts 里任一主机名也出现。这一版只计召回，不惩罚多写。",
+ "claims": [
+  {
+   "id": "redis-bsd-through-72",
+   "claim": "Redis 7.2.x 及更早版本一直是 BSD-3-Clause 许可，7.2.4 是最后一个 BSD 版本线。",
+   "groups": [
+    [
+     "BSD"
+    ],
+    [
+     "7.2",
+     "v7.2",
+     "Redis 7.2"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/legal/licenses/",
+   "quote": "Redis 7.2.x of Redis Open Source and earlier versions remain subject to the BSD3 license."
+  },
+  {
+   "id": "redis-74-dual-rsal-sspl",
+   "claim": "2024 年 3 月起，Redis Community Edition 7.4 到 7.8 改为 RSALv2 或 SSPLv1 双许可，两者都不是 OSI 批准的开源协议。",
+   "groups": [
+    [
+     "RSALv2",
+     "RSAL",
+     "v7.4",
+     "Redis 7.4"
+    ],
+    [
+     "SSPLv1",
+     "SSPL"
+    ],
+    [
+     "7.4"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/legal/licenses/",
+   "quote": "Redis Community Edition 7.4.x to 7.8.x remain subject to the dual RSALv2/SSPLv1 license."
+  },
+  {
+   "id": "redis-8-agplv3-tri-license",
+   "claim": "Redis 8.0（2025 年 5 月 1 日 GA）没有把协议换回 BSD，而是在 RSALv2/SSPLv1 之上新增 OSI 批准的 AGPLv3，变成三许可。",
+   "groups": [
+    [
+     "AGPL"
+    ],
+    [
+     "RSALv2",
+     "RSAL"
+    ],
+    [
+     "SSPLv1",
+     "SSPL"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/legal/licenses/",
+   "quote": "Redis 8 in Redis Open Source and later versions are available under our tri-license, allowing us to be both source-available and open source software. Our tri-license includes RSALv2, SSPLv1, and AGPLv3."
+  },
+  {
+   "id": "valkey-lf-fork-724",
+   "claim": "Valkey 是 2024 年 3 月由 Linux 基金会托管的 Redis 7.2.4 fork，保持 BSD-3-Clause 许可，AWS、Google Cloud、Oracle、Ericsson、Snap 支持。",
+   "groups": [
+    [
+     "7.2.4"
+    ],
+    [
+     "Linux Foundation",
+     "Linux 基金会"
+    ],
+    [
+     "fork",
+     "分叉",
+     "分支",
+     "派生"
+    ]
+   ],
+   "hosts": [
+    "linuxfoundation.org",
+    "valkey.io"
+   ],
+   "source": "https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community",
+   "quote": "Valkey will continue development on Redis 7.2.4"
+  },
+  {
+   "id": "keydb-snap-multithread-fork",
+   "claim": "KeyDB 是注重多线程的 Redis fork，2022 年 5 月被 Snap 收购（README：KeyDB is now a part of Snap Inc），合并为单一 BSD-3 项目，宣称与 Redis 协议、模块、脚本完全兼容的 drop-in 替代。",
+   "groups": [
+    [
+     "Snap"
+    ],
+    [
+     "multithread",
+     "多线程"
+    ],
+    [
+     "drop-in",
+     "drop in",
+     "完全兼容",
+     "fully compatible",
+     "协议兼容",
+     "无缝替代"
+    ]
+   ],
+   "hosts": [
+    "github.com/Snapchat/KeyDB",
+    "keydb.dev"
+   ],
+   "source": "https://github.com/Snapchat/KeyDB",
+   "quote": "KeyDB is a high performance fork of Redis with a focus on multithreading, memory efficiency, and high throughput."
+  },
+  {
+   "id": "keydb-last-release-634",
+   "claim": "KeyDB 公开仓库的最新 release 停留在 v6.3.4（2023 年 10 月），2024 年 4 月后基本无公开提交，上游开发停滞，不建议新项目采用。",
+   "groups": [
+    [
+     "6.3.4"
+    ],
+    [
+     "2023"
+    ]
+   ],
+   "hosts": [
+    "github.com/Snapchat/KeyDB"
+   ],
+   "source": "https://github.com/Snapchat/KeyDB/releases",
+   "quote": "KeyDB v6.3.4 (marked Latest)"
+  },
+  {
+   "id": "dragonfly-bsl-11",
+   "claim": "Dragonfly 用 Business Source License 1.1：源码可用但不是 OSI 开源，不能把 Dragonfly 本身作为竞争性托管内存数据存储服务对外提供；到 change date 后转 Apache 2.0。",
+   "groups": [
+    [
+     "BSL",
+     "Business Source License"
+    ],
+    [
+     "Apache"
+    ]
+   ],
+   "hosts": [
+    "github.com/dragonflydb",
+    "dragonflydb.io"
+   ],
+   "source": "https://github.com/dragonflydb/dragonfly/blob/main/LICENSE.md",
+   "quote": "the right to copy, modify, create derivative works, redistribute, and make non-production use"
+  },
+  {
+   "id": "redis-single-threaded-execution",
+   "claim": "Redis 官方定位：从命令执行角度看基本是单线程服务，现代版本只是把其他工作（I/O、后台任务）交给线程；要多核扩展靠的是跑多个实例/分片。",
+   "groups": [
+    [
+     "single-threaded",
+     "single threaded",
+     "单线程"
+    ],
+    [
+     "commands execution",
+     "command execution",
+     "命令执行",
+     "命令的执行"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/benchmarks/",
+   "quote": "Redis is, mostly, a single-threaded server from the POV of commands execution (actually modern versions of Redis use threads for different things)."
+  },
+  {
+   "id": "redis-io-threads-since-6",
+   "claim": "Redis 从 6.0 起提供 io-threads，把 socket 读写和命令解析下放给 I/O 线程而命令执行仍在主线程；Redis 8 重写了该实现，io-threads 默认 1，设成 8 时官方测得吞吐最高提升 112%。",
+   "groups": [
+    [
+     "io-threads",
+     "I/O threads",
+     "I/O 线程",
+     "IO 线程"
+    ],
+    [
+     "Redis 6",
+     "6.0"
+    ],
+    [
+     "112%"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/blog/redis-8-ga/",
+   "quote": "Since Redis 6, we have supported I/O threads to handle client requests, including socket reads/writes and command parsing."
+  },
+  {
+   "id": "valkey-8-io-threads",
+   "claim": "Valkey 8 引入增强版 I/O 线程：socket 读写、命令解析、epoll 轮询下放给 I/O 线程，命令执行保持单线程；官方基准称相对 Valkey 7.2 吞吐提升约 230%（360K→1.19M RPS）。",
+   "groups": [
+    [
+     "I/O thread",
+     "io-thread",
+     "I/O 线程",
+     "IO 线程"
+    ],
+    [
+     "single-threaded",
+     "单线程"
+    ],
+    [
+     "230%",
+     "1.19M"
+    ]
+   ],
+   "hosts": [
+    "valkey.io"
+   ],
+   "source": "https://valkey.io/blog/unlock-one-million-rps/",
+   "quote": "Throughput increased by approximately 230%, rising from 360K to 1.19M requests per second compared to Valkey 7.2"
+  },
+  {
+   "id": "dragonfly-shared-nothing",
+   "claim": "Dragonfly 是单进程全多线程 shared-nothing 架构：keyspace 按线程分片、每线程管自己的 slice，多键原子操作靠类 VLL 的事务框架协调分片而不是 mutex/spinlock。",
+   "groups": [
+    [
+     "shared-nothing",
+     "shared nothing",
+     "shard",
+     "分片",
+     "slice"
+    ],
+    [
+     "mutex",
+     "spinlock",
+     "锁",
+     "lock-free",
+     "无锁"
+    ]
+   ],
+   "hosts": [
+    "github.com/dragonflydb",
+    "dragonflydb.io"
+   ],
+   "source": "https://github.com/dragonflydb/dragonfly",
+   "quote": "compose atomic multi-key operations without using mutexes or spinlocks"
+  },
+  {
+   "id": "dragonfly-no-aof",
+   "claim": "Dragonfly 目前不支持 AOF，持久化只有 point-in-time 快照，给不了 Redis AOF 那种秒级/逐写 RPO 的本地写日志。",
+   "groups": [
+    [
+     "AOF"
+    ],
+    [
+     "does not support",
+     "不支持",
+     "没有 AOF",
+     "无 AOF",
+     "快照",
+     "snapshot"
+    ]
+   ],
+   "hosts": [
+    "dragonflydb.io"
+   ],
+   "source": "https://www.dragonflydb.io/docs/managing-dragonfly/aof",
+   "quote": "Currently, Dragonfly does not support AOF."
+  },
+  {
+   "id": "valkey-compat-72-not-74",
+   "claim": "Valkey 官方迁移文档划的兼容线：与 Redis OSS 7.2 及更早版本兼容（复制、RDB/AOF 文件可迁移），但 Redis CE 7.4+ 产出的数据文件与 Valkey 不兼容。",
+   "groups": [
+    [
+     "7.2",
+     "v7.2",
+     "Redis 7.2"
+    ],
+    [
+     "7.4",
+     "v7.4",
+     "Redis 7.4"
+    ],
+    [
+     "not compatible",
+     "incompatible",
+     "不兼容",
+     "无法兼容"
+    ]
+   ],
+   "hosts": [
+    "valkey.io"
+   ],
+   "source": "https://valkey.io/topics/migration/",
+   "quote": "Redis Community Edition (CE) version 7.4 and later produce data files that are not compatible with Valkey."
+  },
+  {
+   "id": "redis-40shard-counterbench",
+   "claim": "Dragonfly 的 25× 宣传对比对象是单进程 Redis；Redis 官方 2022 年反测用 40 分片 Redis 7.0 集群（只用 64 核中的 40 核）测得比 Dragonfly 高 18%–40% 吞吐。",
+   "groups": [
+    [
+     "40",
+     "40 分片",
+     "40-shard",
+     "40 shard",
+     "40 个分片"
+    ],
+    [
+     "18%",
+     "18%–40%",
+     "18-40%",
+     "18–40"
+    ],
+    [
+     "shard",
+     "分片",
+     "cluster",
+     "集群"
+    ]
+   ],
+   "hosts": [
+    "redis.io"
+   ],
+   "source": "https://redis.io/blog/redis-architecture-13-years-later/",
+   "quote": "we saw Redis achieve 18% – 40% greater throughput than Dragonfly, even when utilizing only 40 out of the 64 vCores."
+  }
+ ],
+ "needle_note": "groups 用与语言无关的标识（协议名、版本号、命令、组织名）或中英双写；所有 quote 均经 WebFetch 打开官方来源逐字核对，2026-09-24。"
+}

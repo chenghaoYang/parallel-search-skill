@@ -1,0 +1,74 @@
+{
+  "score": -1,
+  "dims": {
+    "orientation": 1,
+    "taxonomy": -1,
+    "coverage": -1,
+    "doubts": 1,
+    "pitfalls": -1,
+    "accuracy": 1,
+    "sourcing": -1,
+    "concision": 0
+  },
+  "errors_x": [
+    "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Agent Skills 已于 2025-12 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code、Cursor 等都已采用 SKILL.md"
+  ],
+  "errors_y": [
+    "第0节第7条与D5行称「MCP强制OAuth2.1+PKCE」「OAuth2.1强制+PKCE」，但 MCP 规范写明 Authorization is OPTIONAL（HTTP 传输为 SHOULD，stdio 不适用），说“强制”言过其实",
+    "自相矛盾：第0节第3条称「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，第5节第4条却说「判断兼容性看运行时 `protocolVersion` 协商结果」"
+  ],
+  "reason": "X8GC 把核心 4 个协议讲得明显更深：D1–D10 维度贯穿对照矩阵，覆盖核心抽象、状态、成熟度、MCP 去会话化等实现级细节，还逐条挂了约 40 条具体来源，便于核查。Z8BM 的疑点处理更好（找出第三个 AGNTCY ACP，澄清 Streamable HTTP 仍用 SSE），大厂自家变体也更全，确信错误略少；但协议本身的对照较浅，来源按厂商打包，难以逐条追溯。综合看，X8GC 对该用户的价值略高。",
+  "suspect": false,
+  "raw": {
+    "dims": {
+      "orientation": "Z8BM",
+      "taxonomy": "X8GC",
+      "coverage": "X8GC",
+      "doubts": "Z8BM",
+      "pitfalls": "X8GC",
+      "accuracy": "Z8BM",
+      "sourcing": "X8GC",
+      "concision": "tie"
+    },
+    "overall": "X8GC",
+    "strength": 1,
+    "errors": {
+      "X8GC": [
+        "第0节第7条与D5行称「MCP强制OAuth2.1+PKCE」「OAuth2.1强制+PKCE」，但 MCP 规范写明 Authorization is OPTIONAL（HTTP 传输为 SHOULD，stdio 不适用），说“强制”言过其实",
+        "自相矛盾：第0节第3条称「每个请求靠 `_meta` 里的 `protocolVersion` 独立生效，没有协商」，第5节第4条却说「判断兼容性看运行时 `protocolVersion` 协商结果」"
+      ],
+      "Z8BM": [
+        "「Skills（SKILL.md）目前只服务 Claude 产品线，未发布为独立开放规范」有误：Agent Skills 已于 2025-12 作为开放标准发布（agentskills.io），OpenAI Codex、GitHub Copilot/VS Code、Cursor 等都已采用 SKILL.md"
+      ]
+    },
+    "unsure": [
+      "A2A 转入 AAIF 的日期两份冲突：X8GC「2026-08-27转AAIF托管」vs Z8BM「AAIF 2026-08-17 官宣」，无法核实",
+      "MCP HTTP+SSE 移除窗口两份冲突：X8GC「官方要求至少12个月弃用窗口」vs Z8BM「相关 SEP 转正后 3 个月即可移除」",
+      "X8GC 关于 2026-07-28 版「remove protocol-level sessions and the `Mcp-Session-Id` header」及「SEP-2596」超出可核实范围",
+      "Z8BM「只是取消跨请求恢复」：2025 版 Streamable HTTP 反而引入了基于事件 ID 的恢复；如果指的是 2026-07-28 版，则无法核实",
+      "Z8BM 所说 AGNTCY ACP「仓库已于 2026-04-11 归档」和 Microsoft「Agent Host Protocol(AHP)」都无法核实",
+      "Z8BM「❌ 明确拒绝(issue closed \"not planned\")」：issue 以 not planned 关闭未必代表官方拒绝；另外 Zed 维护的适配器已经让 Claude Code/Codex 能通过 ACP 使用，X8GC 的 ⚠ 标注更稳妥",
+      "Z8BM 的「地位比 founding 项目低一级」「已加入 MCP steering committee」「强制 TLS1.2+」「刚融完 A 轮」「computer_toolset_20260801」都无法核实",
+      "Z8BM 写的 ACP-Zed 起源「Zed Industries(2025-06-23)」与公开发布时间（2025-08）对不上，可能是仓库创建日；AG-UI「规范 2026-07-18」含义不明",
+      "X8GC 的 ACP-Zed 状态「客户端存会话线程」存疑：ACP 规范里会话由 agent 维护（session/load 时由 agent 回放历史）",
+      "X8GC「AG-UI集成列表里有Anthropic/Google/Microsoft，没有OpenAI」与 Z8BM「🔄 In Progress」冲突；AG-UI README 早期曾把 OpenAI Agent SDK 列为进行中",
+      "X8GC A2A「v0.2.0(2025-06)」：v0.2 在 2025-05 的 Google I/O 上就已宣布；版本链还略去了引入 gRPC 的 v0.3",
+      "两份都没把 OpenAI×Stripe 的 Agentic Commerce Protocol（同样简称 ACP）算进撞名。Z8BM 在大厂表里列了它，却仍说「撞名撞了三次」；X8GC 说「指的基本是还活着的 Zed 这个」。算不算错取决于范围怎么划"
+    ],
+    "reason": "X8GC 把核心 4 个协议讲得明显更深：D1–D10 维度贯穿对照矩阵，覆盖核心抽象、状态、成熟度、MCP 去会话化等实现级细节，还逐条挂了约 40 条具体来源，便于核查。Z8BM 的疑点处理更好（找出第三个 AGNTCY ACP，澄清 Streamable HTTP 仍用 SSE），大厂自家变体也更全，确信错误略少；但协议本身的对照较浅，来源按厂商打包，难以逐条追溯。综合看，X8GC 对该用户的价值略高。",
+    "_codes": {
+      "x": "Z8BM",
+      "y": "X8GC"
+    },
+    "_attr": [
+      5,
+      0
+    ]
+  },
+  "task": "agent-protocols",
+  "x": "e001/agent-protocols",
+  "y": "e000a/agent-protocols",
+  "judge": "claude",
+  "model": "opus",
+  "order": "yx"
+}

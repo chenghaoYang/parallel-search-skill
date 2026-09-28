@@ -30,6 +30,10 @@ def judge_cmd(judge, model, prompt):
         return [str(Path.home() / ".grok" / "bin" / "grok"), "-p", prompt, "-m", model,
                 "--output-format", "json", "--permission-mode", "bypassPermissions", "--always-approve",
                 "--disable-web-search", "--no-subagents"], dict(os.environ, **GROK_ENV)
+    if judge == "claude-devin":
+        return [str(Path.home() / ".local" / "bin" / "claude-devin"), "-p", prompt, "--model", model,
+                "--output-format", "json", "--tools", "Read,Write", "--dangerously-skip-permissions",
+                "--strict-mcp-config", "--no-session-persistence"], None
     return ["claude", "-p", prompt, "--model", model, "--output-format", "json",
             "--tools", "Read,Write", "--dangerously-skip-permissions", "--strict-mcp-config",
             "--no-session-persistence"], None

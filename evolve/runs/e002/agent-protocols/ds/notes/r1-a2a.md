@@ -1,0 +1,35 @@
+# r1-a2a
+question: A2A（Agent2Agent Protocol）官方规范说了什么——它管什么交互、拓扑（client agent / remote agent，是否对等）、传输层、消息格式（JSON-RPC？gRPC？）、鉴权机制、任务/会话状态归属、版本规则（当前版本号）、治理方式（最初是 Google 发起，是否已经捐赠给 Linux Foundation 或其他中立基金会，具体是哪个机构、什么时候）、官方列出的采用者/SDK、以及规范里是否提到与 IBM 的 Agent Communication Protocol (ACP) 有合并或整合关系。
+checked: https://a2a-protocol.org/v1.0.0/specification/,https://a2a-protocol.org/v1.0.1/specification/,https://a2a-protocol.org/latest/specification/,https://github.com/a2aproject/A2A,https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents,https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/,https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/,https://a2a-protocol.org/latest/blog/2026/08/27/a-new-chapter-for-a2a-joining-the-agentic-ai-foundation/,https://aaif.io/blog/a2a-joins-aaif,https://a2a-protocol.org/latest/blog/2026/03/12/a2a-protocol-ships-v10-production-ready-standard-for-agent-to-agent-communication/
+
+## claims
+- [C1] A2A 采用客户端-服务器拓扑，其中 A2A Client 向 A2A Server（Remote Agent）发起请求 | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "An A2A Client is an application or agent that initiates requests to an A2A Server on behalf of a user or another system" | type: official
+- [C2] 支持三种规范协议绑定：JSON-RPC 2.0（HTTP）、gRPC、HTTP+REST | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "The protocol provides three complementary mechanisms" covering JSON-RPC binding (Section 9), gRPC binding (Section 10), HTTP+JSON/REST binding (Section 11) | type: official
+- [C3] JSON-RPC 绑定使用 JSON 编码的方法调用，gRPC 采用 Protocol Buffers 二进制编码，REST 使用标准 HTTP 方法和 JSON 负载 | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "All bindings must maintain functional equivalence in their underlying semantics, though transmission mechanisms differ" | type: official
+- [C4] 鉴权机制包括 API Key、HTTP Basic/Bearer 令牌、OAuth 2.0、OpenID Connect 和 Mutual TLS | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "Section 4.5 Security Objects defines multiple schemes including APIKey, OAuth2, OpenID Connect, and Mutual TLS" | type: official
+- [C5] 协议使用版本头 A2A-Version 和 A2A-Extensions 来标识协议版本和支持的扩展 | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "A2A-Version header identifies protocol version (e.g., '1.0')" | type: official
+- [C6] 任务状态由服务器管理，包含七个状态：SUBMITTED、WORKING、COMPLETED、FAILED、CANCELED、INPUT_REQUIRED、AUTH_REQUIRED | src: https://a2a-protocol.org/v1.0.1/specification/ | quote: "Section 4.1.3 TaskState specifies lifecycle states: submitted, working, completed, failed, canceled, input_required, rejected, auth_required" | type: official
+- [C7] 官方支持的 SDK 包括 Python（a2a-sdk）、JavaScript（@a2a-js/sdk）、Java（Maven）、Go（github.com/a2aproject/a2a-go）、.NET（NuGet）、Rust（cargo add a2a-lf）| src: https://github.com/a2aproject/A2A | quote: "six official SDKs: Python, Go, JavaScript, Java, .NET, Rust" | type: official
+- [C8] Google 于 2025 年 6 月 23 日在 Open Source Summit North America 将 A2A 捐赠给 Linux Foundation | src: https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents | quote: "The Linux Foundation announced the launch of the Agent2Agent (A2A) project on June 23, 2025, at Open Source Summit North America in Denver" | type: official
+- [C9] Linux Foundation 治理包括 AWS、Cisco、Google、IBM Research、Microsoft、Salesforce、SAP 和 ServiceNow 等组织的代表 | src: https://a2a-protocol.org/latest/ | quote: "Technical Steering Committee comprises representatives from AWS, Cisco, Google, IBM Research, Microsoft, Salesforce, SAP, and ServiceNow" | type: official
+- [C10] v1.0.0 于 2026 年 3 月 12 日发布，标志着首个生产就绪的稳定版本 | src: https://a2a-protocol.org/latest/blog/2026/03/12/a2a-protocol-ships-v10-production-ready-standard-for-agent-to-agent-communication/ | quote: "A2A Protocol Ships v1.0: Production-Ready Standard for Agent-to-Agent Communication" (March 12, 2026) | type: official
+- [C11] 当前版本为 v1.0.1，发布于 2026 年 5 月 28 日，包含错误修复和规范更新 | src: https://github.com/a2aproject/A2A/releases | quote: "Most recent release is v1.0.1, released on May 28, 2026" | type: official
+- [C12] A2A 于 2026 年 8 月 17 日加入 Agentic AI Foundation（AAIF），与 MCP 并列为 AAIF 开放代理栈的成员 | src: https://a2a-protocol.org/latest/blog/2026/08/27/a-new-chapter-for-a2a-joining-the-agentic-ai-foundation/ | quote: "August 27, 2026... A2A joins the Agentic AI Foundation alongside sibling projects including MCP, goose, and AGENTS.md" | type: official
+- [C13] A2A 支持 150+ 采用组织，包括 Google Cloud、AWS、Microsoft Azure、Salesforce、ServiceNow、SAP 等企业和框架如 LangGraph、CrewAI、Pydantic AI、AG2、IBM BeeAI | src: https://a2a-protocol.org/latest/blog/2026/08/27/a-new-chapter-for-a2a-joining-the-agentic-ai-foundation/ | quote: "over 150 organizations backing the protocol broadly... Cloud Providers: Google Cloud, AWS, Microsoft Azure... Enterprise SaaS Platforms: ServiceNow, Salesforce, Atlassian, and SAP" | type: official
+- [C14] IBM 的 Agent Communication Protocol (ACP) 于 2025 年 8 月 29 日并入 A2A，ACP 开发停止，其资产和专业知识直接贡献给 A2A | src: https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/ | quote: "IBM's Agent Communication Protocol (ACP) would join forces with Google's Agent2Agent Protocol (A2A) under the Linux Foundation's LF AI & Data umbrella. ACP development is now winding down; its assets and expertise are being contributed directly to A2A" | type: official
+- [C15] IBM Research 的 Kate Blair（ACP 原项目负责人）加入 A2A 技术指导委员会，与来自 Google、Microsoft、AWS、Cisco、Salesforce、ServiceNow、SAP 的代表共同领导 | src: https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/ | quote: "Kate Blair (IBM Research, who led ACP) joined the A2A Technical Steering Committee, alongside representatives from Google, Microsoft, AWS, Cisco, Salesforce, ServiceNow, and SAP" | type: official
+- [C16] IBM BeeAI 平台通过 A2AServer 和 A2AAgent 适配器支持 A2A 兼容性，为 ACP 用户提供迁移路径 | src: https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/ | quote: "BeeAI users have a migration path via the A2AServer and A2AAgent adapters, plus an official BeeAI: ACP to A2A migration guide" | type: official
+
+## conflicts
+- IBM 官方网站（https://www.ibm.com/think/topics/agent2agent-protocol）描述 ACP 为"与 A2A 类似"的协议，但未明确提及 2025 年 8 月的并入事件；而 LFAI&Data 官方公告（https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/）明确声明 ACP 并入 A2A，ACP 开发停止。这反映 IBM 公开页面更新滞后。
+
+## gaps
+- 规范文档中未明确提及第 8 个任务状态（在 C6 引用中 Linux Foundation 声明中提到但规范摘要中未列出）
+- 未从官方规范中找到明确的"对等"架构说法，只找到客户端-服务器单向关系；是否支持双向对等通信需在规范完整文本中进一步验证
+- 未查证是否存在预 v0.1.0 的早期版本或发展历程
+- IBM 官方对 ACP-A2A 并入事件的公开确认文档（仅在 LFAI&Data 侧找到）
+
+## leads
+- Agentic AI Foundation 于 2026 年 8 月 17 日成为 A2A 的新治理主体，取代 Linux Foundation；需确认 Linux Foundation 与 AAIF 的组织关系
+- A2A 规范明确在 Appendix B 中与 MCP 的关系：A2A 处理代理间协作，MCP 处理工具集成，互补而非竞争
+- A2A 支持自定义协议绑定（Section 12），允许实现者在标准三种绑定外扩展传输机制

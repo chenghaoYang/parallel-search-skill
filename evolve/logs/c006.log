@@ -1,0 +1,11 @@
+[run] c006/agent-protocols: crash, 8.9 min, 0 chars, golden 0.0, spawns 6, $8.1782115
+[run] c006/llm-inference: crash, 0.0 min, 0 chars, golden 0.0, spawns 0, $0
+[run] c006/durable-execution: crash, 0.0 min, 0 chars, golden 0.0, spawns 0, $0
+[run] c006/py-packaging: crash, 9.7 min, 0 chars, golden 0.0, spawns 6, $11.179982000000004
+[run] c006/prompt-caching: error, 30.1 min, 6612 chars, golden 0.917, spawns 13, $12.785469999999997
+[run] c006/py-packaging: ok, 25.8 min, 8993 chars, golden 0.917, spawns 10, $19.734208999999996
+[run] c006/agent-protocols: error, 28.5 min, 8916 chars, golden 0.7, spawns 11, $17.817569499999987
+[run] c006/durable-execution: crash, 0.0 min, 0 chars, golden 0.0, spawns 0, $0
+[run] c006/llm-inference: crash, 2.9 min, 0 chars, golden 0.0, spawns 6, $2.6360704999999998
+[run] c006/durable-execution: error, 33.9 min, 9231 chars, golden 0.562, spawns 11, $20.05171649999999
+[run] c006/llm-inference: ok, 32.6 min, 8991 chars, golden 0.467, spawns 10, $19.589194499999987

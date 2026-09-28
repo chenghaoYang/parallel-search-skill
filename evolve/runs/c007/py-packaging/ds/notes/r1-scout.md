@@ -1,0 +1,48 @@
+# r1-scout
+question: (a) PEP 751 pylock.toml 跨工具支持现状（PEP status；pip/uv/poetry/pdm/hatch/pip-tools 能装/能导出/没有）；(b) 迁移/CI 缓存/私有源的坑与网格遗漏实体
+checked: https://peps.python.org/pep-0751/, https://pip.pypa.io/en/stable/news/, https://github.com/astral-sh/uv/releases/tag/0.6.15, https://github.com/pdm-project/pdm/releases/tag/2.24.0, https://github.com/pdm-project/pdm/releases/tag/2.25.0, https://python-poetry.org/blog/announcing-poetry-2.3.0/ (via search excerpt), https://github.com/python-poetry/poetry-plugin-export/releases/tag/1.10.0 (search), https://github.com/jazzband/pip-tools/pull/2380, https://pipenv.pypa.io/en/stable/pylock.html (search excerpt), https://github.com/pypa/hatch/blob/master/docs/blog/posts/release-hatch-1170.md, https://github.com/pypa/hatch/blob/master/docs/plugins/locker.md (search), https://github.com/astral-sh/setup-uv, https://github.com/pdm-project/setup-pdm, https://github.com/actions/setup-python, https://github.com/astral-sh/rye, https://github.com/mkniewallner/migrate-to-uv, https://docs.astral.sh/uv/concepts/authentication/http/, https://python-poetry.org/docs/repositories/, https://docs.astral.sh/uv/concepts/projects/workspaces/, https://discuss.python.org/t/community-adoption-of-pylock-toml-pep-751/89778 (search), https://sichard.ca/blog/2026/04/whats-new-in-pip-26.1/ (search)
+
+## claims
+- [C1] PEP 751 已 Final；Created 24-Jul-2024，Resolution 31-Mar-2025；页面提示其为历史文档，canonical spec 在 PyPA specs (pylock.toml Specification) | src: https://peps.python.org/pep-0751/ | quote: "Status: Final" | type: official
+- [C2] pip 25.1 (2025-04-26) 新增实验性 `pip lock` 命令实现 PEP 751（导出方向） | src: https://pip.pypa.io/en/stable/news/ | quote: "Add a new, experimental, pip lock command, implementing PEP 751." | type: official
+- [C3] pip 26.1 (2026-04-26) 新增实验性从 pylock.toml 读需求安装：`-r pylock.toml` | src: https://pip.pypa.io/en/stable/news/ | quote: "Add experimental support to read requirements from standardized pylock.toml files ( -r pylock.toml )." | type: official
+- [C4] uv 0.6.15 双向支持：`uv export -o pylock.toml`、`uv pip compile -o pylock.toml`（导出）；`uv pip sync pylock.toml`/`uv pip install -r pylock.toml`（安装） | src: https://github.com/astral-sh/uv/releases/tag/0.6.15 | quote: "Add PEP 751 support to `uv pip compile`; Add `uv export` support for PEP 751; Add `pylock.toml` to `uv pip install` and `uv pip sync`" | type: official
+- [C5] PDM 2.24.0 可导出 pylock.toml | src: https://github.com/pdm-project/pdm/releases/tag/2.24.0 | quote: "Support exporting to pylock.toml format as described by PEP 751." | type: official
+- [C6] PDM 2.25.0 可把 pylock 作为主锁格式（配置项 opt-in） | src: https://github.com/pdm-project/pdm/releases/tag/2.25.0 | quote: "Support pylock as alternative lock format and make it opt-in by config. (#3481)" | type: official
+- [C7] Poetry 2.3.0 + poetry-plugin-export 1.10.0 只能导出，不能替代 poetry.lock | src: https://python-poetry.org/blog/announcing-poetry-2.3.0/ | quote: "Poetry is not yet able to replace `poetry.lock` with `pylock.toml` ... Exporting `pylock.toml` requires at least Poetry 2.3.0 and poetry-plugin-export 1.10.0." | type: official
+- [C8] hatch v1.17.0 (2026-05-30) 加入一等 pylock.toml 生成：`hatch env lock`/`hatch lock`，`locked = true` 或全局 `lock-envs = true`；default 环境产 pylock.toml，其余产 pylock.<env>.toml | src: https://github.com/pypa/hatch/blob/master/docs/blog/posts/release-hatch-1170.md | quote: "Hatch now generates PEP 751 lockfiles (`pylock.toml`) for your environments" | type: official
+- [C9] hatch 内置两个 locker：uv 用 `uv pip compile`/`uv pip sync`（可安装）；pip 用 `pip lock`（需 pip 25.1+），pip locker 的 apply_lock 是 no-op，安装端要靠 uv | src: https://github.com/pypa/hatch/blob/master/docs/plugins/locker.md | quote: "`apply_lock` is a no-op — use UV for `locked` installs from a pylock today." | type: official
+- [C10] pip-tools 目前没有已发布的 pylock 支持：PR #2380 拟加第三个顶层命令 `pip-lock` 产 pylock.toml，2026-05 被关闭未合并，作者转向外部 `nab` 项目 | src: https://github.com/jazzband/pip-tools/pull/2380 | quote: "adds a third top-level command, `pip-lock`, that produces a spec-conformant `pylock.toml`" | type: official
+- [C11] pipenv 已实验性支持 pylock.toml 读写：`[pipenv] use_pylock = true` 使 `pipenv lock` 同时生成；`pipenv pylock --generate` 从 Pipfile.lock 生成；两文件并存时优先 pylock.toml | src: https://pipenv.pypa.io/en/stable/pylock.html | quote: "When both a Pipfile.lock and a pylock.toml file exist, Pipenv will prioritize the pylock.toml file." | type: official
+- [C12] packaging 26.1 起含 `packaging.pylock` 读写/校验模块（pip 与 pip-tools PR 依赖它） | src: https://github.com/jazzband/pip-tools/pull/2380 | quote: "PEP 751 reading, writing, and disjointness validation rely on `packaging.pylock`, which only ships from `packaging` 26.1." | type: official
+- [C13] pip 的 pylock 实验限制：`-r pylock.toml` 不可与 --python-version/--platform/--abi/--implementation 同用；实验性 `pip lock` 无法输出 extras/dependency-groups | src: https://github.com/pypa/pip/pull/13876 | quote: "currently, the still experimental `pip lock` command cannot (even in principle) produce extras and dependency groups" | type: official
+- [C14] 安装器按文件名识别锁文件：必须为 `pylock.toml` 或 `pylock.<name>.toml`；pip 26.1 混用 `-r pylock.toml` 与其他 requirements 被官方强烈劝阻 | src: https://sichard.ca/blog/2026/04/whats-new-in-pip-26.1/ | quote: "as long it is named as expected: `pylock.toml` or `pylock..toml`" | type: secondary
+- [C15] actions/setup-python 的 `cache` 输入只支持 pip/pipenv/poetry，不覆盖 uv/pdm | src: https://github.com/actions/setup-python | quote: "Supported package managers are `pip`, `pipenv` and `poetry`." | type: official
+- [C16] setup-uv 提供 `enable-cache`（默认 `"auto"`，GitHub-hosted runner 自动开，self-hosted 关）+ `cache-dependency-glob`/`cache-suffix`/`prune-cache`/`cache-python`；默认 glob 覆盖 requirements*/constraints*/pyproject.toml/uv.lock/`*.py.lock`，未列 pylock.toml | src: https://github.com/astral-sh/setup-uv | quote: "`enable-cache` (default: `\"auto\"`) — \"Enable the GitHub Actions cache for uv: true, false, or auto\"" | type: official
+- [C17] setup-pdm 提供 `cache: true` + `cache-dependency-path`（默认 `pdm.lock`，支持 glob 如 `'**/pdm.lock'`）；README 指出 setup-python 不原生支持 PDM 缓存 | src: https://github.com/pdm-project/setup-pdm | quote: "`cache` (default `false`) — \"Cache PDM installation.\"; `cache-dependency-path` (default `pdm.lock`)" | type: official
+- [C18] rye 仓库已于 2026-02-05 被 owner archive，README 宣告停止开发并指向 uv | src: https://github.com/astral-sh/rye | quote: "Rye is no longer developed." | type: official
+- [C19] migrate-to-uv（mkniewallner/现 osprey-oss）支持从 Poetry（含 PEP 621 的 Poetry 2.0+）、Pipenv、pip-tools、pip 迁移并保留已锁版本；不支持 PDM | src: https://github.com/mkniewallner/migrate-to-uv | quote: "The following package managers are supported: Poetry ... Pipenv; pip-tools; pip" | type: official
+- [C20] uv HTTP 私有源认证优先级：URL 内嵌凭据 → .netrc（始终启用，NETRC 环境变量或 ~/.netrc）→ `uv auth` 凭据存储（~/.local/share/uv/credentials/credentials.toml）→ keyring subprocess（需 `--keyring-provider subprocess`/`UV_KEYRING_PROVIDER`，默认关） | src: https://docs.astral.sh/uv/concepts/authentication/http/ | quote: "Reading credentials from `.netrc` files is always enabled." | type: official
+- [C21] Poetry 私有源凭据用 `poetry config http-basic.<repo>`/`pypi-token`，优先存 keyring、失败回落 auth.toml；env 变量 `POETRY_HTTP_BASIC_<REPO>_USERNAME/_PASSWORD`；官方警告 ~/.netrc "has been known to conflict with Poetry's configured authentication" | src: https://python-poetry.org/docs/repositories/ | quote: "it is recommended to use [API tokens](https://pypi.org/help/#apitoken) when uploading packages to PyPI." | type: official
+- [C22] uv workspace：root `pyproject.toml` 加 `tool.uv.workspace`（members 必填/exclude 可选），成员依赖用 `tool.uv.sources` 的 `workspace = true`；整个 workspace 共享一个 uv.lock、一个 requires-python；成员要求冲突时不适用 | src: https://docs.astral.sh/uv/concepts/projects/workspaces/ | quote: "`uv lock` operates on the entire workspace at once." | type: official
+- [C23] 生态采纳帖确认版本起点：pip>=25.1、PDM>=2.24.0 导出，uv>=0.6.15 导出+安装，PDM>=2.25.0 pylock 可作主锁格式；并列 Dependabot issue #12094 与 Renovate discussion #35704 为未支持 pylock 的跟踪项 | src: https://discuss.python.org/t/community-adoption-of-pylock-toml-pep-751/89778 | quote: "pip, PDM, uv can now export pylock.toml files." | type: secondary
+- [C24] pipenv 支持详情（search 摘录，未经 WebFetch 复核）：`pipenv install`/`pipenv sync` 自动检测 pylock.toml；`pylock_name = "dev"` 产 pylock.dev.toml；PR #6391 标注 experimental | src: https://github.com/pypa/pipenv/pull/6391 | quote: "This PR adds experimental support for PEP 751 `pylock.toml` files" | type: official
+
+## conflicts
+- pip-tools PR 作者 fork 的 README（gaborbernat/pip-tools@pep751）写 `pip install --lockfile pylock.toml .`（称 pip 26.1+），与 pip 官方 changelog 的实际语法 `-r pylock.toml` 不符 —— fork README 是未合并提案的设想语法，不可作为 pip 用法来源 | https://github.com/gaborbernat/pip-tools/blob/pep751/README.md vs https://pip.pypa.io/en/stable/news/
+
+## gaps
+- uv 官方 docs 上 pylock 的用户文档页（uv export --format 取值列表、uv pip install pylock 说明）未直接打开；compatibility 页确认不提 pylock
+- poetry 是否有 workspace/monorepo 概念、PDM workspace 支持——未查
+- conda-lock / mamba / micromamba 的 pylock 关系——未查（conda 生态与 PEP 751 正交，但网格可能漏列）
+- pyenv、pipx/uvx（应用安装维度）、pixi 已由他人覆盖与否未核
+- packaging.python.org 的 pylock.toml canonical spec 页未打开（命名规则、environments 字段语义）
+- setup-uv 默认 cache-dependency-glob 的逐字 glob 未核（摘要列出 `*.py.lock` 而非 pylock.toml，需确认是否为真实默认值）
+
+## leads
+- hatch 1.17.0 是 PEP 751 最大遗漏实体：`hatch env lock --check` 可直接做 CI 锁校验；但 pip locker 只产锁不装，装端仍依赖 uv
+- Dependabot (dependabot-core#12094) 与 Renovate (#35704) 均未支持 pylock —— 纯 pylock 项目拿不到依赖更新 PR，是 CI 大坑
+- 私有源迁移坑：uv 始终读 .netrc，Poetry 反而警告 netrc 会冲突；凭据存放位置完全不同（auth.toml+keyring vs credentials.toml+URL/netrc），迁移需重配
+- `packaging.pylock`（packaging 26.1+）是各工具共用的官方读写实现，后续工具接入大概率走它
+- conda-lock、mamba/micromamba、pyenv、pipx 为网格外候选实体；rye 已死应只作为「历史/已归档」行
+- monorepo：uv workspace 单锁单 requires-python；poetry/pdm 的对应能力未查，pip 无 workspace 概念

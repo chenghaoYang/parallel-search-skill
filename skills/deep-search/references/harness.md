@@ -3,8 +3,11 @@
 SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 → 终审。换外层时只改三件事：
 「一次 spawn」具体是什么调用、工人用什么取数、并发和失败谁来管。任务提示词里依赖外层的句子也按下表改。
 
+**默认栈：ZCode + GLM-5.3**（主/工人同模，`worker-model` 默认 `inherit`）。其余外层为 bench 对比保留。
+
 | 外层 | 一次 spawn = | 选工人模型 | 等一批的正确方式 | 状态 |
 |---|---|---|---|---|
+| ZCode（GLM-5.3） | 一次 Agent 调用（或一次 SendMessage 追问） | 继承会话模型（GLM-5.3），Agent 调用不传模型 | 同一条消息发出整批，然后直接结束回合，完成通知会唤醒你 | 日常默认 |
 | Claude Code | 一次 Agent 调用（或一次 SendMessage 追问） | `research-worker` 定义里的 `model`，或 Agent 调用传 `model` | 同一条消息发出整批，然后直接结束回合，完成通知会唤醒你 | bench 已测 |
 | Kimi Code（≥ 0.36） | 一次 Agent 调用，或 AgentSwarm 里的一项 | `config.toml` 的 `[secondary_model] default_model`（`force = true` 钉死） | 一次 AgentSwarm，或同一步多个前台 Agent 调用 | bench 已测 |
 | Grok Build | 一次 `spawn_subagent` | 每次调用显式传 `model` | 同一条消息发出整批，再用一次 `get_command_or_subagent_output`（wait_all） | bench 已测 |
@@ -12,6 +15,34 @@ SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 
 | Codex CLI / 任意带 shell 的外层 | 一个后台 `codex exec` 或 `claude -p` 进程 | 进程参数 | shell 的 `&` + `wait` | 未测 |
 
 所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等，也不要在这一窗口里自己打开网页。窗口里想到的缺口记进 `log.md` 的 `待查：`，留给下一轮简报。
+
+## ZCode（默认栈：GLM-5.3 全家桶）
+
+- 安装：skill 放 `.agents/skills/deep-search/`（项目级，仓库里是指向 `skills/deep-search/` 的符号链接）或
+  `ln -s <repo>/skills/deep-search ~/.agents/skills/deep-search`（用户级，所有项目 `/deep-search` 直接触发）。
+  两种路径 ZCode 都会扫描；用户级和别的 skill 共存没有冲突。
+- 工人 = Agent 工具，`subagent_type: general-purpose`（通用型，全工具）。工人**继承会话模型**，Agent 调用
+  没有 model 参数也不用传——默认栈就是主/工人同为 GLM-5.3。简报里把 `references/worker.md` 的规则整段带上
+  （general-purpose 不认识 research-worker 定义）。
+- 一轮的所有简报放**同一条消息**里并行发出多个 Agent 调用，`description` 写 `r<轮>-<slug>`。发出后直接结束本回合，
+  完成通知会逐个唤醒；到齐再收束。等待窗口里不开页面（本环境有 WebSearch / WebFetch / mcp web reader，照硬规则不碰），
+  缺口记 `log.md` 的 `待查：`。
+- 追问优先 SendMessage 给原工人（它保留了读过的页面），比新 spawn 便宜；同样计入 turn。
+- 长任务可以 `run_in_background`，其余和前台一致：整批发出后结束回合等通知，不轮询。
+- 不用 CreateWorkflow 编排这套流程（团队约定：dynamic workflow 不作为推荐实现）。
+
+### ZCode 实战坑（2026-09 深调研实测）
+
+- **别用 `general-purpose`**：`~/.zcode/v2/agents-state.json` 的 builtInModelSelectionOverrides 会把 general-purpose
+  钉在某个已下线模型（当时是 deepseek-v4-pro），整批 spawn 直接报 "Model unavailable / model-not-found"；
+  改盘上配置也要 App 重启才生效。**用 `Explore` 替代**：未被覆盖、继承会话模型、自带 Bash/WebFetch/WebSearch，
+  够调研工人用。
+- **Explore 沙箱常为只读**：heredoc/重定向写盘会被系统禁掉。工人简报必须写双预案：「优先 Bash heredoc 写盘到
+  `notes/<name>.md`；若被拒绝，把笔记全文放进最终消息由 lead 代存」。多数工人会走代存路径，lead 收到后照抄 Write。
+- **代存笔记别保留 `src: 同上`**：工人原文用"同上"指代上一条 src 时，代存要展开成完整 URL（几行 Python 逐行回填），
+  否则 notes_lint 报几十条 no_src。quote 必须以引号字符开头（lint 正则 `quote:\s*["“「]`），"如左"、"quote: (1) …"
+  这类写法都会被判 no_quote。
+- **限流重试**：整批 spawn 偶发 1302（账户级速率限制）；失败的那几个按"失败重派一次"规则原样重发，已成功的不重派。
 
 ## Claude Code（agent team）
 
@@ -58,7 +89,7 @@ SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 
 ## 纯 Perplexity
 
 - 每份简报的窄问题 → 一次 `pplx-safe search "<问题>" --json`，答案和 citations 就是笔记。
-- 这类笔记没有原文摘录，按规则全部算 `secondary`；收束时要在第 5 节说明「未经一手来源核对」。
+- 这类笔记没有原文摘录，按规则全部算 `secondary`；收束时要在第 6 节说明「未经一手来源核对」。
 - 只能做「一轮扩展 + 一次收束」或「多轮但每轮都是搜索答案」，没有追问能力。
 - 提示词里写「产出文档」时，Perplexity 会改成「生成文件」：正文只剩 1–2k 字的文件摘要，文件本身 `pplx-web` 拿不到。
   要在提示词末尾加一句「直接在回答正文里输出完整文档，不要生成、附加或引用文件」。

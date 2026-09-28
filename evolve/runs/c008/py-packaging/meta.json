@@ -1,0 +1,50 @@
+{
+  "exp": "c008",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e002/skill",
+  "skill_sha": "965c8432b1",
+  "skill_chars": 14500,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 25.2,
+  "spawns": 11,
+  "followups": 3,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 13,
+    "Bash": 18,
+    "Write": 6,
+    "Agent": 11,
+    "SendMessage": 3,
+    "Edit": 26,
+    "ListAgents": 1
+  },
+  "cost_usd": 19.317967999999997,
+  "num_turns": 3,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 13,
+  "mech": {
+    "chars": 8980,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 1.0,
+    "golden_missed": [],
+    "urls": 58,
+    "traceable": 1.0,
+    "notes": {
+      "files": 10,
+      "claims": 227,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.r1.md": 8825,
+      "report.r2.md": 8998,
+      "report.r3.md": 8980
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c008/py-packaging"
+}

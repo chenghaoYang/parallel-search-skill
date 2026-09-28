@@ -1,6 +1,9 @@
 # local-only material: private notes, raw transcripts, third-party copies
 private/
 .claude/
+
+# deep-search working dirs (research deliverables stay local)
+/deep-search/
 bench/runs/*/transcript.jsonl
 bench/runs/*/stderr.txt
 bench/runs/justin-handbook-*/report.md

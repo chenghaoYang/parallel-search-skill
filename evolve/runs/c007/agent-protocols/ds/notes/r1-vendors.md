@@ -1,0 +1,55 @@
+# r1-vendors
+question: OpenAI、Anthropic、Google、Microsoft 各自官方支持哪些 agent 协议（MCP / A2A / AG-UI / ACP），有无自家变体或私有替代。
+checked: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/, https://www.anthropic.com/news/model-context-protocol, https://www.microsoft.com/en-us/microsoft-cloud/blog/2025/05/07/empowering-multi-agent-apps-with-the-open-agent2agent-a2a-protocol/, https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/announcing-general-availability-of-azure-ai-foundry-agent-service/4414352, https://developers.openai.com/apps-sdk/quickstart, https://developers.openai.com/apps-sdk/mcp-apps-in-chatgpt, https://openai.github.io/openai-agents-python/mcp/, https://developers.openai.com/api/docs/guides/agents-api/tools/mcp, https://openai.com/index/buy-it-in-chatgpt/, https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp, https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/, https://learn.microsoft.com/en-us/windows/ai/mcp/overview, https://blogs.windows.com/windowsdeveloper/2025/11/18/ignite-2025-furthering-windows-as-the-premier-platform-for-developers-governed-by-security/, https://news.microsoft.com/source/features/company-news/introducing-nlweb-bringing-conversational-interfaces-directly-to-the-web/, https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation, https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation, https://docs.cloud.google.com/mcp/overview, https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/mcp, https://adk.dev/mcp/, https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/, https://github.com/google/A2UI, https://github.com/google-gemini/gemini-skills
+
+## claims
+
+OpenAI
+- [C1] OpenAI Agents SDK 官方支持 MCP，含多种传输 | src: https://openai.github.io/openai-agents-python/mcp/ | quote: "The Agents Python SDK understands multiple MCP transports." | type: official
+- [C2] OpenAI Agents API（Responses/Codex harness）可挂接 MCP server（HTTP/stdio 传输） | src: https://developers.openai.com/api/docs/guides/agents-api/tools/mcp | quote: "An MCP server publishes tool definitions and runs tool calls. The Agents API discovers the tools, calls the server, and returns results to the agent." | type: official
+- [C3] OpenAI Apps SDK 基于 MCP（ChatGPT apps = MCP server + 可选 UI 组件） | src: https://developers.openai.com/apps-sdk/quickstart | quote: "Apps built with the Apps SDK use the Model Context Protocol (MCP) to connect to ChatGPT." | type: official
+- [C4] OpenAI 的自家 UI 变体已上游标准化为 "MCP Apps"：ChatGPT 实现该开放标准，`window.openai` 仅作 ChatGPT 专有扩展 | src: https://developers.openai.com/apps-sdk/mcp-apps-in-chatgpt | quote: "OpenAI helped shape the MCP Apps standard from ChatGPT Apps, and new capabilities move into the MCP spec after shape and functionality validation." | type: official
+- [C5] OpenAI 与 Stripe 共建并开源 Agentic Commerce Protocol (ACP)，驱动 Instant Checkout（2025-09-29） | src: https://openai.com/index/buy-it-in-chatgpt/ | quote: "We're also open-sourcing the technology that powers Instant Checkout, the Agentic Commerce Protocol... an open standard for AI commerce that lets AI agents, people, and businesses work together to complete purchases." | type: official
+- [C6] OpenAI 是 AAIF 联合创始方，捐赠 AGENTS.md；LF 称其 "early adopter of MCP" | src: https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation | quote: "OpenAI was an early adopter of MCP and has contributed ACP, Codex CLI, and the Agents SDK and Apps SDK to support the open agentic ecosystem" | type: official
+
+Anthropic
+- [C7] MCP 由 Anthropic 创建并于 2024-11-25 开源 | src: https://www.anthropic.com/news/model-context-protocol | quote: "Today, we're open-sourcing the Model Context Protocol"; "a new standard for connecting AI assistants to the systems where data lives" | type: official
+- [C8] 2025-12-09 Anthropic 把 MCP 捐给 Linux 基金会下 AAIF（与 Block、OpenAI 联合创立；Google/Microsoft/AWS 等支持）；Claude 侧 75+ connectors 由 MCP 驱动 | src: https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation | quote: "Claude now has a directory with over 75 connectors (powered by MCP)" | type: official
+
+Google
+- [C9] Google 于 2025-04-09 发起 A2A，定位与 MCP 互补，50+ 合作伙伴 | src: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ | quote: "Today, we're launching a new, open protocol called Agent2Agent (A2A)"; "A2A is an open protocol that complements Anthropic's Model Context Protocol (MCP)" | type: official
+- [C10] Google 已将 A2A 捐给 Linux Foundation | src: https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/ | quote: "This is why we collectively created the Agent-to-Agent (A2A) Protocol and donated it to the Linux Foundation" | type: official
+- [C11] Google Cloud 提供官方远程 MCP servers，支持 MCP spec 2025-11-25 版 | src: https://docs.cloud.google.com/mcp/overview | quote: "MCP is an open source protocol developed by Anthropic that standardizes how AI applications connect to data sources. Our MCP servers support version 2025-11-25 of MCP." | type: official
+- [C12] Gemini Enterprise Agent Platform（Vertex AI 线）暴露 MCP server 端点 aiplatform.googleapis.com/mcp/* | src: https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/mcp | quote: "Model Context Protocol (MCP) server that provides Agent Platform tools for building, deploying, and scaling... applications on Google Cloud" | type: official
+- [C13] Google ADK 支持 MCP（既可作 MCP client 消费工具，也可把 ADK tools 包成 MCP server），文档站含 A2A Protocol 章节 | src: https://adk.dev/mcp/ | quote: "ADK helps you both use and consume MCP tools in your agents"; "An ADK agent can act as an MCP client and use tools provided by external MCP servers." | type: official
+- [C14] Gemini API 的 google-genai SDK 有实验性内建 MCP 支持（可把 MCP ClientSession 当 tool 传入） | src: https://github.com/google-gemini/gemini-skills/blob/HEAD/skills/vertex-ai-api-dev/references/advanced_features.md | quote: "Built-in [MCP] support is an experimental feature. You can pass a local MCP server as a tool directly." | type: official
+- [C15] Google 自有协议 A2UI（agent 生成 UI 的声明式 JSON 格式，2025-12-15 公开；可跑在 A2A/AG-UI 等 transport 上） | src: https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/ | quote: "The JSON payload can be sent to the client over A2A, AG UI, and potentially other transports." | type: official
+- [C16] A2UI 由 Google 创建、CopilotKit 等贡献，Apache 2.0 | src: https://github.com/google/A2UI/blob/main/docs/index.md | quote: "A2UI is Apache 2.0 licensed, created by Google with contributions from CopilotKit and the open source community" | type: official
+- [C17] Google 官方协议全景把 MCP/A2A/UCP/AP2/A2UI/AG-UI 并列分工 | src: https://developers.googleblog.com/en/developers-guide-to-ai-agent-protocols/ | quote: "MCP connects agents to tools and data. A2A connects agents to other agents. UCP standardizes commerce. AP2 handles payment authorization. A2UI defines what to render. AG-UI defines how to stream it." | type: official
+
+Microsoft
+- [C18] 2025-05-07 宣布 A2A 将进入 Azure AI Foundry 与 Copilot Studio，并加入 A2A GitHub working group | src: https://www.microsoft.com/en-us/microsoft-cloud/blog/2025/05/07/empowering-multi-agent-apps-with-the-open-agent2agent-a2a-protocol/ | quote: "we are committed to advancing open protocols like Agent2Agent (A2A), coming soon to Azure AI Foundry and Copilot Studio"; "We have joined the A2A working group on GitHub" | type: official
+- [C19] Azure AI Foundry Agent Service 2025-05-19 GA，带 A2A API head + MCP 支持，可跨云对接 Google Vertex AI 等 | src: https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/announcing-general-availability-of-azure-ai-foundry-agent-service/4414352 | quote: "The new Agent2Agent (A2A) API head from Azure AI Foundry Agent Service enables open-source orchestrators with A2A connectors to seamlessly use Foundry Agent Service agents" | type: official
+- [C20] Copilot Studio 支持 MCP tools 与 resources（需 generative orchestration；页更新于 2026-08-26） | src: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp | quote: "You can extend your agent with tools by using Model Context Protocol (MCP)... Copilot Studio currently supports MCP tools and resources." | type: official
+- [C21] Windows 11 原生支持 MCP：On-device Agent Registry (ODR) + MCP proxy（Build 2025 宣布私有预览，Ignite 2025-11-18 公共预览） | src: https://blogs.windows.com/windowsdeveloper/2025/11/18/ignite-2025-furthering-windows-as-the-premier-platform-for-developers-governed-by-security/ | quote: "Agent connectors are essentially MCP servers built by app developers and made available in the Windows on-device registry." | type: official
+- [C22] Microsoft Agent Framework 官方集成 AG-UI（支持全部 7 个 AG-UI 特性，前端对接 CopilotKit） | src: https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/ | quote: "The Agent Framework AG-UI integration supports all 7 AG-UI protocol features" | type: official
+- [C23] Microsoft 自有项目 NLWeb（Build 2025）：每个 NLWeb 实例同时是 MCP server，定位 "agentic web 的 HTML" | src: https://news.microsoft.com/source/features/company-news/introducing-nlweb-bringing-conversational-interfaces-directly-to-the-web/ | quote: "Every NLWeb instance is also a Model Context Protocol (MCP) server... we believe NLWeb can play a similar role to HTML in the emerging agentic web." | type: official
+- [C24] Microsoft 参与 MCP 生态治理（与 Anthropic、MCP Steering Committee 合作） | src: https://blogs.windows.com/windowsexperience/2025/05/19/securing-the-model-context-protocol-building-a-safer-agentic-future-on-windows/ | quote: "We are also working with others in the ecosystem such as Anthropic and the MCP Steering Committee" | type: official
+
+AG-UI 采用（二手佐证）
+- [C25] CopilotKit 的 AG-UI 1st-party 集成表把 Microsoft Agent Framework 与 Google ADK 列为 Supported | src: https://docs.showcase.copilotkit.ai/ag-ui/introduction | quote: "Microsoft Agent Framework | Supported... Google ADK | Supported" | type: secondary
+
+## conflicts
+- 无文档间冲突。注意缩写撞车：OpenAI/Stripe 的 "ACP" = Agentic Commerce Protocol，与 IBM/BeeAI 的 ACP（Agent Communication Protocol）同名不同物。
+
+## gaps
+- OpenAI 对 A2A 无官方采纳/声明：查过 openai.com index 与 developers.openai.com（agents/apps-sdk 文档只讲 MCP/MCP Apps/ACP）；LF AAIF 新闻稿也只列其 MCP 系贡献。
+- Anthropic 对 A2A 无官方表态：anthropic.com/news 与 MCP 捐赠文均未提 A2A；A2A 首发 50+ 伙伴名单（Atlassian/Box/SAP/Salesforce 等）中无 Anthropic/OpenAI/Microsoft。
+- OpenAI/Anthropic 对 AG-UI 均无官方支持（OpenAI 走 MCP Apps 路线代替）；仅 CopilotKit 文档列 Microsoft Agent Framework、Google ADK 为 1st-party。
+- OpenAI 采纳 MCP 的官宣日期（2025-03-26 Altman X 帖）只见社区帖，openai.com 未找到对应公告页（index 页 403 无法核验）。
+- Copilot Studio 的 A2A 落地状态：2025-05 公告为 "coming soon"/public preview，未见 GA 公告。
+
+## leads
+- MCP Apps（modelcontextprotocol/ext-apps）正成为 agent UI 层的收敛点：OpenAI 的 Apps SDK UI 贡献进 MCP 规范，与 AG-UI、Google A2UI 同层竞争/互补。
+- 商务协议层分裂：Google 有 AP2（支付授权）与 UCP（通用商务），OpenAI/Stripe 有 ACP。
+- MCP 与 A2A 现都在 Linux Foundation 下（AAIF vs A2A project），治理归属可查 LF。

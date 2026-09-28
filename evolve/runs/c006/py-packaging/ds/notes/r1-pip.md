@@ -1,0 +1,39 @@
+# r1-pip
+question: pip 的现状：PEP 751 pylock.toml 支持进展、pip 的依赖声明与锁文件机制（requirements.txt / pip-compile 区分）、虚拟环境关系、CI 缓存、私有源/认证；填 pip 行 D1/D6/D8/D9，核实 D2/D3/D4/D5 是否真的不适用。
+checked: https://peps.python.org/pep-0751/, https://pip.pypa.io/en/stable/news/, https://pip.pypa.io/en/stable/cli/pip_lock/, https://pip.pypa.io/en/stable/reference/requirements-file-format/, https://pip.pypa.io/en/stable/topics/authentication/, https://pip.pypa.io/en/stable/topics/caching/, https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/, https://pip.pypa.io/en/stable/reference/build-system/, https://pip.pypa.io/en/stable/getting-started/, https://pip.pypa.io/en/stable/topics/workflow/, https://pip.pypa.io/en/stable/topics/repeatable-installs/, https://pip.pypa.io/en/stable/topics/python-option.html, https://github.com/actions/setup-python
+
+## claims
+- [C1] PEP 751「A file format to record Python dependencies」Status=Final、Standards Track，Resolution 31-Mar-2025（replaces PEP 665）；规范文件名 `pylock.toml` 或 `pylock.<name>.toml` | src: https://peps.python.org/pep-0751/ | quote: "Status: Final ... Resolution: 31-Mar-2025 ... r\"^pylock\\.([^.]+)\\.toml$\"" | type: official
+- [C2] pip 25.1（2025-04-26）加入实验性 `pip lock` 命令实现 PEP 751 | src: https://pip.pypa.io/en/stable/news/ | quote: "Add a new, *experimental*, `pip lock` command, implementing PEP 751." | type: official
+- [C3] `pip lock` 默认写出 `pylock.toml`，`-o/--output` 可改路径或 `-` 输出到 stdout；限定语：锁文件只对当前 Python 版本与平台保证有效 | src: https://pip.pypa.io/en/stable/cli/pip_lock/ | quote: "Lock file name (default=pylock.toml) ... The generated lock file is only guaranteed to be valid for the current python version and platform." | type: official
+- [C4] pip 26.1（2026-04-26）开始可消费 pylock.toml：`-r pylock.toml`（仍标 experimental） | src: https://pip.pypa.io/en/stable/news/ | quote: "Add experimental support to read requirements from standardized pylock.toml files ( `-r pylock.toml`)." | type: official
+- [C5] pip 26.2（2026-07-29）完善 pylock 消费：honor `--only-final`、支持 `upload-time`/`--uploaded-prior-to`、拒绝逃逸锁文件目录的 path | src: https://pip.pypa.io/en/stable/news/ | quote: "Add support for `pylock.toml` `upload-time` field, so `--uploaded-prior-to` works with `-r pylock.toml`." | type: official
+- [C6] 最新 pip 为 26.2.1（2026-08-04） | src: https://pip.pypa.io/en/stable/news/ | quote: "pip 26.2.1, released 2026-08-04" | type: official
+- [C7] pip 原生可复现机制仍是 requirements.txt 钉版 + `pip freeze` + `--hash` 哈希校验 + `-c` constraints；官方 repeatable-installs 页推荐 pip-tools 管理生成 requirements 文件 | src: https://pip.pypa.io/en/stable/topics/repeatable-installs/ | quote: "A requirements file, containing pinned package versions can be generated using pip freeze." | type: official
+- [C8] requirements 文件是 pip 自有格式，名字 requirements.txt 只是约定 | src: https://pip.pypa.io/en/stable/reference/requirements-file-format/ | quote: "Requirements files serve as a list of items to be installed by pip" | type: official
+- [C9] pip 不自建 venv：PyPA 官方流程是 `python3 -m venv .venv` + activate 后 `python -m pip install`；pip 定义为「install and update packages into a virtual environment」 | src: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ | quote: "the reference Python package manager. It's used to install and update packages into a virtual environment." | type: official
+- [C10] pip 22.3 起有 `--python` 选项，可指向另一解释器或 venv 路径来装包（venv 本身仍由 venv 模块创建） | src: https://pip.pypa.io/en/stable/topics/python-option.html | quote: "you can use the `--python` option to specify the interpreter you want to manage ... Added in version 22.3." | type: official
+- [C11] pip 官方自述：创建/管理环境、管理 Python 解释器、管理 project 均「not part of pip's scope」；`pip wheel` 能产 wheel 但无 sdist 命令，建议用 `build` 工具 | src: https://pip.pypa.io/en/stable/topics/workflow/ | quote: "Tasks like creating and managing environments, configuring and running development tasks, managing the Python interpreter itself, and managing the overall “project”, are not part of pip's scope." | type: official
+- [C12] pip 不是构建后端，构建委托给 PEP 517 backend；无 pyproject.toml 时回退 setuptools>=40.8.0 legacy backend | src: https://pip.pypa.io/en/stable/reference/build-system/ | quote: "pip does not directly handle the build process for the package. This responsibility is delegated to \"build backends\"" | type: official
+- [C13] pip 25.1 起 `pip install --group`/`pip lock --group` 支持 PEP 735 dependency groups（读 pyproject.toml [dependency-groups]）——pip 消费 PEP 621/735，但自身无 [project] 声明格式 | src: https://pip.pypa.io/en/stable/news/ | quote: "Add a `--group` option which allows installation from PEP 735 Dependency Groups." | type: official
+- [C14] pip 绑定运行它的解释器：官方要求先装 Python，推荐 `python -m pip` 调用（`pip X.Y.Z from ... (python 3.N.N)`），pip 自身不下载/切换 Python 版本 | src: https://pip.pypa.io/en/stable/getting-started/ | quote: "you should check that you have a working Python with pip installed" | type: official
+- [C15] pip 默认开启本地缓存：HTTP 响应缓存（23.3 起 http-v2 目录）+ 本地构建 wheel 缓存；`pip cache info/list/remove/purge`（`pip cache dir` 自 20.1）；`--no-cache-dir` 关闭 | src: https://pip.pypa.io/en/stable/topics/caching/ | quote: "Pip attempts to use wheels from its local wheel cache whenever possible." | type: official
+- [C16] pip 缓存文档无专门 CI 章节；官方仅建议「不要关缓存，除非有更高层缓存（如容器分层缓存）」 | src: https://pip.pypa.io/en/stable/topics/caching/ | quote: "recommended to NOT disable pip's caching unless you have caching at a higher level (eg: layered caches in container builds)" | type: official
+- [C17] GHA setup-python `cache: 'pip'` 缓存 pip 全局 cache 目录，以 requirements.txt/pyproject.toml 哈希入 cache key，`cache-dependency-path` 支持多文件 | src: https://github.com/actions/setup-python | quote: "For `pip`, the action will cache the global cache directory" | type: official
+- [C18] 私有源认证方式一：URL 内嵌凭证 `https://username:password@host/simple`（10.0 起支持百分号转义；token 可当 username），经 `--index-url`/`--extra-index-url` 传入 | src: https://pip.pypa.io/en/stable/topics/authentication/ | quote: "providing the username (and optionally password) in the URL" | type: official
+- [C19] 认证方式二：未内嵌时回落 `.netrc`（经 requests，仅 ASCII）；方式三：keyring | src: https://pip.pypa.io/en/stable/topics/authentication/ | quote: "pip will attempt to get authentication credentials for the URL's hostname from the user's `.netrc` file" | type: official
+- [C20] keyring：`--keyring-provider` 取值 auto/disabled/import/subprocess，auto 为默认（依次试 import→subprocess→disabled，--no-input 时不查）；可用 `pip config set global.keyring-provider` 或 `PIP_KEYRING_PROVIDER` 配置 | src: https://pip.pypa.io/en/stable/topics/authentication/ | quote: "which can be enabled by passing `--keyring-provider` with a value of `auto`, `disabled`, `import`, or `subprocess`" | type: official
+- [C21] keyring 版本线：23.0 起可用 PATH 上的 keyring（pipx 安装的也能用），23.1 加 `--keyring-provider` flag，26.2 subprocess provider 支持取 username | src: https://pip.pypa.io/en/stable/news/ | quote: "Enable the use of `keyring` found on `PATH`. This allows `keyring` installed using `pipx` to be used by `pip`." | type: official
+
+## conflicts
+- requirements-file-format 参考页只字未提 pylock.toml/PEP 751，而 cli/pip_lock 页与 changelog 明确 `-r` 已接受 pylock.toml——文档滞后而非真冲突，成稿引用时以 changelog 为准。
+
+## gaps
+- `pip install` 除 `-r pylock.toml` 外是否有自动识别/其他入口（如 `--requirement` 自动判格式 vs 显式声明）未逐字核实到 install reference 页。
+- 21.3 之前的 changelog 段被截断，keyring 最早支持版本（pip 内嵌 import 路径）未定位到确切版本。
+- `pip lock` 对多平台锁定的具体行为（`--platform`/`--python-version` 类选项是否存在）未展开；页面只说锁文件「only guaranteed ... for the current python version and platform」。
+
+## leads
+- pip-tools（pip-compile/pip-sync）是 pip 体外的事实标准锁文件方案：生成带 `--hash` 的钉版 requirements.txt；pip 官方 repeatable-installs 页直接推荐它。现维护在 jazzband 组织（非 pypa/pip 本体）。
+- `pip install --report`（22.2+）可输出 JSON 安装报告，是与可复现安装相关的另一条线（本次未展开）。
+- uv 侧 PEP 751 状态由 r1-uv 核实；Q1 的 pip 半侧答案：生成=25.1 `pip lock`（实验性），消费=26.1 `-r pylock.toml`（实验性）。

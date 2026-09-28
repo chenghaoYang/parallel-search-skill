@@ -1,0 +1,49 @@
+# r1-scout
+question: 用户在 vLLM/SGLang/TensorRT-LLM/llama.cpp 之间选型时常踩的坑、版本 breaking changes、遗漏实体与维度
+checked: https://docs.vllm.ai/en/latest/usage/v1_guide/, https://docs.vllm.ai/en/stable/contributing/deprecation_policy/, https://nvidia.github.io/TensorRT-LLM/overview.html, https://nvidia.github.io/TensorRT-LLM/latest/legacy/tensorrt-backend-removal.html, https://nvidia.github.io/TensorRT-LLM/_sources/release-notes.md.txt, https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc20, https://github.com/ggml-org/llama.cpp, https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md, https://github.com/ggml-org/ggml/blob/master/docs/gguf.md, https://github.com/ggml-org/llama.cpp/issues/1408, https://github.com/InternLM/lmdeploy, https://github.com/mlc-ai/mlc-llm, https://github.com/sgl-project/sglang, https://github.com/ai-dynamo/dynamo, https://github.com/llm-d/llm-d, https://docs.ray.io/en/latest/serve/llm/index.html, https://github.com/vllm-project/vllm, https://lmsys.org/blog/2024-01-17-sglang/, https://github.com/ollama/ollama, https://github.com/huggingface/text-generation-inference/issues/726, https://github.com/huggingface/text-generation-inference/issues/744, https://github.com/huggingface/text-generation-inference, https://huggingface.co/docs/inference-endpoints/main/en/engines/tgi, https://docs.sglang.io/references/faq.html
+
+## claims
+- [C1] vLLM V1 已完全废弃 V0 引擎，官方指南列出移除特性 | src: https://docs.vllm.ai/en/latest/usage/v1_guide/ | quote: "We have fully deprecated V0. Please read RFC #18571 for more details." | type: official
+- [C2] vLLM V1 移除 best_of、Per-Request Logits Processors、GPU<>CPU KV Cache Swapping、Request-level Structured Output Backend | src: https://docs.vllm.ai/en/latest/usage/v1_guide/ | quote: "best_of: This feature has been removed due to limited usage... Per-Request Logits Processors... has been removed. Instead, we now support global logits processors which are set at startup time" | type: official
+- [C3] V1 中 prompt logprobs 与 prefix caching 同时启用时不再缓存，会忽略 prefix cache 重算 prefill | src: https://docs.vllm.ai/en/latest/usage/v1_guide/ | quote: "the engine will ignore the prefix cache and recompute the prefill of full prompt to generate the logprobs" | type: official
+- [C4] vLLM 官方弃用政策：feature 经 deprecated → off-by-default → removed，只在 minor(Y) 版本移除 | src: https://docs.vllm.ai/en/stable/contributing/deprecation_policy/ | quote: "No Removals in Patch Releases: Removing deprecated features in patch (.Z) releases is disallowed to avoid surprising users." | type: official
+- [C5] TensorRT-LLM 已移除 TensorRT engine 后端，PyTorch 成为唯一执行后端；LLM(backend="tensorrt") 报 ValueError，trtllm-build/trtllm-refit/trtllm-prune、convert_checkpoint.py 全部移除，HF checkpoint 直接加载 | src: https://nvidia.github.io/TensorRT-LLM/latest/legacy/tensorrt-backend-removal.html | quote: "Breaking change. The TensorRT engine backend has been removed. PyTorch is now the sole execution backend" | type: official
+- [C6] v1.3.0rc20 是最后一个支持 TensorRT 后端的 RC | src: https://github.com/NVIDIA/TensorRT-LLM/releases/tag/v1.3.0rc20 | quote: "This RC version will be the last one supporting the TensorRT backend, in the next version the TensorRT backend will be removed!" | type: official
+- [C7] TRT-LLM 更早版本已把 PyTorch 设为默认后端（先默认、后移除的两步 breaking） | src: https://nvidia.github.io/TensorRT-LLM/_sources/release-notes.md.txt | quote: "BREAKING CHANGE Promote PyTorch to be the default LLM backend... Change default backend to PyTorch in trtllm-serve" | type: official
+- [C8] llama.cpp server 原生支持多并发：continuous batching 默认开、--parallel N 槽位、统一 KV buffer；反驳「llama.cpp 不能多并发」的说法 | src: https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md | quote: "Parallel decoding with multi-user support... Continuous batching... -np, --parallel N number of server slots" | type: official
+- [C9] llama.cpp server README 未作任何 production-ready 声明；对公网部署只建议设 API key + 反向代理，并警告 --tools/MCP 不可用于不可信环境 | src: 同上 | quote: "set an API key, put the server behind a reverse proxy" | type: official
+- [C10] GGUF 当前 spec 版本为 3（v2: uint64 计数；v3: big-endian 支持）；格式设计上保证新增 metadata 不破坏兼容性 | src: https://github.com/ggml-org/ggml/blob/master/docs/gguf.md | quote: "Must be `3` for version described in this spec... designed to be extensible, so that new information can be added to models without breaking compatibility" | type: official
+- [C11] GGUF 之前的 GGJT 格式 v1-v3 量化方案互不兼容，曾导致旧量化模型无法加载（2023 年真实 breaking change，用户须从 fp16 重量化） | src: https://github.com/ggml-org/llama.cpp/issues/1408 | quote: "error loading model: this format is no longer supported (see .../pull/1305)" | type: official
+- [C12] LMDeploy 定位「a toolkit for compressing, deploying, and serving LLMs」，双引擎 TurboMind（极致性能）+ PyTorch engine（低门槛），Apache 2.0 | src: https://github.com/InternLM/lmdeploy | quote: "LMDeploy has developed two inference engines - TurboMind and PyTorch, each with a different focus" | type: official
+- [C13] LMDeploy README 声称吞吐最高 1.8x vLLM、4-bit 推理性能 2.4x FP16 — 厂商自述 benchmark | src: https://github.com/InternLM/lmdeploy | quote: "the 4-bit inference performance is 2.4x higher than FP16" | type: official
+- [C14] MLC-LLM 定位「Universal LLM Deployment Engine with ML Compilation」，覆盖浏览器 WebGPU/WASM、iOS/Android、CUDA/ROCm/Vulkan/Metal，Apache-2.0 | src: https://github.com/mlc-ai/mlc-llm | quote: "a machine learning compiler and high-performance deployment engine for large language models" | type: official
+- [C15] NVIDIA Dynamo 是推理引擎之上的编排层（datacenter-scale），不替代 vLLM/SGLang/TRT-LLM，三者皆为其后端；PD 分离 + KV-aware routing，Apache 2.0 | src: https://github.com/ai-dynamo/dynamo | quote: "the orchestration layer above inference engines... Separates prefill and decode into independently scalable GPU pools" | type: official
+- [C16] llm-d 是 CNCF sandbox 项目，K8s 原生分布式推理栈，位于 vLLM/SGLang 之上，由 Red Hat/Google Cloud/IBM Research/CoreWeave/NVIDIA 发起，Apache 2.0 | src: https://github.com/llm-d/llm-d | quote: "a high-performance distributed inference serving stack optimized for production deployments on Kubernetes" | type: official
+- [C17] Ray Serve LLM（原 RayLLM）是 Ray Serve 上的生产级 LLM serving 层，以 vLLM/SGLang 为引擎后端，Apache 生态 | src: https://docs.ray.io/en/latest/serve/llm/index.html | quote: "Engine-agnostic backends such as vLLM and SGLang" | type: official
+- [C18] TGI（HuggingFace Text Generation Inference）已进 maintenance mode（2025-12-11）且仓库 archived，官方推荐迁移到 vLLM/SGLang | src: https://huggingface.co/docs/inference-endpoints/main/en/engines/tgi | quote: "Text Generation Inference is in maintenance mode as of 12/11/2025... we recommend using our available inference engine options, such as vLLM or SGLang" | type: official
+- [C19] TGI v1.0+ 曾改为 HFOIL 1.0（禁止将其作为托管服务出售），后又回退 Apache 2.0 且承诺不可逆 — license 维度真实踩坑案例 | src: https://github.com/huggingface/text-generation-inference/issues/744 | quote: "I am very happy to announce that the license was reverted to Apache 2.0... the repository will remain under the Apache 2.0 license for all forthcoming releases" | type: official
+- [C20] SGLang 发布博客声称最高 5x 吞吐 vs Guidance 和 vLLM v0.2.5（2024-01，Llama-7B/Mixtral FP16 on A10G）— baseline 版本极旧，引用须带日期 | src: https://lmsys.org/blog/2024-01-17-sglang/ | quote: "up to 5 times higher throughput compared to existing systems, namely Guidance and vLLM" | type: official
+- [C21] SGLang 定位高性能 serving 框架，核心特性 RadixAttention prefix caching + 结构化输出 + multi-LoRA batching + PD 分离，Apache-2.0，支持 NV/AMD/TPU/Ascend | src: https://github.com/sgl-project/sglang | quote: "SGLang is a high-performance serving framework for large language models and multimodal models" | type: official
+- [C22] vLLM 定位「A high-throughput and memory-efficient inference and serving engine for LLMs」，Apache-2.0 | src: https://github.com/vllm-project/vllm | quote: "State-of-the-art serving throughput" | type: official
+- [C23] llama.cpp 定位「LLM inference in C/C++」，MIT license，支持 CUDA/HIP/Metal/Vulkan/SYCL/CANN/OpenVINO/WebGPU 等 17+ 后端 | src: https://github.com/ggml-org/llama.cpp | quote: "Plain C/C++ implementation without any dependencies... CPU+GPU hybrid inference to partially accelerate models larger than the total VRAM capacity" | type: official
+- [C24] Ollama 唯一列出的 backend 是 llama.cpp（MIT license）— 网格里 Ollama 与 llama.cpp 不应算两个独立引擎 | src: https://github.com/ollama/ollama | quote: "Supported backend: llama.cpp project founded by Georgi Gerganov" | type: official
+- [C25] SGLang FAQ 确认动态 batching+prefix caching 导致数值不确定性，并新增 --enable-deterministic-inference 开关 — 可复现性是个可填维度 | src: https://docs.sglang.io/references/faq.html | quote: "dynamic batching and prefix caching cause numerical differences, with a mention of a newer --enable-deterministic-inference flag" | type: official
+
+## conflicts
+- 厂商速度宣称互相矛盾且 baseline 版本过时：SGLang 官方博客称 up to 5x vs vLLM（但测的是 v0.2.5，2024-01）；LMDeploy README 称吞吐 1.8x vs vLLM；vLLM 自称 "State-of-the-art serving throughput"。三方都自称最快，无共同协议，任何「X 比 Y 快」必须带 benchmark 日期和版本。
+- 「llama.cpp 不适合多并发」的流行说法 vs 官方 README 明示 continuous batching + parallel slots 默认启用（C8 vs 常见误解）。
+
+## gaps
+- SGLang 官方版本兼容/breaking-change 政策未找到：FAQ（docs.sglang.io/references/faq.html）无版本内容，README 无 compat matrix。
+- vLLM V1 成为默认引擎的确切版本号未确认（指南只说 "fully deprecated V0" + RFC #18571）。
+- llama.cpp 是否仍可读 GGUF v1/v2 未验证（spec 只规定新文件必须 v3，未列 reader 支持矩阵）。
+- TensorRT-LLM license（应为 Apache 2.0）未取得页面原句。
+- llama.cpp 近年是否又移除过旧量化格式（如 2024 移除 k-quants 旧变体）未深入查。
+
+## leads
+- 新增类别「引擎之上的编排层」值得单独一行：NVIDIA Dynamo、llm-d、Ray Serve LLM（C15-C17），与 vLLM/SGLang 非竞争关系。
+- TGI 是完整的选型反面教材：license 改 HFOIL → 回退 → maintenance mode → archived（C18/C19），可提醒用户注意项目存续风险维度。
+- MoE 专家并行是新兴维度：TRT-LLM release notes 反复出现 EPLB（expert load balance）支持条目。
+- 可复现性/确定性推理是新维度：SGLang --enable-deterministic-inference（vLLM 也有对应模式待查）。
+- 其他候选实体（未验证，供下轮）：mistral.rs、TabbyAPI/exllama、DeepSpeed-MII、NVIDIA Triton Inference Server（TRT-LLM backend 已迁出主 repo）、KoboldCPP（维护全格式向后兼容 fork）。
+- Ollama/llama.cpp 实体去重（C24）；同理 llama-cpp-python 等 binding 不算独立引擎。

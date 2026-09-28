@@ -1,5 +1,28 @@
 # deep-search changelog
 
+## v2.0（2026-09-28，vocabulary-first 集成 + 分层成稿 + GLM-5.3 默认栈）
+
+目标：调研任何领域直接 `/deep-search`，成稿对标并超越 [justinatusa/llm-api-protocols](https://github.com/justinatusa/llm-api-protocols)
+（bench 里它三层全量 8.0/9.0、Layer 0 单独看 orientation 全场最高，但 135k 字、跨页重复）。三个来源定了这版：
+
+- **词表先行（vocabulary-first，方法来自 [justinatusa/vocabulary-first](https://github.com/justinatusa/vocabulary-first)，MIT）**：
+  R0 主 agent 凭知识反向生成 `vocab.md`（入口词/骨架词/圈内暗号/门槛概念/外行→标准名/概念边，全标 ⚠ 不编出处）；
+  taxonomy 从词表长出来（对象词→行、问题词→列、对立轴→分类轴）；工人简报带词表切片、搜索用标准词；
+  R1 派词表核验工人对官方 glossary 核验（错词换官方叫法、漏词补、⚠→✅）；缺词急救——某格反复 ❓ 先怀疑词没对上，
+  先补词再派调研简报；成稿固定 §1「先认识这些词」（压缩自 vocab.md，暗号带易混邻域，外行→标准名小表），
+  超越手册的扁平术语表。新增 `references/vocab.md`、worker.md 词表核验简报模板。
+- **分层成稿（对 bench 结论「单文档 20k 做不到快速认知 + 字段细节兼得」的回应）**：
+  `report.md` 导读（≤ budget，必须单独成立）+ 可选 `atlas.md` 字段对照册（≤ 2×budget，全维度字段级、不复述结论）
+  + 可选 `details/<slug>.md` 细节页（每页 ≤ 4000、≤ 8 页）。去重规则：字段级事实只在 atlas、叙事只在 details、
+  report 只放概括 + 指针，内容不抄两遍；引用各自页尾解析。观察表加「字段级细节被压掉 → 开 atlas/details」一行；
+  roundstat.py 加 atlas/details 预算与 vocab.md 存在性检查。骨架重排：0 一屏看懂 → 1 先认识这些词 → 2 Taxonomy
+  → 3 对照矩阵 → 4 变体与适配层 → 5 坑（选型/接入类收「上手检查清单」）→ 6 未决与置信度。
+- **默认栈 ZCode + GLM-5.3**：`worker-model` 默认 `inherit`（主/工人同模）；harness.md 加 ZCode 节
+  （Agent 工具派 general-purpose、继承会话模型、整批同消息 + 结束回合等通知、SendMessage 追问），
+  SKILL.md 描述放宽到任何领域的调研/入门。仓库带 `.agents/skills/deep-search` 符号链接，本仓内直接 `/deep-search`。
+
+未跑盲评（bench 待恢复）；分层与词表的增益先按手册评审证据定向设计，恢复评测后 v2.0 作为整体对打 v1.3-dev 参照。
+
 ## v1.3-dev（2026-09-24，evolve 候选 e003/e004/e005 人工合并；未过盲评，待强臂复验）
 
 因 Grok 余额耗尽、cc-swe2 并发限流，三个已产出候选没走完盲评流程，按证据人工合并：

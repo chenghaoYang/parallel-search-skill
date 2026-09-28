@@ -4,7 +4,8 @@
 usage: roundstat.py DIR [--budget CHARS]
 
 Prints: chars of each snapshot and of report.md against the budget, whether any snapshot
-grew past the budget or grew round over round, grid cell status counts, notes per round.
+grew past the budget or grew round over round, atlas.md against 2x budget, details pages
+against 4000 chars, vocab.md presence, grid cell status counts, notes per round.
 """
 
 import re
@@ -59,6 +60,21 @@ def main(argv):
             print(line)
 
     grid = root / "grid.md"
+    if not (root / "vocab.md").exists() and grid.exists():
+        print("vocab: vocab.md 不存在（R0 应先反向生成词表，见 references/vocab.md）")
+
+    atlas = root / "atlas.md"
+    if atlas.exists():
+        n = len(atlas.read_text(encoding="utf-8"))
+        flag = "OVER BUDGET" if n > 2 * budget else ""
+        print(f"atlas.md: {n} (cap {2 * budget}) {flag}".rstrip())
+
+    for p in sorted(root.glob("details/*.md")):
+        n = len(p.read_text(encoding="utf-8"))
+        flag = "OVER 4000" if n > 4000 else ""
+        if flag:
+            print(f"details/{p.name}: {n} {flag}")
+
     if grid.exists():
         cells = Counter()
         for line in grid.read_text(encoding="utf-8").splitlines():

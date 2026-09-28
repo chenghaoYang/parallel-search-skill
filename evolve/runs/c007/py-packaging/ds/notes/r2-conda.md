@@ -1,0 +1,30 @@
+# r2-conda
+question: 补齐 conda/pixi 侧 4 缺口：pixi#3889 pylock.toml 状态；conda 26.5 锁文件能否生成/消费及命令；pixi 每环境不同 Python 原句；conda-build vs rattler-build 定位；pixi 文档 lock_file 页 version:6 是否滞后
+checked: https://github.com/prefix-dev/pixi/issues/3889, https://api.github.com/repos/prefix-dev/pixi/issues/3889, https://api.github.com/repos/prefix-dev/pixi/issues/3889/comments, https://docs.conda.io/projects/conda/en/stable/new-features.html, https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html, https://github.com/conda/conda/releases/tag/26.5.0, https://pixi.prefix.dev/latest/workspace/multi_environment/, https://pixi.prefix.dev/latest/workspace/lock_file/, https://docs.conda.io/projects/conda-build/en/stable/user-guide/v1-recipes.html, https://github.com/prefix-dev/rattler-build/
+
+## claims
+- [C1] pixi issue #3889（export pylock.toml）仍 open；2025-06-03 由 benglewis 创建，label enhancement/area:export/python，assignee wolfv；截至 2025-07-03 共 4 条评论，无关闭。 | src: https://api.github.com/repos/prefix-dev/pixi/issues/3889 | quote: "open ... comments: 4"（state=open, created_at=2025-06-03T11:20:03Z, closed_at=null）| type: official
+- [C2] 唯一维护者回复是 wolfv（MEMBER）2025-06-18：conda 依赖无法在 pylock.toml 中表示，pixi.lock 仍是主锁文件。 | src: https://api.github.com/repos/prefix-dev/pixi/issues/3889/comments | quote: "we would never be able to capture \"everything\" as the conda dependencies can not be properly represented in the `pylock.toml` file ... The primary lockfile for pixi will probably have to continue to be `pixi.lock`." | type: official
+- [C3] 该 issue 最后一条评论（2025-07-03，benglewis）提议只导出 PyPI 包到 pylock.toml 并可附带 conda-explicit-spec，并问 "Do you want me to try creating a PR with the change?"——此后无维护者回应，无 PR 引用。 | src: https://api.github.com/repos/prefix-dev/pixi/issues/3889/comments | quote: "it should just be documented and maybe it should output a note to the STDOUT noting that it does not include conda packages" | type: official
+- [C4] conda 26.5 起锁文件是双向的：既能生成也能消费。生成用 `conda export --name my-env --file conda-lock.yaml`；消费用 `conda create --name my-env --file conda-lock.yaml`（install 也支持）。 | src: https://docs.conda.io/projects/conda/en/stable/new-features.html | quote: "`conda export`, `conda create`, and `conda install` now support lockfiles as a first-class artifact." | type: official
+- [C5] conda 原生支持两种锁文件格式 conda-lock.yaml 与 pixi.lock，无需插件；26.5+ 可用、无需 opt-in。 | src: https://docs.conda.io/projects/conda/en/stable/new-features.html | quote: "Conda supports the `conda-lock.yaml` and `pixi.lock` formats natively. No separate plugin or third-party tool is required." | type: official
+- [C6] conda export 默认只记录导出时平台；重复 `--platform` 可写多平台锁文件：`conda export --name my-env --file conda-lock.yaml --platform linux-64 --platform osx-arm64 --platform win-64`；从锁文件安装时跳过 solver。 | src: https://docs.conda.io/projects/conda/en/stable/new-features.html | quote: "By default, the lockfile captures only the platform you exported from. To capture multiple platforms in one file, pass `--platform` once per target" | type: official
+- [C7] manage-environments 页新增 "Multi-platform lockfiles" 节，同样给出 export/create 双向用法，并注明版本门槛。 | src: https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html | quote: "Lockfile support is available in conda 26.5 and later." | type: official
+- [C8] conda export 到锁文件只抓 conda 包，pip 装的包默认不入锁。 | src: https://docs.conda.io/projects/conda/en/stable/new-features.html | quote: "`conda export` to a lockfile captures conda packages only." | type: official
+- [C9] pixi 多环境文档用 feature 钉不同 Python：`[feature.py39.dependencies] python = "~=3.9.0"` / `[feature.py310.dependencies] python = "~=3.10.0"`，再由环境组合 feature（polarify 例 py39–py312：`py39 = ["py39", "test"]` … `py312 = ["py312", "test"]`）。 | src: https://pixi.prefix.dev/latest/workspace/multi_environment/ | quote: "Testing of multiple package versions, e.g. `py39` and `py310` or polars `0.12` and `0.13`." | type: official
+- [C10] pixi 文档 lock_file 页示例仍写 `version: 6`（实物已为 version: 7，文档滞后佐证）。 | src: https://pixi.prefix.dev/latest/workspace/lock_file/ | quote: "version: 6" | type: official
+- [C11] pixi 锁文件向后兼容不向前兼容：新 pixi 可读旧锁，反之不行。 | src: https://pixi.prefix.dev/latest/workspace/lock_file/ | quote: "Pixi is backward compatible with the lock file, but not forward compatible." | type: official
+- [C12] conda-build 官方定位：仍存续且新增 v1 recipe 支持，底层委托给 rattler——`conda-build` "now supports building v1 recipes using the Python bindings for rattler-build"，识别格式后经 py-rattler-build 构建；v0 meta.yaml 仍由自身构建。 | src: https://docs.conda.io/projects/conda-build/en/stable/user-guide/v1-recipes.html | quote: "now supports building v1 recipes using the Python bindings for rattler-build" | type: official
+- [C13] rattler-build（prefix-dev）自我定位：Rust 重写的独立二进制，"universal Conda package builder for Windows, macOS and Linux (like conda-build but faster)"，recipe.yaml 格式受 conda-build/boa 启发，产物可被 pixi/mamba/conda 安装。 | src: https://github.com/prefix-dev/rattler-build | quote: "rattler-build is a universal Conda package builder for Windows, macOS and Linux (like conda-build but faster)" | type: official
+- [C14] conda-build 文档把迁往 v1（rattler recipe.yaml）的收益列为 "faster rendering and buiding"（原文拼写如此）、标准化 schema、纯 YAML。 | src: https://docs.conda.io/projects/conda-build/en/stable/user-guide/v1-recipes.html | quote: "faster rendering and buiding, standardized schema with autocomplete support, and pure YAML syntax" | type: official
+
+## conflicts
+- pixi.lock 格式版本：文档示例 version: 6（https://pixi.prefix.dev/latest/workspace/lock_file/，"version: 6"）vs 上轮实测实物 version: 7——文档滞后，非行为冲突。
+
+## gaps
+- multi_environment 页没有"每个 environment 可用不同 Python 版本"的字面句子，只有 feature.pyXX 示例 + 动机 bullet（C9）；若需字面原句可再查 feature 参考页（未取）。
+- pixi #3889 自 2025-07-03 后无任何新评论；是否存在关联 PR（issue 内无 cross-reference）未单独核。
+
+## leads
+- conda 26.5 同时新增环境 spec/exporter 插件机制（default_filenames 通配 `*.conda-lock.yml`，#15719），锁文件支持是插件体系的一环；@EXPLICIT explicit spec 仍是单平台旧路径。
+- conda-build PR #5924 正把 v1 构建从 rattler-build CLI 子进程迁到 py-rattler-build API（github.com/conda/conda-build/issues/5924）。

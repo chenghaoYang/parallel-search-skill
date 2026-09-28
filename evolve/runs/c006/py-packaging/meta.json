@@ -1,0 +1,49 @@
+{
+  "exp": "c006",
+  "task": "py-packaging",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "ddb65d5e4c",
+  "skill_chars": 18291,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 25.8,
+  "spawns": 10,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 9,
+    "Write": 7,
+    "Agent": 10,
+    "Bash": 8,
+    "Edit": 6
+  },
+  "cost_usd": 19.734208999999996,
+  "num_turns": 9,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 8993,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.917,
+    "golden_missed": [
+      "pixi-python-as-conda-package"
+    ],
+    "urls": 59,
+    "traceable": 1.0,
+    "notes": {
+      "files": 6,
+      "claims": 141,
+      "claims_ok": 1.0
+    },
+    "snapshots": {
+      "report.final.md": 8993,
+      "report.r1.md": 8932
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c006/py-packaging"
+}

@@ -1,0 +1,51 @@
+{
+  "exp": "c006",
+  "task": "agent-protocols",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "ddb65d5e4c",
+  "skill_chars": 18291,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 28.5,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 14,
+    "Bash": 19,
+    "Write": 7,
+    "Agent": 11,
+    "Edit": 9
+  },
+  "cost_usd": 17.817569499999987,
+  "num_turns": 61,
+  "is_error": true,
+  "terminal_reason": "api_error",
+  "rate_limit_lines": 1,
+  "mech": {
+    "chars": 8916,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.7,
+    "golden_missed": [
+      "a2a-google-donated-lf",
+      "anthropic-mcp-oauth",
+      "openai-mcp-responses-support"
+    ],
+    "urls": 45,
+    "traceable": 1.0,
+    "notes": {
+      "files": 11,
+      "claims": 194,
+      "claims_ok": 0.918
+    },
+    "snapshots": {
+      "report.r1.md": 8983,
+      "report.r2.md": 8916
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c006/agent-protocols"
+}

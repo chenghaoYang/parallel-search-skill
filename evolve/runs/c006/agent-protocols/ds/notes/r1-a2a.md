@@ -1,0 +1,43 @@
+# r1-a2a
+question: A2A 官方 spec 现状：连接面、治理、传输、核心抽象、鉴权、版本、大厂采用、代表实现（grid.md A2A 行 D1–D8）
+checked: https://a2a-protocol.org/latest/, https://a2a-protocol.org/latest/specification/ (full text via curl), https://github.com/a2aproject/A2A (README+releases+org repos via gh), https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/, https://developers.googleblog.com/google-cloud-donates-a2a-to-linux-foundation/, https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/, https://research.ibm.com/projects/agent-communication-protocol, https://github.com/a2aproject/A2A/releases/tag/v1.0.0, https://github.com/a2aproject/A2A/releases/tag/v1.0.1
+
+## claims
+- [C1] A2A 连接独立/不透明 AI agent 系统（client agent ↔ remote agent，对等委派任务而非共享内部状态）| src: https://a2a-protocol.org/latest/specification/ | quote: "an open standard designed to facilitate communication and interoperability between independent, potentially opaque AI agent systems" | type: official
+- [C2] 设计原则含 "Opaque Execution"：agent 间不共享 thoughts/plans/tools | src: https://a2a-protocol.org/latest/specification/ | quote: "Agents collaborate based on declared capabilities and exchanged information, without needing to share their internal thoughts, plans, or tool implementations." | type: official
+- [C3] Google 于 2025-04-09 公开发布 A2A | src: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ | quote: "we're launching a new, open protocol called Agent2Agent (A2A)"（post dated April 9, 2025）| type: official
+- [C4] 发布时 50+ 技术伙伴（Atlassian, Box, Cohere, Intuit, Langchain, MongoDB, PayPal, Salesforce, SAP, ServiceNow, UKG, Workday）+ Accenture/BCG/Deloitte 等 SI | src: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ | quote: "with support and contributions from more than 50 technology partners" | type: official
+- [C5] 2025-06-23 Linux Foundation 宣布成立 Agent2Agent 项目，创始成员 AWS、Cisco、Google、Microsoft、Salesforce、SAP、ServiceNow；Google 移交 spec+SDKs+工具 | src: https://developers.googleblog.com/google-cloud-donates-a2a-to-linux-foundation/ | quote: "the Linux Foundation announced the formation of the Agent2Agent project with Amazon Web Services, Cisco, Google, Microsoft, Salesforce, SAP, and ServiceNow" | type: official
+- [C6] 治理：Linux Foundation 旗下项目，由 LF Technical Steering Committee 维护；Apache-2.0 | src: https://a2a-protocol.org/latest/ + https://github.com/a2aproject/A2A | quote: "The A2A Protocol is an open source project under the Linux Foundation, contributed by Google"（README）；站脚 "Licensed under the Apache License, Version 2.0" | type: official
+- [C7] spec 三层结构：数据模型→抽象操作→协议绑定；Layer 3 "provides concrete mappings ... to specific protocol bindings (JSON-RPC, gRPC, HTTP/REST)"；无默认/必选绑定，要求 "All protocol bindings MUST provide functionally equivalent representations"（§5.1）；允许自定义绑定（§12）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C8] JSON-RPC 绑定（§9.1）："JSON-RPC 2.0 over HTTP(S)"，Content-Type application/json，流式用 "Server-Sent Events ( text/event-stream )"，方法名 PascalCase（SendMessage, GetTask…）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C9] gRPC 绑定（§10.1）："gRPC over HTTP/2 with TLS"，normative proto3 文件 specification/a2a.proto，实现 A2AService | src: https://a2a-protocol.org/latest/specification/ | quote: "Protocol: gRPC over HTTP/2 with TLS ... Service: Implement the A2AService gRPC service" | type: official
+- [C10] HTTP+JSON/REST 绑定（§11）有独立 URL pattern/HTTP method 映射；专用媒体类型 application/a2a+json（§14.1.1，"This media type is intended for the HTTP+JSON/REST binding"）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C11] 异步推送：server 向 client webhook 发 HTTP POST（§3.5.1 "Agent sends HTTP POST requests to client-registered endpoints when task state changes"）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C12] 核心抽象：Task（"the core unit of action for A2A"）、TaskStatus/TaskState、Message（"A communication turn between a client and a remote agent"）、Part（"The smallest unit of content within a Message or Artifact"）、Artifact（输出，composed of Parts）、AgentCard、AgentSkill、AgentInterface、TaskStatusUpdateEvent/TaskArtifactUpdateEvent、TaskPushNotificationConfig（§4.x）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C13] Agent Card 发现：well-known URI `https://{server_domain}/.well-known/agent-card.json`（§8.2；§14.3 IANA 注册 URI suffix: agent-card.json, "Status: Permanent"）；另有 registries/catalogs、direct configuration 两种发现方式 | src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C14] 鉴权：SecurityScheme 为 "a discriminated union type based on the OpenAPI 3.2 Security Scheme Object"（§4.5.1）；枚举：apiKeySecurityScheme / httpAuthSecurityScheme / oauth2SecurityScheme / openIdConnectSecurityScheme / mutualTlsSecurityScheme；OAuth flows：authorizationCode、clientCredentials、deviceCode（v1.0 移除 implicit/password、加 PKCE/device code）| src: https://a2a-protocol.org/latest/specification/ + https://github.com/a2aproject/A2A/releases/tag/v1.0.0 | type: official
+- [C15] "Servers MUST reject requests with invalid or missing authentication credentials"（§3.3.2）；扩展 Agent Card 需按 securitySchemes/security 声明鉴权（§3.1.11）| src: https://a2a-protocol.org/latest/specification/ | type: official
+- [C16] 最新 spec：站点标 "Latest Released Version 1.0.0"；GitHub release v1.0.0 发布于 2026-03-12，v1.0.1（Latest）2026-05-28；版本经 `A2A-Version` header 协商（§3.6.1 "Clients MUST send the A2A-Version header"），按 Major.Minor 匹配、patch 忽略，空值视为 0.3（§3.6.2）| src: https://a2a-protocol.org/latest/specification/ + https://github.com/a2aproject/A2A/releases | type: official
+- [C17] v1.0.0 重大变更：spec 重构为「应用协议定义 vs 传输映射」分离（"Large refactor of specification to separate application protocol definition from mapping to transports"）、新增 tasks/list、HTTP URL 去 v1 前缀、extendedAgentCard 字段移入 AgentCapabilities、枚举对齐 ProtoJSON | src: https://github.com/a2aproject/A2A/releases/tag/v1.0.0 | type: official
+- [C18] 官方 MCP 定位（spec Appendix B）："A2A and MCP are complementary protocols designed for different aspects of agentic systems"；MCP 管 tools/APIs/data sources，A2A 管 agent 对等协作 | src: https://a2a-protocol.org/latest/specification/ | quote: "Focuses on standardizing how AI models and agents connect to and interact with tools, APIs, data sources" (MCP) vs "how independent, often opaque, AI agents communicate and collaborate with each other as peers" (A2A) | type: official
+- [C19] Google 原始说法："A2A is an open protocol that complements Anthropic's Model Context Protocol (MCP)" | src: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ | type: official
+- [C20] IBM ACP 已并入 A2A：LF AI & Data 2025-08-29 公告 "ACP is officially merging with the A2A under the Linux Foundation"；ACP 团队停止独立开发并直接向 A2A 贡献；BeeAI 平台改由 A2A 驱动 | src: https://lfaidata.foundation/communityblog/2025/08/29/acp-joins-forces-with-a2a-under-the-linux-foundations-lf-ai-data/ | type: official
+- [C21] IBM Research 官方页确认 "ACP is now part of A2A under the Linux Foundation!" | src: https://research.ibm.com/projects/agent-communication-protocol | type: official
+- [C22] 官方实现：a2aproject org 下 SDK —— a2a-python(PyPI a2a-sdk)、a2a-js(@a2a-js/sdk)、a2a-java、a2a-dotnet、a2a-go、a2a-rs(Rust)；工具：a2a-cli、a2a-inspector、a2a-tck(兼容性测试)、a2a-gateway、a2a-samples | src: https://github.com/a2aproject/A2A (README) + https://github.com/orgs/a2aproject/repositories | quote: README 列 "Python, Go, JS (@a2a-js/sdk), Java, .NET, and Rust" SDKs | type: official
+- [C23] Microsoft 为 LF 创始成员并承诺参与标准制定（Yina Arenas, VP Azure AI Foundry："We welcome the announcement of A2A as a neutral nonprofit project"）| src: https://developers.googleblog.com/google-cloud-donates-a2a-to-linux-foundation/ | type: official
+
+## conflicts
+- spec 站标 "Latest Released Version 1.0.0"，但 GitHub 最新 release 为 v1.0.1（2026-05-28，仅 bug fix：application/a2a+json 偏好、transcoding error、TaskStatus 值修正）。可能是站点版本列表滞后于 patch release；语义上 patch 不参与协商（§3.6），故 wire-level 仍是 1.0。
+- IBM think 页曾称 ACP 与 A2A "can coexist"，但同页顶部及 IBM Research 页已注明 ACP merged into A2A——为同一页面新旧表述并存，非实质分歧。
+
+## gaps
+- HTTP+JSON/REST 绑定 §11.3 的具体 URL pattern（如 /v1/message:send 类）未逐条摘出；只知 v1.0.0 "Remove v1s from a2a url http bindings"。
+- "What's New in v1.0" 页面内容未单独抓取（v1.0.0 release notes 已覆盖要点）。
+- Microsoft 产品级集成（Azure AI Foundry / Copilot Studio 的 A2A 支持）未取一手原句。
+- spec 发布日历/治理章程（TSC 成员名单）未逐名核实（IBM Kate Blair 入 TSC 仅见 LinkedIn 二手）。
+
+## leads
+- Microsoft Build 2025 宣布 Foundry/Copilot Studio 支持 A2A（可补一手 devblogs 引用）。
+- a2aproject 实验仓：experimental-cpb-slimrpc（自定义绑定）、experimental-ext-oid4vp-auth（OID4VP 任务内授权扩展）——说明扩展机制已落地。
+- 伙伴墙：https://a2a-protocol.org/latest/community/ 或 partners 页可补生产采用名单。

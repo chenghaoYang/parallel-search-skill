@@ -1,0 +1,55 @@
+{
+  "exp": "c007",
+  "task": "llm-inference",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "ddb65d5e4c",
+  "skill_chars": 18291,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 39.2,
+  "spawns": 9,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 11,
+    "Bash": 29,
+    "Write": 6,
+    "Agent": 9,
+    "Edit": 2
+  },
+  "cost_usd": 20.078000500000012,
+  "num_turns": 18,
+  "is_error": true,
+  "terminal_reason": "budget_exhausted",
+  "rate_limit_lines": 0,
+  "mech": {
+    "chars": 9000,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.533,
+    "golden_missed": [
+      "vllm-prefix-caching-default-on",
+      "vllm-structured-outputs-guided-removed",
+      "vllm-hardware-scope",
+      "vllm-disagg-prefill-nixl",
+      "sglang-quant-offline-recommended",
+      "sglang-spec-algorithms",
+      "llamacpp-metal-default-backends"
+    ],
+    "urls": 55,
+    "traceable": 1.0,
+    "notes": {
+      "files": 8,
+      "claims": 181,
+      "claims_ok": 0.917
+    },
+    "snapshots": {
+      "report.r1.md": 8596,
+      "report.r2.md": 9000
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c007/llm-inference"
+}

@@ -1,0 +1,51 @@
+{
+  "exp": "c007",
+  "task": "prompt-caching",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "ddb65d5e4c",
+  "skill_chars": 18291,
+  "status": "ok",
+  "returncode": 0,
+  "minutes": 34.8,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 11,
+    "Bash": 29,
+    "Write": 7,
+    "Agent": 11,
+    "Edit": 14
+  },
+  "cost_usd": 19.635584499999997,
+  "num_turns": 59,
+  "is_error": false,
+  "terminal_reason": "completed",
+  "rate_limit_lines": 2,
+  "mech": {
+    "chars": 8906,
+    "len_ok": true,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.833,
+    "golden_missed": [
+      "deepseek-disk-cache-automatic",
+      "deepseek-hit-miss-fields"
+    ],
+    "urls": 28,
+    "traceable": 0.929,
+    "notes": {
+      "files": 8,
+      "claims": 164,
+      "claims_ok": 0.878
+    },
+    "snapshots": {
+      "report.final.md": 8906,
+      "report.r1.md": 9037,
+      "report.r2.md": 8999
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c007/prompt-caching"
+}

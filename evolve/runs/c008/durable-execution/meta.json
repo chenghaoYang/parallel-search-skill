@@ -1,0 +1,62 @@
+{
+  "exp": "c008",
+  "task": "durable-execution",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/evolve/candidates/e002/skill",
+  "skill_sha": "965c8432b1",
+  "skill_chars": 14500,
+  "status": "crash",
+  "returncode": 1,
+  "minutes": 0.0,
+  "spawns": 0,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {},
+  "cost_usd": 0,
+  "num_turns": 1,
+  "is_error": true,
+  "terminal_reason": "api_error",
+  "rate_limit_lines": 1,
+  "mech": {
+    "chars": 0,
+    "len_ok": false,
+    "sections": 0.0,
+    "sections_missing": [
+      "overview",
+      "taxonomy",
+      "matrix",
+      "pitfalls",
+      "open",
+      "sources"
+    ],
+    "golden": 0.0,
+    "golden_missed": [
+      "temporal-deterministic-replay",
+      "temporal-ts-sandbox",
+      "temporal-official-sdks",
+      "temporal-cloud-actions-pricing",
+      "temporal-signal-with-start",
+      "restate-server-bsl-sdks-mit",
+      "restate-log-first-architecture",
+      "restate-ctx-run-journal",
+      "dbos-postgres-library",
+      "dbos-deterministic-workflows",
+      "inngest-step-memoization",
+      "inngest-execution-billing",
+      "inngest-sspl-license",
+      "inngest-waitforevent-future-only",
+      "hatchet-postgres-source-of-truth",
+      "hatchet-durable-task-checkpoint"
+    ],
+    "urls": 0,
+    "traceable": 0.0,
+    "notes": {
+      "files": 0,
+      "claims": 0,
+      "claims_ok": 0.0
+    },
+    "snapshots": {}
+  },
+  "arena": "/tmp/ps-arena/evolve/c008/durable-execution"
+}

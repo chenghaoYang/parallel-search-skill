@@ -1,0 +1,55 @@
+{
+  "exp": "c006",
+  "task": "durable-execution",
+  "rep": 1,
+  "arm": "cc-swe2",
+  "skill_dir": "~/developer/parallel-search-skill/skills/deep-search",
+  "skill_sha": "ddb65d5e4c",
+  "skill_chars": 18291,
+  "status": "error",
+  "returncode": 1,
+  "minutes": 33.9,
+  "spawns": 11,
+  "followups": 0,
+  "lead_web": 0,
+  "lead_tools": {
+    "Read": 14,
+    "Write": 10,
+    "Agent": 11,
+    "Bash": 27,
+    "Edit": 32
+  },
+  "cost_usd": 20.05171649999999,
+  "num_turns": 19,
+  "is_error": true,
+  "terminal_reason": "budget_exhausted",
+  "rate_limit_lines": 4,
+  "mech": {
+    "chars": 9231,
+    "len_ok": false,
+    "sections": 1.0,
+    "sections_missing": [],
+    "golden": 0.562,
+    "golden_missed": [
+      "temporal-signal-with-start",
+      "restate-ctx-run-journal",
+      "dbos-postgres-library",
+      "inngest-step-memoization",
+      "inngest-waitforevent-future-only",
+      "hatchet-postgres-source-of-truth",
+      "hatchet-durable-task-checkpoint"
+    ],
+    "urls": 56,
+    "traceable": 1.0,
+    "notes": {
+      "files": 11,
+      "claims": 289,
+      "claims_ok": 0.965
+    },
+    "snapshots": {
+      "report.r1.md": 8926,
+      "report.r2.md": 9231
+    }
+  },
+  "arena": "/tmp/ps-arena/evolve/c006/durable-execution"
+}

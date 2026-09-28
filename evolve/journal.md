@@ -72,3 +72,26 @@
 - **人工合并（2026-09-24，用户指示停止跑批、直接打磨）**：e003（引文保全+cite 检查）、e004（等待窗口纪律）、e005（终审核验群）按证据合并进 `skills/deep-search/` → v1.3-dev，见 CHANGELOG。e005 证据最硬（e002 审稿 44 条全 supported 但盲评 ≥4 条硬错）；e004 经 transcript `model` 字段实锤；e003 取其改稿引文规则折进 e005 的改稿步。三个候选**未过盲评**，等强臂恢复后 v1.3-dev 要作为整体复验。
 - bench 扩到 9 题：dev_tasks=[prompt-caching, agent-protocols, py-packaging, llm-inference, durable-execution]，holdout=[js-runtimes, api-protocol, kv-stores, structured-outputs]。**注意**：在位者在新题上还没有参照运行，恢复评测前 c002 要先补 llm-inference、durable-execution 两题；golden 针已 lint+补强（裸数字组补带单位同义词）。
 - **坑：`claude -p` 有后台等待上限 600s**（`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`，默认 600000）——lead 派完后台工人结束回合，工人 10 分钟内没回来进程就自杀（rc=0、report 没写 → crash）。Claude 臂的 Haiku 工人够快没踩过；swe-2 工人慢，c003 首发两题全这样死的。已在 run_one 给 claude-code 臂统一设 `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`（无限等；evaluate.py 自己的 timeout_min 是真上限）。e005 提案者加了 `--disallowedTools Agent`，单线程不触发这个坑。
+
+## cc-swe2 基线（2026-09-25 启动）
+
+- 用户指示「开始跑进化，swe2」。Grok Build 余额仍断，整条线走 cc-swe2 臂（lead/工人/评审全 swe-2-max，claude-devin → devin2api:3003，已冒烟）。注意本臂评审是 swe-2-max ×2 顺序 ×2 passes，与 dev 臂（Opus+Grok）不是同一把尺。
+- c002–c005 首批全 crash（429 resource_exhausted + 600s 后台等待坑，后者已在 run_one 修掉）。本轮 `--parallel 3`（≤3 并发 lead）。
+- 基线设计：c006 = 在位 v1.3-dev ×5 dev 题（参照运行）；c007 = v1.3-dev 再跑一遍（本臂 A/A 噪声 + 双参照）；c008 = e002 skill ×5 题（人工合并的 v1.3-dev 在强臂上的整体复验：c006 vs c008）。
+- 判完之后：c007 vs c006 得本臂 A/A → 定 cc-swe2 取舍门槛；c006 vs c008 ≥ ~0 则 v1.3-dev 坐实在位者，之后候选对打 c006+c007 合集；若明显为负，回滚 v1.3-dev、以 c008 为参照重来。
+
+### cc-swe2 基线第一轮失败与重跑（01:33）
+
+- `--parallel 3` 仍超 devin2api 本地 gate（`max_rpm: 80`，单账户）：首批 3 lead×6 worker 跑 9–39min 后 gate 打满，后续请求全 429 → lead `api_error` 死。llm-inference/durable-execution 及 c007/c008 全部 0-token 秒挂（外部故障，不记结果）。烧 ~$32。
+- c006/prompt-caching 幸存：rc=1 但 report 6612 字、golden .917、traceable 1.0 已落盘，留作参照（`run` 只重建列出的任务目录，所以只补跑其余 4 题）。
+- 重跑：`--parallel 2`（c006 补 4 题 → c007 全量 → c008 全量）。若再撞 429 就降到 1。门槛结论：cc-swe2 臂并行上限实际是 gate 的 rpm，不是 lead 数。
+
+### 第二轮也撞 gate（~03:3x）：降到 --parallel 1
+
+- parallel 2 坚持了 ~26min（py-packaging ok 8993 字、agent-protocols error 但有 8916 字稿），随后 gate 又满：durable-execution 0min 秒挂、c007/c008 全 0-token 429。教训：gate 是固定分钟桶的请求数计数（devin.max_rpm=80，保护上游 Devin 账户），2 lead×6 worker 的持续流量还是会打满；claude -p 首请求撞 429 直接 api_error 死，运行中撞久了也死。
+- 决策：不动 devin2api 配置（gate 是保护上游的），降到 `--parallel 1` 串行（1 lead+6 worker ≈ 远低于 80rpm）。剩余 12 次运行约 7–9h。c006 已有 prompt-caching + py-packaging + agent-protocols 三题成稿。
+
+### 串行第三轮（~06:30）：上游免费档限流 + 重试循环
+
+- c006 全 5 题有成稿（2 ok、3 error-但有稿）；c007 拿到 3 题后 llm-inference/durable-execution 撞限，c008 全灭。stderr 显示两层限流：devin2api 本地 gate（80rpm 分钟桶）+ **上游 Devin 免费档**「Reached free model rate limit」。饱和后连锁反应：每次首请求 429 秒挂反而保持桶热。
+- 对策：`baseline-retry.sh` 后台循环——每轮只补跑缺 report.md 的任务（parallel 1），间隔 120–180s 让桶冷却，最多 8 轮。

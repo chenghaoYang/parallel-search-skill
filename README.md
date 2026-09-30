@@ -1,8 +1,10 @@
 # parallel-search-skill
 
-A multi-agent **deep-search skill** (vocabulary first → taxonomy → parallel expand → converge → observe → next round, hard length budget, layered deliverable) plus a **bench** that compares running it under different harnesses and models against single-shot Perplexity answers. Docs are in Chinese.
+A **deep-search skill** for source-backed research: clarify the question, investigate independently useful directions, verify consequential claims, and write an answer people can actually read. Parallelism and supporting files are optional. Docs are in Chinese.
 
-一套多 agent 深度调研 skill，**默认跑在 ZCode + GLM-5.3**（主/工人同模），调研任何领域直接 `/deep-search`：先反向生成领域词表（[vocabulary-first](https://github.com/justinatusa/vocabulary-first)：先对齐名字，再进入领域），从词表长出 taxonomy，再分轮并行扩展（一次 spawn 算一个 turn），每轮单独收束、按观察决定下一步。成稿分层交付：导读 `report.md`（长度上限、不许越改越长）+ 可选字段对照册 `atlas.md` + 可选细节页 `details/`，对标并超越 [justinatusa/llm-api-protocols](https://github.com/justinatusa/llm-api-protocols) 那套「分层、说人话、条理清晰」的成稿。外加一个 bench：同一道调研题，比较「直接调 Perplexity（换模型）」和「不同外层 + 模型调这个 skill」的效果。
+一套面向复杂问题的调研 skill。先弄清用户要理解或决定什么，再按需要并行查证；来源可靠、结论有边界，表达和结构随问题调整。可以直接 `/deep-search <调研任务>`，不强制词表、轮数或多层报告，也不依赖特定模型或检索服务。
+
+本仓库同时保留跨模型/外层的历史 bench 和进化实验。下面的分数属于当时的版本与任务，不代表本次修订已经经过同样评测；旧指标中有固定章节和结构化笔记要求，不能直接用来评价新版的自然表达。
 
 ## 结果速览（2026-09-23，题目：LLM 时代 API 请求协议的差异）
 
@@ -22,7 +24,7 @@ A multi-agent **deep-search skill** (vocabulary first → taxonomy → parallel 
 |---|---|
 | `.agents/skills/deep-search` | 指向 `skills/deep-search/` 的符号链接，本仓内 ZCode 直接 `/deep-search` |
 | `.agents/skills/search-evolution-review/` | 仓库维护技能：查看进化/bench 进度、判决与失败证据，复用已有工具，不启动评测 |
-| `skills/deep-search/` | skill 本体：`SKILL.md`（流程）、`references/`（词表 vocab、工人简报与笔记格式、收束与分层成稿骨架、各外层适配）、`agents/research-worker.md`（工人定义）、`scripts/`（`notes_lint.py`、`roundstat.py`、并行安全的 `pplx-safe`）、`CHANGELOG.md` |
+| `skills/deep-search/` | skill 本体：`SKILL.md`（核心原则）、`references/`（可选术语对齐、分工与证据笔记、整合写作、环境适配）、`agents/research-worker.md`（工人定义）、`scripts/`（`notes_lint.py`、`roundstat.py`、并行安全的 `pplx-safe`）、`CHANGELOG.md` |
 | `bench/tasks/api-protocol/task.md` | bench 的任务原文 |
 | `bench/arms.json` | 参赛方法（外层 × 模型），按外层微调提示词的规则，排除的方法和原因 |
 | `bench/run_arm.py` | 跑一个方法：Perplexity 单次、Claude Code / Kimi Code / Grok Build + skill。在仓库外的临时目录跑，产物拷回 `bench/runs/<arm>/` |
@@ -38,33 +40,31 @@ A multi-agent **deep-search skill** (vocabulary first → taxonomy → parallel 
 
 ## 用 skill
 
-ZCode（默认栈，GLM-5.3 主/工人同模；用户级安装后任何项目都能用）：
+在已支持 skill 的环境里使用 `/deep-search <调研任务>`，或让 agent 读取 `skills/deep-search/SKILL.md`。按问题选择表达方式：一份解释清楚的回答往往比固定模板更有用；需要可复用的长文时再保存文件。
+
+旧参数仍可用，例如：
+
+```text
+/deep-search 比较几种视频帧选择方法，重点看额外开销和适用条件 --workers 4 --rounds 3 --budget 12000 --dir ./deep-search/video-sampling
+```
+
+`workers` 是每批新派研究者的上限，`rounds` 是研究批次上限，不要求派满或跑满。`budget` 是主回答的字符上限（含引用），不是 token 或费用预算；没指定就按问题需要控制长度。`worker-model` 仅在当前环境支持时使用，否则继承环境设置。明确指定的文件路径和输出格式仍优先遵守。
+
+本仓库的 `.agents/skills/deep-search` 已链接到 skill 本体。需要用户级安装时，按所用工具当前支持的目录安装；例如支持 `~/.agents/skills` 的环境可用：
 
 ```bash
 ln -s "$PWD/skills/deep-search" ~/.agents/skills/deep-search
 ```
 
-然后 `/deep-search <调研任务>`。项目级的话把符号链接放进项目的 `.agents/skills/`（本仓库已自带）。
+Claude Code 可使用 `~/.claude/skills/deep-search`，并按需把 `skills/deep-search/agents/research-worker.md` 链接到 `~/.claude/agents/research-worker.md`。不要覆盖已有的同名安装。
 
-Claude Code（bench 对比用）：
+没有子 agent 时可顺序研究。默认使用环境现有搜索工具并读取原始来源。`scripts/pplx-safe` 是可选的 `pplx-web` 包装器；外部客户端不在仓库中，已配置的用户可通过 `PPLX_WEB_SCRIPT` 指定它。更多适配说明见 [harness.md](skills/deep-search/references/harness.md)。
 
-```bash
-ln -s "$PWD/skills/deep-search" ~/.claude/skills/deep-search
-```
-
-```bash
-ln -s "$PWD/skills/deep-search/agents/research-worker.md" ~/.claude/agents/research-worker.md
-```
-
-然后 `/deep-search <调研任务>`。Kimi Code 用 `--skills-dir`，Grok Build 会读 `.claude/skills/`。各外层怎么派工人、怎么等一批、怎么指定工人模型，见 [references/harness.md](skills/deep-search/references/harness.md)。
-
-成稿分层：导读 `report.md`（≤ budget）+ 可选 `atlas.md` 字段对照册 + 可选 `details/` 细节页；领域词表（vocabulary-first，来自 [justinatusa/vocabulary-first](https://github.com/justinatusa/vocabulary-first)，MIT）在 R0 反向生成、R1 起由工人对官方 glossary 核验，喂给 taxonomy、工人简报和成稿「先认识这些词」一节。
-
-检索：工人默认通过 `scripts/pplx-safe` 调本地的 `pplx-web`（Perplexity Pro 网页会话客户端，**不在本仓库**，用 `PPLX_WEB_SCRIPT` 指向它）；没有它就用外层自带的网页搜索，再用网页抓取工具打开一手页面摘原句。
+词表、比较网格、过程日志、快照和附录只在有用时创建。需要诊断旧版 C# 笔记可运行 `notes_lint.py`；`roundstat.py <dir> --budget 12000` 检查显式字符上限，`--legacy-layout` 才启用旧版布局提示。这些脚本检查形式，不证明事实正确。离线回归测试可运行 `python3 -m unittest discover -s tests`。
 
 ## 跑 bench
 
-需要 `claude` CLI；Kimi Code ≥ 0.36、Grok Build、`pplx-web` 可选。`run_arm.py` 要联网（模型 API、Perplexity、各家文档站），在 Claude Code 沙箱里要关掉沙箱跑；Grok 需要代理时设 `PS_PROXY` / `PS_NO_PROXY`。
+需要 `claude` CLI；Kimi Code ≥ 0.36、Grok Build、`pplx-web` 可选。`run_arm.py` 要联网（模型 API、Perplexity、各家文档站），按当前环境的权限运行；Grok 需要代理时设 `PS_PROXY` / `PS_NO_PROXY`。
 
 ```bash
 python3 bench/run_arm.py cc-opus-sonnet --force
@@ -80,4 +80,4 @@ python3 bench/summarize.py
 
 ## License
 
-MIT，见 [LICENSE](LICENSE)。词表方法（vocabulary-first：seed / core lexicon / shibboleths 三件套、双向用法）来自 [justinatusa/vocabulary-first](https://github.com/justinatusa/vocabulary-first)（MIT），集成时做了多 agent 化改造。`bench/runs/` 里的成稿是各模型生成的调研文本，其中引用的官方文档版权归原作者。
+MIT，见 [LICENSE](LICENSE)。可选术语对齐的思路受 [justinatusa/vocabulary-first](https://github.com/justinatusa/vocabulary-first)（MIT）启发；本版不要求固定数量或分类。`bench/runs/` 里的成稿是各模型生成的调研文本，其中引用的官方文档版权归原作者。

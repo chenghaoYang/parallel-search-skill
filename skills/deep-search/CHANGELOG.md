@@ -1,5 +1,14 @@
 # deep-search changelog
 
+## v2.1（2026-09-30，按问题调研，自然表达）
+
+- 保留来源追溯、回原始材料核验重要结论、否定与排他主张找反例，以及明确区分事实、推断和不确定性。
+- 去掉至少两轮、固定词表数量、主 agent 禁止查原页、整批等待、每轮全文重写和固定报告章节。根据独立问题和剩余缺口选择并行、补查及停止时机。
+- 词表、网格、C# 笔记、快照、atlas/details 改为按需使用。旧参数继续接受，轮数/人数是上限；保留显式路径与格式要求。保留入口 YAML 的 argument-hint，参数提示改为通用占位值，不暗示默认数量。
+- 同步 worker 定义与所有 references，避免入口放松后被旧参考文件重新锁死。环境说明不再把单次模型/机器故障推广成通用规则；Perplexity 包装器仍为可选工具。
+- 机械检查只作诊断：自由格式笔记明确标为未评估；篇幅限制需显式传入，旧版布局通过 `--legacy-layout` 选择。增加离线兼容回归测试。
+- 本版未运行付费模型或联网 A/B bench。历史 bench/evolve 记录与 incumbent 保持不变；其固定章节/C# 指标不等价于新版研究质量。来源正确性与表达质量仍需实际任务评估。
+
 ## v2.0（2026-09-28，vocabulary-first 集成 + 分层成稿 + GLM-5.3 默认栈）
 
 目标：调研任何领域直接 `/deep-search`，成稿对标并超越 [justinatusa/llm-api-protocols](https://github.com/justinatusa/llm-api-protocols)

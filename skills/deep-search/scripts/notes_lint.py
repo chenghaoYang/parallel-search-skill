@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Mechanical check of deep-search worker notes before a converge step.
+"""Optional diagnostics for legacy deep-search structured notes.
 
-usage: notes_lint.py NOTES_DIR [--round N]
+usage: notes_lint.py NOTES_DIR [--round N] [--max-chars N]
 
 Per note: claims (official/secondary), claims missing src or quote, conflicts, gaps, leads.
-Exit code is 0 even when problems are found; the lead reads the table and decides.
+Freeform notes are not assessed. A zero exit code means the diagnostics ran, not that
+sources or research quality passed. The lead must inspect the evidence itself.
 """
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -44,16 +46,22 @@ def lint(path):
 
 
 def main(argv):
-    if len(argv) < 2:
-        raise SystemExit("usage: notes_lint.py NOTES_DIR [--round N]")
-    notes = Path(argv[1])
-    pattern = "*.md"
-    if "--round" in argv:
-        pattern = f"r{argv[argv.index('--round') + 1]}-*.md"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("notes_dir", type=Path)
+    parser.add_argument("--round", type=int, dest="round_number")
+    parser.add_argument("--max-chars", type=int, help="optional advisory length limit")
+    args = parser.parse_args(argv[1:])
+    if not args.notes_dir.is_dir():
+        parser.error(f"notes directory does not exist: {args.notes_dir}")
+    if args.max_chars is not None and args.max_chars < 1:
+        parser.error("--max-chars must be positive")
+    notes = args.notes_dir
+    pattern = f"r{args.round_number}-*.md" if args.round_number is not None else "*.md"
     rows = [lint(p) for p in sorted(notes.glob(pattern))]
     if not rows:
-        print(f"no notes matching {notes}/{pattern}")
+        print(f"NOT ASSESSED: no notes matching {notes}/{pattern}")
         return 0
+    print("Legacy-format diagnostics only; source truth and freeform content are NOT ASSESSED.")
     print("| note | claims | official | secondary | no src | no quote | conflicts | gaps | leads |")
     print("|---|---|---|---|---|---|---|---|---|")
     for r in rows:
@@ -67,10 +75,12 @@ def main(argv):
           f"(official {tot['official']}, secondary {tot['secondary']}), {bad} missing src/quote, "
           f"{tot['conflicts']} conflicts, {tot['gaps']} gaps, {tot['leads']} leads")
     if empty:
-        print("notes with 0 parseable claims (format problem or failed worker): " + ", ".join(empty))
-    long = [f"{r['file']} ({r['chars']})" for r in rows if r["chars"] > 8000]
-    if long:
-        print("notes over 8000 chars: " + ", ".join(long))
+        print("NOT ASSESSED: no legacy C# claims parsed in " + ", ".join(empty) +
+              "; this may be freeform notes, an empty note, or a format problem. Read manually.")
+    if args.max_chars is not None:
+        long = [f"{r['file']} ({r['chars']})" for r in rows if r["chars"] > args.max_chars]
+        if long:
+            print(f"notes over {args.max_chars} chars: " + ", ".join(long))
     return 0
 
 

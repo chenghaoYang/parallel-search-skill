@@ -1,114 +1,38 @@
-# 外层（harness）适配
+# 在不同环境中使用
 
-SKILL.md 里的流程不变：R0 → 扩展 → 收束 → 观察 → 下一步 → 终审。换外层时只改三件事：
-「一次 spawn」具体是什么调用、工人用什么取数、并发和失败谁来管。任务提示词里依赖外层的句子也按下表改。
+先看当前环境实际提供的工具、并发限制、权限和交付方式。skill 不依赖某个模型、CLI 或搜索服务；优先用现有的搜索、原文读取和原生子 agent 工具。没有子 agent 时顺序研究也可以。
 
-**默认栈：ZCode + GLM-5.3**（主/工人同模，`worker-model` 默认 `inherit`）。其余外层为 bench 对比保留。
+## 分工和等待
 
-| 外层 | 一次 spawn = | 选工人模型 | 等一批的正确方式 | 状态 |
-|---|---|---|---|---|
-| ZCode（GLM-5.3） | 一次 Agent 调用（或一次 SendMessage 追问） | 继承会话模型（GLM-5.3），Agent 调用不传模型 | 同一条消息发出整批，然后直接结束回合，完成通知会唤醒你 | 日常默认 |
-| Claude Code | 一次 Agent 调用（或一次 SendMessage 追问） | `research-worker` 定义里的 `model`，或 Agent 调用传 `model` | 同一条消息发出整批，然后直接结束回合，完成通知会唤醒你 | bench 已测 |
-| Kimi Code（≥ 0.36） | 一次 Agent 调用，或 AgentSwarm 里的一项 | `config.toml` 的 `[secondary_model] default_model`（`force = true` 钉死） | 一次 AgentSwarm，或同一步多个前台 Agent 调用 | bench 已测 |
-| Grok Build | 一次 `spawn_subagent` | 每次调用显式传 `model` | 同一条消息发出整批，再用一次 `get_command_or_subagent_output`（wait_all） | bench 已测 |
-| 纯 Perplexity | 一次 `pplx-safe search` | `--model`（配额用完会被静默回退，见下） | 并行进程 | bench 已测 |
-| Codex CLI / 任意带 shell 的外层 | 一个后台 `codex exec` 或 `claude -p` 进程 | 进程参数 | shell 的 `&` + `wait` | 未测 |
+把问题、背景、边界和交付要求交给研究者。环境支持 `research-worker` 定义时可使用 [agents/research-worker.md](../agents/research-worker.md)；不支持时把相关要求放进任务描述，不必强行安装 agent 文件。
 
-所有外层共用一条：**等待就是阻塞在「等整批」那一步，或者结束回合交给通知**。不要用 sleep、定时唤醒、轮询来等，也不要在这一窗口里自己打开网页。窗口里想到的缺口记进 `log.md` 的 `待查：`，留给下一轮简报。
+模型默认继承环境设置。用户明确指定的模型或并发上限要尊重；不支持时说明情况，不能默默假装用了它。并发受实际容量约束，不把 `workers` 上限当作必须派满的人数。
 
-## ZCode（默认栈：GLM-5.3 全家桶）
+用环境文档支持的等待或完成通知机制。能够逐个接收结果就边吸收边推进；主 agent 可以核对来源或做其他独立工作，但避免和研究者重复取数。只在运行环境确实要求整批等待时才整批等。不要凭其他产品的一段历史经验猜测本环境工具的调用方法。
 
-- 安装：skill 放 `.agents/skills/deep-search/`（项目级，仓库里是指向 `skills/deep-search/` 的符号链接）或
-  `ln -s <repo>/skills/deep-search ~/.agents/skills/deep-search`（用户级，所有项目 `/deep-search` 直接触发）。
-  两种路径 ZCode 都会扫描；用户级和别的 skill 共存没有冲突。
-- 工人 = Agent 工具，`subagent_type: general-purpose`（通用型，全工具）。工人**继承会话模型**，Agent 调用
-  没有 model 参数也不用传——默认栈就是主/工人同为 GLM-5.3。简报里把 `references/worker.md` 的规则整段带上
-  （general-purpose 不认识 research-worker 定义）。
-- 一轮的所有简报放**同一条消息**里并行发出多个 Agent 调用，`description` 写 `r<轮>-<slug>`。发出后直接结束本回合，
-  完成通知会逐个唤醒；到齐再收束。等待窗口里不开页面（本环境有 WebSearch / WebFetch / mcp web reader，照硬规则不碰），
-  缺口记 `log.md` 的 `待查：`。
-- 追问优先 SendMessage 给原工人（它保留了读过的页面），比新 spawn 便宜；同样计入 turn。
-- 长任务可以 `run_in_background`，其余和前台一致：整批发出后结束回合等通知，不轮询。
-- 不用 CreateWorkflow 编排这套流程（团队约定：dynamic workflow 不作为推荐实现）。
+工人失败时先分清暂时错误、权限限制和任务过大。只有重试有望解决时才重试，复用已有结果并遵守用户预算；权限拒绝不通过换工具绕过。仍无法完成就保留缺口，说明影响。
 
-### ZCode 实战坑（2026-09 深调研实测）
+## 文件与兼容
 
-- **别用 `general-purpose`**：`~/.zcode/v2/agents-state.json` 的 builtInModelSelectionOverrides 会把 general-purpose
-  钉在某个已下线模型（当时是 deepseek-v4-pro），整批 spawn 直接报 "Model unavailable / model-not-found"；
-  改盘上配置也要 App 重启才生效。**用 `Explore` 替代**：未被覆盖、继承会话模型、自带 Bash/WebFetch/WebSearch，
-  够调研工人用。
-- **Explore 沙箱常为只读**：heredoc/重定向写盘会被系统禁掉。工人简报必须写双预案：「优先 Bash heredoc 写盘到
-  `notes/<name>.md`；若被拒绝，把笔记全文放进最终消息由 lead 代存」。多数工人会走代存路径，lead 收到后照抄 Write。
-- **代存笔记别保留 `src: 同上`**：工人原文用"同上"指代上一条 src 时，代存要展开成完整 URL（几行 Python 逐行回填），
-  否则 notes_lint 报几十条 no_src。quote 必须以引号字符开头（lint 正则 `quote:\s*["“「]`），"如左"、"quote: (1) …"
-  这类写法都会被判 no_quote。
-- **限流重试**：整批 spawn 偶发 1302（账户级速率限制）；失败的那几个按"失败重派一次"规则原样重发，已成功的不重派。
+长任务按需保留来源笔记；研究者不能写文件时可以返回内容，由主 agent 保存。路径来自任务要求，不假定所有环境共享文件系统。主 agent 负责最终整合，避免多人覆盖同一份成稿。
 
-## Claude Code（agent team）
+本仓库保留了 Claude Code 风格的 `agents/research-worker.md`，以及 `.agents/skills/deep-search` 项目级链接。各外层如何发现 skill、选择模型、等待任务，以当前工具说明为准；旧版本和旧机器上的配置不作为通用要求。
 
-- 工人类型：有 `research-worker`（本 skill 的 `agents/research-worker.md`，或启动时 `--agents` 定义）就用它；没有就用
-  `general-purpose`，并在 Agent 调用里显式传 `model`（`sonnet` / `opus`），同时把 `references/worker.md` 的规则整段放进简报。
-- 一轮的所有简报放在**同一条消息**里发出多个 Agent 调用，`name` 用 `r<轮>-<slug>`，方便之后 SendMessage 追问。
-- 工人默认在后台跑，完成时会通知你。等整批通知到齐再收束：发出整批后直接结束本回合，不要轮询，也不要在等的时候自己去搜或开页面。要查的记进 `log.md` 的 `待查：`。
-- 等待就是直接结束本回合。不要用 ScheduleWakeup、CronCreate、`sleep` 来「等」：headless（`claude -p`）下，
-  主 agent 排了唤醒就会结束会话，进程退出时所有还在跑的工人被杀掉（bench 里 cc-opus-opus 第 1 次就这样丢了 10 个工人）。
-  跑 headless 时最好直接用 `--disallowedTools ScheduleWakeup CronCreate`。
-- `claude -p` 还有一个后台等待上限：回合结束、后台工人还没回来时进程最多等 600s 就自杀（stderr 会写
-  `Background tasks still running after 600s; terminating`）。慢工人（几十分钟级）会整批被杀。外层要设
-  `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`（无限等，由外层自己的超时兜底）。
-- 模型可以不走官方额度：`claude-devin` 这类包装把 ANTHROPIC_BASE_URL 指向本地反代（devin2api 出 swe-2-max，
-  lead 和工人同模型）。对 skill 来说外层仍是 Claude Code，行为不变；只是工人和主 agent 的模型可能都和预期不同。
-- 追问优先 SendMessage 给原工人（它保留了读过的页面），比新 spawn 便宜；同样计入 turn。
-- 工人不再往下派工人。范围很大时（> 12 个实体）才考虑两层：给 sub-leader 用 `general-purpose`，让它对自己那一枝跑 R1+收束，
-  只交回枝笔记（主张 + 来源），不交成稿。默认不开。
-- 不用 Workflow 工具编排这套流程（团队约定：dynamic workflow 不作为推荐实现）。
+只在用户已经选择并授权的 CLI 工作流里使用后台 CLI 进程。缺少 CLI、搜索服务或登录时，不为执行 skill 擅自安装软件、改配置、复制凭据或开启新的付费运行。
 
-## Kimi Code
+## 可选的 Perplexity 包装器
 
-- 版本要 ≥ 0.36（2026-08-13 起才有 subagent 模型池）；0.34 下子 agent 一律继承主模型。bench 用的是 2.0.2。
-- 工人类型：把 `agents/research-worker.md` 放进 agent 目录（项目级 `.kimi-code/agents/`、`.agents/agents/`，或 `config.toml`
-  顶层 `extra_agent_dirs`），用 `subagent_type: "research-worker"` 派。agent 文件里的 `model` 字段会被忽略。
-- 工人模型：`[secondary_model] default_model = "<alias>"`，要钉死就加 `force = true`（此时 Agent 调用不接受 `model` 参数）。
-- 一轮用一次 AgentSwarm（`prompt_template` 写 `{{item}}`，`items` 放各份完整简报；AgentSwarm 必须是该步唯一的工具调用），
-  或同一步多个前台 Agent 调用。`kimi -p` 下 subagent 默认不超时。
-- skill：`--skills-dir <父目录>`，或放进 `.kimi-code/skills/` / `.agents/skills/`；也可以在提示词里让主 agent 先读 SKILL.md。
-- `kimi -p` 不能和 `--auto` / `--yolo` 同用；权限按 `config.toml` 的 `default_permission_mode`。
+`scripts/pplx-safe` 包装仓库外的 `pplx-web`，不是必需依赖。只有已有可用且获授权的设置时才使用；否则用环境现有搜索工具。
 
-## Grok Build
+兼容现有安装的关键点：
 
-- `spawn_subagent` 没有「选 agent 类型」的参数，项目里的 `.grok/agents/research-worker.md` 能被发现（`grok inspect`），
-  但主 agent 选不到它，派出来的是 `general-purpose`。所以：**每次调用都显式传 `model`**，并把 `agents/research-worker.md` 的正文整段放进简报。
-- 用户配置里 `[subagents.models] general-purpose = ...` 会给没传 `model` 的工人定模型；显式 `model` 参数优先。
-- 工人默认后台运行。同一条消息发出整批时，可以同时把 `待查：` 写进 `log.md`。下一条消息只能是一次 `get_command_or_subagent_output`（传这一批全部 id，`timeout_ms` 给足），或者结束回合。这次等待返回之前，不要调用 `web_search`、`web_fetch`，不要用 shell 打开 URL，不要再 `spawn_subagent`。
-- grok-4.7 主 agent 实测会在等待窗口里自己抓页（一次运行 80–170 次 `web_search`/`web_fetch`，约 2MB 原始页面进主上下文），也是 Grok 臂运行超时/报错的主因。等待纪律靠上面的窗口规则，不要靠禁用 `web_fetch` / `web_search`——工人和终审核验工人仍然需要它们找页、取原句、回原页核对。
-- Grok 的 `web_fetch` 带 SSRF 防护，走 fake-ip 代理（198.18.x.x）时一些官方文档域会被拦（实测 api-docs.deepseek.com、docs.x.ai）。工人遇到这种情况按规则记 gaps，写明试过哪些入口，不要凭记忆补主张。
-- Grok Build 不读 macOS 系统代理；网络需要代理时，启动 grok 要显式带上 HTTPS_PROXY / NO_PROXY（bench 的 runner 读 `PS_PROXY`、`PS_NO_PROXY`）。
-- 自定义 Responses 后端的模型（bench 里是一个本地反代提供的 `swe-2`）若返回的 `usage` 缺 `output_tokens_details`，Grok 会报
-  `serialization error` 直接失败，主模型和工人都一样。先用一句 `grok -p "reply ok" -m <model>` 试通再排进 bench。
+- `PPLX_WEB_SCRIPT` 可指定外部 `pplx_web.py`；包装器还使用 `uv` 和所需 Python 包，首次使用可能涉及下载。
+- 它复制已有 cookie/config 到临时 HOME，避免并发写固定临时文件冲突；刷新的 cookie 不写回原文件。不要把这些文件放入研究笔记或共享产物。
+- 搜索答案和 citations 提供线索，关键事实仍要读原始来源。返回的模型或研究模式可能与请求不同，应根据实际返回值报告；不能把参数名称当成已成功运行的证明。
+- 登录失效或权限问题按当前产品支持的安全流程处理，不能从旧说明推断凭据处理权限。
 
-## 纯 Perplexity
+## 历史 bench 的环境经验
 
-- 每份简报的窄问题 → 一次 `pplx-safe search "<问题>" --json`，答案和 citations 就是笔记。
-- 这类笔记没有原文摘录，按规则全部算 `secondary`；收束时要在第 6 节说明「未经一手来源核对」。
-- 只能做「一轮扩展 + 一次收束」或「多轮但每轮都是搜索答案」，没有追问能力。
-- 提示词里写「产出文档」时，Perplexity 会改成「生成文件」：正文只剩 1–2k 字的文件摘要，文件本身 `pplx-web` 拿不到。
-  要在提示词末尾加一句「直接在回答正文里输出完整文档，不要生成、附加或引用文件」。
+仓库记录过 headless 进程过早退出导致后台任务终止、模型覆盖指向不可用模型、只读研究者无法落盘、限流和代理导致原页不可访问。这些是排障线索，不是对所有版本生效的规则。遇到相似故障先查真实状态和日志，再决定如何处理。
 
-## Codex CLI / 通用 shell 外层（未测）
-
-- 一个工人 = 一个后台进程：`codex exec -s workspace-write "<worker.md 规则 + 简报>"`，或 `claude -p --model sonnet "<同上>"`。
-  用 shell 的 `&` + `wait` 控制一批，进程退出码非 0 记为失败。
-- 进程的笔记写到简报里的路径；主 agent 只读笔记文件，不读进程的完整输出。
-
-## 已知坑：Perplexity
-
-`pplx-web` 是本仓库之外的本地工具（Perplexity Pro 网页会话客户端），`scripts/pplx-safe` 只是给它加并行安全；用 `PPLX_WEB_SCRIPT` 指向它的 `pplx_web.py`。没有它就让工人用外层自带的网页搜索。
-
-- **并行写 cookie**：`pplx-web` 每次搜索都会把 cookie 写回 `~/.config/perplexity-web/cookies.json`，临时文件名固定为
-  `cookies.json.tmp`，多进程同时跑时后一个 `replace` 报 `FileNotFoundError`。`scripts/pplx-safe` 给每个进程一个临时 HOME
-  和一份 cookie 副本，并行不会互相踩；代价是这次刷新的 cookie 不会写回主文件。
-- **配额回退**：Pro 配额（`/rest/rate-limit/all` 的 `remaining_pro`）用完后，除 `pplx_pro`（Best）外，请求的模型会被静默换成
-  `gpt56_terra(_thinking)`，返回 JSON 的 `model` 字段是实际模型。比较 Perplexity 模型前先看配额，结果里要核对 `model`。
-- **研究模式**：`pplx-safe --mode research`（`pplx_alpha`）请求能返回，但 `remaining_research` 不减、实际模型是回退模型，
-  说明没有进入 Deep Research；`agentic_research` 直接返回空答案。经 `pplx-web` 暂时用不了这两种模式。
-- 遇到 `AUTHENTICATION` 错误时，按 perplexity-research skill 的说明在 Chrome 里重新登录，再跑一次 `pplx-web login`。
+`bench/run_arm.py`、`evolve/evaluate.py` 会额外指定模型、检索方式和 `./ds/`、`./report.md` 等路径。运行已有实验时这些显式设置仍需遵守。历史固定评测包含旧版输出格式指标；不能把本次文风修订的离线检查说成完成了模型 A/B 评测。

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Length trajectory and grid fill for a deep-search workspace.
+"""Optional size, citation-shape and existing-grid diagnostics for a research workspace.
 
-usage: roundstat.py DIR [--budget CHARS]
+usage: roundstat.py DIR [--budget CHARS] [--legacy-layout]
 
-Prints: chars of each snapshot and of report.md against the budget, whether any snapshot
-grew past the budget or grew round over round, atlas.md against 2x budget, details pages
-against 4000 chars, vocab.md presence, grid cell status counts, notes per round.
+No layout, vocabulary file or length limit is required by default. --budget checks
+report/snapshot character counts. --legacy-layout additionally checks the old source
+section, numbered overview citations, atlas (2x budget) and 4000-character detail pages.
+All findings are advisory: successful execution does not validate research quality.
 """
 
+import argparse
 import re
 import sys
 from collections import Counter
@@ -16,79 +18,93 @@ from pathlib import Path
 STATUSES = ["✅", "⚠", "⚔", "❓", "∅"]
 
 
-def cite_lines(text):
-    """Warn if the source section has no URL, or the lead summary has no [n]."""
+def cite_lines(text, legacy=False):
+    """Check citation shape only, without claiming to verify sources or support."""
+    if not legacy:
+        if not re.search(r"https?://", text):
+            return ["cite: no full source URL found; check provenance manually"]
+        return []
     lines = []
     marker = re.search(r"^##\s*来源\s*$", text, re.M)
     body = text[: marker.start()] if marker else text
     src = text[marker.start() :] if marker else ""
     if marker is None:
-        lines.append("cite: 没有来源节")
+        lines.append("cite: legacy layout has no 来源 section")
     elif not re.search(r"https?://", src):
-        lines.append("cite: 来源节没有 https:// URL（每条照抄笔记 src，不要去掉协议或用花括号合并）")
+        lines.append("cite: legacy 来源 section has no full source URL")
     screen = re.search(r"^##\s*0\.[^\n]*\n(.*?)(?=^## |\Z)", body, re.M | re.S)
     if screen and len(screen.group(1).strip()) > 80 and not re.search(r"\[\d+\]", screen.group(1)):
-        lines.append("cite: 一屏看懂没有 [n]（概括句要带矩阵格上的 [n]，[§k] 不算）")
+        lines.append("cite: legacy overview has no numbered citation; check manually")
     return lines
 
 
-def main(argv):
-    if len(argv) < 2:
-        raise SystemExit("usage: roundstat.py DIR [--budget CHARS]")
-    root = Path(argv[1])
-    budget = int(argv[argv.index("--budget") + 1]) if "--budget" in argv else 20000
+def snapshot_key(path):
+    match = re.fullmatch(r"report\.r(\d+)\.md", path.name)
+    return (0, int(match.group(1))) if match else (1, path.name)
 
-    snaps = sorted(root.glob("snapshots/report.r*.md"),
-                   key=lambda p: int(re.search(r"r(\d+)", p.name).group(1)))
+
+def main(argv):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("directory", type=Path)
+    parser.add_argument("--budget", type=int, help="optional report character cap")
+    parser.add_argument("--legacy-layout", action="store_true")
+    args = parser.parse_args(argv[1:])
+    root, budget = args.directory, args.budget
+    if not root.is_dir():
+        parser.error(f"workspace directory does not exist: {root}")
+    if budget is not None and budget < 1:
+        parser.error("--budget must be positive")
+
+    print("Diagnostics only; factual accuracy and source support are NOT ASSESSED.")
+    print(f"budget {budget}" if budget is not None else "budget not specified (sizes only)")
+    snaps = sorted(root.glob("snapshots/report.*.md"), key=snapshot_key)
     lengths = [(p.name, len(p.read_text(encoding="utf-8"))) for p in snaps]
     report = root / "report.md"
     report_text = report.read_text(encoding="utf-8") if report.exists() else None
     if report_text is not None:
         lengths.append(("report.md", len(report_text)))
-    print(f"budget {budget}")
+    else:
+        print("report.md not present; main report NOT ASSESSED")
     prev = None
     for name, n in lengths:
         flag = []
-        if n > budget:
+        if budget is not None and n > budget:
             flag.append("OVER BUDGET")
-        if prev is not None and n > prev:
-            flag.append(f"+{n - prev}")
-        print(f"  {name}: {n} {' '.join(flag)}")
+        if prev is not None and n != prev:
+            flag.append(f"change {n - prev:+d}")
+        print(f"  {name}: {n} {' '.join(flag)}".rstrip())
         prev = n
     if report_text is not None:
-        for line in cite_lines(report_text):
+        for line in cite_lines(report_text, legacy=args.legacy_layout):
             print(line)
-
-    grid = root / "grid.md"
-    if not (root / "vocab.md").exists() and grid.exists():
-        print("vocab: vocab.md 不存在（R0 应先反向生成词表，见 references/vocab.md）")
 
     atlas = root / "atlas.md"
     if atlas.exists():
         n = len(atlas.read_text(encoding="utf-8"))
-        flag = "OVER BUDGET" if n > 2 * budget else ""
-        print(f"atlas.md: {n} (cap {2 * budget}) {flag}".rstrip())
-
+        cap = 2 * budget if args.legacy_layout and budget is not None else None
+        flag = " OVER BUDGET" if cap is not None and n > cap else ""
+        print(f"atlas.md: {n}" + (f" (legacy cap {cap})" if cap is not None else "") + flag)
     for p in sorted(root.glob("details/*.md")):
         n = len(p.read_text(encoding="utf-8"))
-        flag = "OVER 4000" if n > 4000 else ""
-        if flag:
-            print(f"details/{p.name}: {n} {flag}")
+        flag = " OVER 4000 (legacy cap)" if args.legacy_layout and n > 4000 else ""
+        print(f"details/{p.name}: {n}{flag}")
 
+    grid = root / "grid.md"
     if grid.exists():
         cells = Counter()
         for line in grid.read_text(encoding="utf-8").splitlines():
             if line.startswith("|"):
-                for s in STATUSES:
-                    cells[s] += line.count(s)
+                for status in STATUSES:
+                    cells[status] += line.count(status)
         total = sum(cells.values())
-        filled = cells["✅"] + cells["∅"]
-        pct = f"{100 * filled / total:.0f}%" if total else "n/a"
-        print("grid: " + ", ".join(f"{s} {cells[s]}" for s in STATUSES) + f" | resolved {filled}/{total} ({pct})")
+        print("grid markers: " + ", ".join(f"{s} {cells[s]}" for s in STATUSES) +
+              f" | {total} total (marker counts, not verified coverage)")
 
     notes = Counter()
     for p in root.glob("notes/r*-*.md"):
-        notes[int(re.match(r"r(\d+)-", p.name).group(1))] += 1
+        match = re.match(r"r(\d+)-", p.name)
+        if match:
+            notes[int(match.group(1))] += 1
     if notes:
         print("notes per round: " + ", ".join(f"r{k}={notes[k]}" for k in sorted(notes)))
     return 0

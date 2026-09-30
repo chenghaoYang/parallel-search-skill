@@ -46,7 +46,7 @@ sys.path.insert(0, str(REPO / "bench"))
 sys.path.insert(0, str(ROOT))
 from run_arm import GROK_ENV, cc_prompt, collect, worker_agent, worker_body  # noqa: E402
 from judge import judge_cmd  # noqa: E402
-from mech import mech  # noqa: E402
+from mech import LEGACY_DIAGNOSTICS_NOTICE, mech  # noqa: E402
 
 SKILL_ROOT = ".claude/skills/deep-search"
 GROK = str(Path.home() / ".grok" / "bin" / "grok")
@@ -364,6 +364,7 @@ def mean(xs):
 
 
 def report(exp, vs_list, tasks=None):
+    print(LEGACY_DIAGNOSTICS_NOTICE, file=sys.stderr)
     metas = [refresh(p) for p in sorted((RUNS / exp).glob("*/meta.json"))]
     tasks = tasks or sorted({m["task"] for m in metas})
     metas = [m for m in metas if m["task"] in tasks]

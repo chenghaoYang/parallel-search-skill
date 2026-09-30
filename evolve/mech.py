@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Mechanical metrics for one deep-search run directory (part of the fixed evaluation harness).
+"""Legacy mechanical diagnostics for one deep-search run directory.
+
+These format-dependent values are preserved for historical reproducibility, not
+general research-quality scores. Free-form answers may have sources and good
+structure while scoring zero on the legacy heading and C# note checks.
 
 usage: mech.py RUN_DIR TASK_ID [--budget 9000]
 
@@ -8,6 +12,8 @@ golden   recall over bench/tasks/<task>/golden.json (hidden from the loop's prop
 sources  unique URLs in the report; share of them that also appear as a `src:` in the notes
 notes    note files, claims, share of claims with a full-URL src and a quote
 process  snapshot lengths per round (from ds/snapshots)
+
+The JSON keys and calculations remain unchanged. See README.md for scope.
 """
 
 import json
@@ -26,6 +32,12 @@ SECTIONS = {
     "open": r"未决|置信|待核|未解决|缺口",
     "sources": r"来源|参考|引用|Sources|References",
 }
+
+LEGACY_DIAGNOSTICS_NOTICE = (
+    "Legacy diagnostics: sections checks fixed headings; traceable matches C# note "
+    "URLs; claims_ok checks C# src/quote fields. Zero can mean format not assessed, "
+    "not poor research. Golden checks lexical recall, not truth. See evolve/README.md."
+)
 
 
 def norm_url(u):
@@ -93,6 +105,7 @@ def main(argv):
     if len(argv) < 3:
         raise SystemExit(__doc__)
     budget = int(argv[argv.index("--budget") + 1]) if "--budget" in argv else 9000
+    print(LEGACY_DIAGNOSTICS_NOTICE, file=sys.stderr)
     print(json.dumps(mech(argv[1], argv[2], budget), indent=2, ensure_ascii=False))
     return 0
 

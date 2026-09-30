@@ -1,5 +1,7 @@
 # bench
 
+本目录保留历史任务与评分协议。词面召回、旧章节及结构化笔记指标不是通用研究质量分；当前灵活版 skill 的评测范围和兼容注意事项见 [evolve 说明](../evolve/README.md#当前-skill-与历史评测)。不要改写旧结果，或把不同协议的分数直接混排。
+
 任务在 `tasks/<task>/`：`task.md`（用户视角的调研题：seed keywords、半对半错的 variation、范围要求、四行元指令）、
 `golden.json`（隐藏答案：claims 的 groups/hosts/source/quote，只计召回）、`answers.md`（人工核对用参考答案）。
 

@@ -57,10 +57,10 @@ def main(argv):
 
     print("Diagnostics only; factual accuracy and source support are NOT ASSESSED.")
     print(f"budget {budget}" if budget is not None else "budget not specified (sizes only)")
-    snaps = sorted(root.glob("snapshots/report.*.md"), key=snapshot_key)
+    snaps = sorted((p for p in root.glob("snapshots/report.*.md") if p.is_file()), key=snapshot_key)
     lengths = [(p.name, len(p.read_text(encoding="utf-8"))) for p in snaps]
     report = root / "report.md"
-    report_text = report.read_text(encoding="utf-8") if report.exists() else None
+    report_text = report.read_text(encoding="utf-8") if report.is_file() else None
     if report_text is not None:
         lengths.append(("report.md", len(report_text)))
     else:
@@ -79,18 +79,18 @@ def main(argv):
             print(line)
 
     atlas = root / "atlas.md"
-    if atlas.exists():
+    if atlas.is_file():
         n = len(atlas.read_text(encoding="utf-8"))
         cap = 2 * budget if args.legacy_layout and budget is not None else None
         flag = " OVER BUDGET" if cap is not None and n > cap else ""
         print(f"atlas.md: {n}" + (f" (legacy cap {cap})" if cap is not None else "") + flag)
-    for p in sorted(root.glob("details/*.md")):
+    for p in sorted(p for p in root.glob("details/*.md") if p.is_file()):
         n = len(p.read_text(encoding="utf-8"))
         flag = " OVER 4000 (legacy cap)" if args.legacy_layout and n > 4000 else ""
         print(f"details/{p.name}: {n}{flag}")
 
     grid = root / "grid.md"
-    if grid.exists():
+    if grid.is_file():
         cells = Counter()
         for line in grid.read_text(encoding="utf-8").splitlines():
             if line.startswith("|"):
@@ -103,7 +103,7 @@ def main(argv):
     notes = Counter()
     for p in root.glob("notes/r*-*.md"):
         match = re.match(r"r(\d+)-", p.name)
-        if match:
+        if match and p.is_file():
             notes[int(match.group(1))] += 1
     if notes:
         print("notes per round: " + ", ".join(f"r{k}={notes[k]}" for k in sorted(notes)))

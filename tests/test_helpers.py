@@ -120,6 +120,57 @@ class HelperTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("must be positive", result.stderr)
 
+    def test_quoted_examples_are_not_claims(self):
+        module = load_module("notes_fences", SCRIPTS / "notes_lint.py")
+        for fence in ("```", "~~~~"):
+            with self.subTest(fence=fence):
+                path = self.write("example.md", f"{fence}markdown\n## claims\n- [C1] Example\n{fence}\n")
+                self.assertEqual(module.lint(path)["claims"], 0)
+
+    def test_claim_section_does_not_leak_into_other_headings(self):
+        module = load_module("notes_headings", SCRIPTS / "notes_lint.py")
+        path = self.write("headings.md", "## claims\n- [C1] Actual\n# Appendix\n- [C2] Example\n")
+        self.assertEqual(module.lint(path)["claims"], 1)
+
+    def test_empty_evidence_and_official_prefix_are_rejected(self):
+        module = load_module("notes_empty", SCRIPTS / "notes_lint.py")
+        path = self.write("empty.md", '## claims\n- [C1] Fact | src: https:// | quote: "" | type: officially-unverified\n')
+        stats = module.lint(path)
+        self.assertEqual(stats["no_src"], ["C1"])
+        self.assertEqual(stats["no_quote"], ["C1"])
+        self.assertEqual(stats["official"], 0)
+
+    def test_field_names_inside_quotes_are_not_evidence_fields(self):
+        module = load_module("notes_fields", SCRIPTS / "notes_lint.py")
+        path = self.write("fields.md", '## claims\n- [C1] Fact | quote: "src: https://example.org | type: official"\n')
+        stats = module.lint(path)
+        self.assertEqual(stats["no_src"], ["C1"])
+        self.assertEqual(stats["official"], 0)
+        self.assertEqual(stats["no_quote"], [])
+
+    def test_chinese_quotes_and_url_query_survive_parsing(self):
+        module = load_module("notes_unicode", SCRIPTS / "notes_lint.py")
+        for quoted in ('“原文 | 有边界”', '「原文」', '\"original\"'):
+            with self.subTest(quoted=quoted):
+                path = self.write("unicode.md", f"## claims\n- [C1] Fact | src: https://example.org/a?q=one%7Ctwo#section | quote: {quoted} | type: OFFICIAL\n")
+                stats = module.lint(path)
+                self.assertEqual((stats["no_src"], stats["no_quote"], stats["official"]), ([], [], 1))
+
+    def test_markdown_named_directories_are_ignored(self):
+        (self.root / "notes" / "directory.md").mkdir(parents=True)
+        (self.root / "snapshots" / "report.r1.md").mkdir(parents=True)
+        (self.root / "details" / "directory.md").mkdir(parents=True)
+        for script, directory in (("notes_lint.py", self.root / "notes"), ("roundstat.py", self.root)):
+            with self.subTest(script=script):
+                result = self.run_script(script, directory)
+                self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_negative_round_is_rejected(self):
+        (self.root / "notes").mkdir()
+        result = self.run_script("notes_lint.py", self.root / "notes", "--round", -1)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must be non-negative", result.stderr)
+
     def test_existing_benchmark_worker_adapter(self):
         module = load_module("bench_run_arm_test", ROOT / "bench" / "run_arm.py")
         description, body = module.worker_body()

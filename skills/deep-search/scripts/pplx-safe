@@ -17,6 +17,7 @@ Usage: pplx-safe search "QUERY" [--json] [--timeout 180] [...]   (same args as p
 params.mode is replaced (research / agentic_research), which Perplexity's research models need.
 """
 
+import json
 import os
 import shutil
 import subprocess
@@ -49,17 +50,52 @@ sys.exit(pw.main(sys.argv[3:]))
 """
 
 
+def error(code, message, status=1):
+    sys.stderr.write(json.dumps({"error": code, "message": message}) + "\n")
+    return status
+
+
+def extract_mode(args):
+    """Consume only the wrapper's option; preserve client args and the -- boundary."""
+    mode, forwarded = None, []
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--":
+            forwarded.extend(args[i:])
+            break
+        if arg == "--mode" or arg.startswith("--mode="):
+            if mode is not None:
+                raise ValueError("--mode may be specified only once")
+            if arg == "--mode":
+                i += 1
+                if i == len(args):
+                    raise ValueError("--mode requires a value")
+                value = args[i]
+            else:
+                value = arg.partition("=")[2]
+            if not value.strip() or value.startswith("--"):
+                raise ValueError("--mode requires a non-empty value")
+            mode = value
+        else:
+            forwarded.append(arg)
+        i += 1
+    return mode, forwarded
+
+
 def main(argv):
-    args = list(argv[1:])
-    mode = None
-    if "--mode" in args:
-        i = args.index("--mode")
-        mode = args[i + 1]
-        del args[i:i + 2]
-    if not SCRIPT.exists():
-        sys.stderr.write(f'{{"error": "NO_PPLX_WEB", "message": "missing {SCRIPT}"}}\n')
-        return 1
-    uv = shutil.which("uv") or str(REAL_HOME / ".local/bin/uv")
+    try:
+        mode, args = extract_mode(list(argv[1:]))
+    except ValueError as exc:
+        return error("INVALID_ARGUMENT", str(exc), 2)
+    if not SCRIPT.is_file():
+        return error("NO_PPLX_WEB", f"missing {SCRIPT}")
+    uv = shutil.which("uv")
+    if uv is None:
+        fallback = REAL_HOME / ".local/bin/uv"
+        if not fallback.is_file() or not os.access(fallback, os.X_OK):
+            return error("NO_UV", "uv is unavailable; use your environment's existing search tools")
+        uv = str(fallback)
     with tempfile.TemporaryDirectory(prefix="pplx-safe-") as tmp:
         cfg = Path(tmp) / ".config/perplexity-web"
         cfg.mkdir(parents=True, mode=0o700)
@@ -76,7 +112,10 @@ def main(argv):
             env.setdefault("UV_PYTHON_INSTALL_DIR", str(py_dir))
         cmd = [uv, "run", "--quiet", "--with", "browser-cookie3", "--with", "curl_cffi", "python3"]
         cmd += ["-c", SHIM, str(SCRIPT), mode, *args] if mode else [str(SCRIPT), *args]
-        return subprocess.run(cmd, env=env).returncode
+        try:
+            return subprocess.run(cmd, env=env).returncode
+        except OSError as exc:
+            return error("RUN_FAILED", str(exc))
 
 
 if __name__ == "__main__":
